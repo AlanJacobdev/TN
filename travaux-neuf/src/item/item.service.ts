@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { TypeobjetService } from 'src/typeobjet/typeobjet.service';
 import { Repository } from 'typeorm';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -9,18 +10,34 @@ import { Item } from './entities/item.entity';
 @Injectable()
 export class ItemService {
   
-  constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService){}
+  constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService, private OrService : ObjetrepereService){}
   
   async create(createItemDto: CreateItemDto) {
-    const item = this.findOne(+createItemDto.idItem);
-    if ( item == undefined){
-      const newItem = this.itemRepo.create(createItemDto);
-      await this.itemRepo.save(newItem);
-      return newItem;
+    const objetrepere = this.OrService.findOne(+createItemDto.idOR);
+    if( objetrepere != undefined) {
+      const typeObjet = this.typeObjetService.findOne(+createItemDto.codeObjet);
+      if (typeObjet != undefined){
+        const item = this.findOne(+createItemDto.idItem);
+        if ( item == undefined){
+          const newItem = this.itemRepo.create(createItemDto);
+          await this.itemRepo.save(newItem);
+          return newItem;
+        } else {
+          return {
+            status : HttpStatus.CONFLICT,
+            error :'Already exist',
+          }
+        }
+      } else {
+        return {
+          status : HttpStatus.NOT_FOUND,
+          error :'Code Objet doesn\'t exist',
+        }
+      }
     } else {
       return {
-        status : HttpStatus.CONFLICT,
-        error :'Already exist',
+        status : HttpStatus.NOT_FOUND,
+        error :'Objet Repere doesn\'t exist',
       }
     }
   }
