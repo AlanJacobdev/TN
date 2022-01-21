@@ -66,7 +66,7 @@ export class NumerouniqueService {
     } catch {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
-        error :-'Not Found',
+        error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
     await this.NuRepo.delete(id)

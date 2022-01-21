@@ -8,11 +8,11 @@ import { TypeobjetrepereModule } from './typeobjetrepere/typeobjetrepere.module'
 import { NumerouniqueModule } from './numerounique/numerounique.module';
 import { AtelierModule } from './atelier/atelier.module';
 import { OrsaveModule } from './orsave/orsave.module';
-import { TypeModule } from './type/type.module';
 import { TypeobjetModule } from './typeobjet/typeobjet.module';
+import { ItemModule } from './item/item.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeModule, TypeobjetModule],
+  imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule],
   controllers: [AppController],
   providers: [AppService],
 })

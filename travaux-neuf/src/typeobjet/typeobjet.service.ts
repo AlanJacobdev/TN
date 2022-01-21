@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type } from 'os';
 import { Repository } from 'typeorm';
@@ -54,7 +54,20 @@ export class TypeobjetService {
 
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} typeobjet`;
+  async remove(id: number) {
+    try {
+      const TypeObjet = this.typeObjetRepo.findOneOrFail({
+        where : {
+          idType : id
+        }
+      })
+    } catch {
+      throw new HttpException({
+        status : HttpStatus.NOT_FOUND,
+        error : 'Not Found',
+      }, HttpStatus.NOT_FOUND)
+    }
+    await this.typeObjetRepo.delete(id)
+    return this.typeObjetRepo.findOne(id);
   }
 }

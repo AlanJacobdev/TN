@@ -1,4 +1,5 @@
 
+import { Item } from 'src/item/entities/item.entity';
 import { Numerounique } from 'src/numerounique/entities/numerounique.entity';
 import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { Typeobjetrepere } from 'src/typeobjetrepere/entities/typeobjetrepere.entity';
@@ -8,6 +9,7 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToMany, Many
 export class Objetrepere {
 
     @OneToMany (() => Orsave, (ORS : Orsave) => ORS.idObjetRepere)
+    @OneToMany (() => Item, (Item : Item) => Item.idOR)
     @PrimaryColumn({length : 6, unique: true})
     idObjetRepere : string;
 
