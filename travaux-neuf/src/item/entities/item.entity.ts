@@ -1,10 +1,12 @@
+import { Itemsave } from "src/itemsave/entities/itemsave.entity";
 import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
 import { Typeobjet } from "src/typeobjet/entities/typeobjet.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 
 @Entity('item')
 export class Item {
     
+    @OneToMany (() => Itemsave, (ItemSave : Itemsave) => ItemSave.idItem)
     @PrimaryColumn({length : 10})
     idItem : string;
 

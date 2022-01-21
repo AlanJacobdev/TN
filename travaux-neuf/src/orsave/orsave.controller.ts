@@ -18,8 +18,8 @@ export class OrsaveController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orsaveService.findOne(+id);
+  findById(@Param('id') id: string) {
+    return this.orsaveService.findById(+id);
   }
 
   @Patch(':id')

@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LargeNumberLike } from 'crypto';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { Repository } from 'typeorm';
 import { CreateOrsaveDto } from './dto/create-orsave.dto';
@@ -14,9 +15,17 @@ export class OrsaveService {
   async create(createOrsaveDto: CreateOrsaveDto) {
     const orExist = this.orservice.findOne(+createOrsaveDto.idObjetRepere);
     if ( orExist != undefined) {
-      const newOrSave = this.orsaveRepo.create(createOrsaveDto);
-      await this.orsaveRepo.save(newOrSave);
-      return newOrSave;
+      const orSave = this.findOne(+createOrsaveDto.idObjetRepere, createOrsaveDto.date, createOrsaveDto.heure);
+      if ( orSave == undefined){
+        const newOrSave = this.orsaveRepo.create(createOrsaveDto);
+        await this.orsaveRepo.save(newOrSave);
+        return newOrSave;
+      } else {
+        return  {
+          status : HttpStatus.NOT_FOUND,
+          error :'Already exist'
+        }
+      }
     } else {
       return  {
         status : HttpStatus.NOT_FOUND,
@@ -29,10 +38,19 @@ export class OrsaveService {
     return this.orsaveRepo.find()
   }
 
-  findOne(id: number) {
-    return this.orsaveRepo.findOne({
+  findById(id: number) {
+    return this.orsaveRepo.find({
       where : {
         idObjetRepere : id
+      }
+    })
+  }
+  findOne(id: number, date: Date, heure:Date ){
+    return this.orsaveRepo.findOne({
+      where : {
+        idObjetRepere : id,
+        date : date,
+        heure : heure
       }
     })
   }

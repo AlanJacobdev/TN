@@ -11,7 +11,7 @@ export class AtelierService {
   constructor(@InjectRepository(Atelier) private AtelierRepo : Repository<Atelier> ){}
 
   async create(createAtelierDto: CreateAtelierDto) {
-    const atelier = this.findOne(+createAtelierDto.idAtelier)
+    const atelier = this.findOne(+createAtelierDto.idAtelier);
     if ( atelier == undefined){
       const newAtelier = this.AtelierRepo.create(createAtelierDto);
       await this.AtelierRepo.save(newAtelier);

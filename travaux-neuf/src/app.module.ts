@@ -10,9 +10,10 @@ import { AtelierModule } from './atelier/atelier.module';
 import { OrsaveModule } from './orsave/orsave.module';
 import { TypeobjetModule } from './typeobjet/typeobjet.module';
 import { ItemModule } from './item/item.module';
+import { ItemsaveModule } from './itemsave/itemsave.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule],
+  imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule],
   controllers: [AppController],
   providers: [AppService],
 })
