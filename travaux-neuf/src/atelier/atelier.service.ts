@@ -11,7 +11,7 @@ export class AtelierService {
   constructor(@InjectRepository(Atelier) private AtelierRepo : Repository<Atelier> ){}
 
   async create(createAtelierDto: CreateAtelierDto) {
-    const atelier = this.findOne(+createAtelierDto.idAtelier);
+    const atelier = this.findOne(createAtelierDto.idAtelier);
     if ( atelier == undefined){
       const newAtelier = this.AtelierRepo.create(createAtelierDto);
       await this.AtelierRepo.save(newAtelier);
@@ -28,7 +28,7 @@ export class AtelierService {
     return this.AtelierRepo.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.AtelierRepo.findOne({
       where : {
         idAtelier : id
@@ -36,7 +36,7 @@ export class AtelierService {
     })
   }
 
-  async update(id: number, updateAtelierDto: UpdateAtelierDto) {
+  async update(id: string, updateAtelierDto: UpdateAtelierDto) {
     const atelier = await this.AtelierRepo.findOne({
       where : {
         idAtelier : id
@@ -53,7 +53,7 @@ export class AtelierService {
 
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       const Atelier = this.AtelierRepo.findOneOrFail({
         where : {

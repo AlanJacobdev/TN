@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { ItemsaveService } from './itemsave.service';
 import { CreateItemsaveDto } from './dto/create-itemsave.dto';
 import { UpdateItemsaveDto } from './dto/update-itemsave.dto';
@@ -23,17 +23,12 @@ export class ItemsaveController {
   }
 
   @Get(':id/:date/:heure')
-  findOne(@Param('id') id: string, @Param('id') date: Date, @Param('id') heure: Date) {
+  findOne(@Param('id') id: string, @Param('date') date: Date, @Param('heure') heure: Date) {
     return this.itemsaveService.findOne(+id, date, heure);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateItemsaveDto: UpdateItemsaveDto) {
-    return this.itemsaveService.update(+id, updateItemsaveDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.itemsaveService.remove(+id);
+  @Delete(':id/:date/:heure')
+  remove(@Param('id') id: string, @Param('date') date: Date, @Param('heure') heure: Date) {
+    return this.itemsaveService.remove(id, date, heure);
   }
 }

@@ -6,8 +6,8 @@ export class Orsave {
     
     @ManyToOne(() => Objetrepere)
     @JoinColumn({name: 'idObjetRepere'})
-    @PrimaryColumn({type :"string"})
-    idObjetRepere : Objetrepere;
+    @PrimaryColumn({type :"string", length : 6})
+    idObjetRepere : string;
 
     @Column({length : 200})
     libelleObjetRepere : string;

@@ -19,16 +19,16 @@ export class AtelierController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.atelierService.findOne(+id);
+    return this.atelierService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAtelierDto: UpdateAtelierDto) {
-    return this.atelierService.update(+id, updateAtelierDto);
+    return this.atelierService.update(id, updateAtelierDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.atelierService.remove(+id);
+    return this.atelierService.remove(id);
   }
 }

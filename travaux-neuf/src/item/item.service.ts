@@ -64,8 +64,8 @@ export class ItemService {
       return {
         status : HttpStatus.NOT_FOUND,
         error : 'Identifier not found'
+      }
     }
-  }
     await this.itemRepo.update(id, updateItemDto);
     return this.itemRepo.findOne(id);
 

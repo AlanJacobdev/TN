@@ -16,9 +16,9 @@ export class ItemsaveService {
     if(item != undefined) {
       const itemsave  = this.findOne(+createItemsaveDto.idItem, createItemsaveDto.date, createItemsaveDto.heure);
       if ( itemsave == undefined){
-        const itemsave = this.itemSaveRepo.create(createItemsaveDto);
-        await this.itemSaveRepo.save(itemsave);
-        return itemsave;
+        const newitemsave = this.itemSaveRepo.create(createItemsaveDto);
+        await this.itemSaveRepo.save(newitemsave);
+        return newitemsave;
       } else {
         return {
           status : HttpStatus.CONFLICT,
@@ -50,34 +50,19 @@ export class ItemsaveService {
   findById(id: number) {
     return this.itemSaveRepo.find({
       where : {
-        idItem : id,
-      }
-    })
-  }
-
-
-
-  async update(id: number, updateItemsaveDto: UpdateItemsaveDto) {
-    const itemsave = await this.itemSaveRepo.findOne({
-      where : {
         idItem : id
       }
     })
-    if (itemsave == undefined) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Identifier not found'
-    }
-  }
-    await this.itemSaveRepo.update(id, updateItemsaveDto);
-    return this.itemSaveRepo.findOne(id);
   }
 
-  async remove(id: number) {
+
+  async remove(idItem: string, date: Date, heure: Date) {
     try {
       const itemsave = this.itemSaveRepo.findOneOrFail({
         where : {
-          idItem : id
+          idItem : idItem,
+          date: date,
+          heure : heure
         }
       })
     } catch {
@@ -86,7 +71,14 @@ export class ItemsaveService {
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
-    await this.itemSaveRepo.delete(id)
-    return this.itemSaveRepo.findOne(id);
+    await this.itemSaveRepo.delete({
+      idItem,
+      date,
+      heure
+    })
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
   }
 }

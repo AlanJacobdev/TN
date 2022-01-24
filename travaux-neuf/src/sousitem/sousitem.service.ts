@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from 'src/item/entities/item.entity';
 import { ItemService } from 'src/item/item.service';
@@ -14,8 +14,34 @@ export class SousitemService {
   
   constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService ){}
   
-  create(createSousitemDto: CreateSousitemDto) {
-    return 'This action adds a new sousitem';
+  async create(createSousitemDto: CreateSousitemDto) {
+    const item = this.itemservice.findOne(+createSousitemDto.idItem);
+    if (item != undefined) {
+      const typeObjet = this.typeObjetService.findOne(+createSousitemDto.codeSousItem);
+      if (typeObjet != undefined){
+        const SousItem = this.findOne(+createSousitemDto.idSousItem);
+        if(SousItem == undefined){
+          const newSousItem = this.sousitemRepo.create(createSousitemDto);
+          await this.sousitemRepo.save(newSousItem);
+          return newSousItem;               
+        } else {
+          return {
+            status : HttpStatus.CONFLICT,
+            error :'Already exist',
+          }
+        }
+      } else {
+        return {
+          status : HttpStatus.NOT_FOUND,
+          error :'Type Objet doesn\'t exist',
+        }
+      }
+    } else {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error :'Item doesn\'t exist',
+      }
+    }
   }
 
   findAll() {
@@ -30,11 +56,36 @@ export class SousitemService {
     })
   }
 
-  update(id: number, updateSousitemDto: UpdateSousitemDto) {
-    return `This action updates a #${id} sousitem`;
+  async update(id: number, updateSousitemDto: UpdateSousitemDto) {
+    const item = await this.sousitemRepo.findOne({
+      where : {
+        idSousItem : id
+      }
+    })
+    if (item == undefined) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Identifier not found'
+      }
+    } 
+    await this.sousitemRepo.update(id, updateSousitemDto);
+    return this.sousitemRepo.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} sousitem`;
+  async remove(id: number) {
+    try {
+      const sousItem = this.sousitemRepo.findOneOrFail({
+        where : {
+          idSousItem : id
+        }
+      })
+    } catch {
+      throw new HttpException({
+        status : HttpStatus.NOT_FOUND,
+        error : 'Not Found',
+      }, HttpStatus.NOT_FOUND)
+    }
+    await this.sousitemRepo.delete(id)
+    return this.sousitemRepo.findOne(id);
   }
 }

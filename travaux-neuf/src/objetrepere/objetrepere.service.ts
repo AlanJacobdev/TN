@@ -89,7 +89,10 @@ export class ObjetrepereService {
       }, HttpStatus.NOT_FOUND)
     }
     await this.OrRepo.delete(id)
-    return this.OrRepo.findOne(id);
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
   }
 }
 

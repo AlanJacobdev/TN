@@ -17,18 +17,18 @@ export class SousitemsaveController {
     return this.sousitemsaveService.findAll();
   }
 
+  @Get(':id/:date/:heure')
+  findOne(@Param('id') id: string, @Param('date') date: Date, @Param('heure') heure: Date) {
+    return this.sousitemsaveService.findOne(+id, date, heure);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.sousitemsaveService.findOne(+id);
+  findById(@Param('id') id: string) {
+    return this.sousitemsaveService.findById(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSousitemsaveDto: UpdateSousitemsaveDto) {
-    return this.sousitemsaveService.update(+id, updateSousitemsaveDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sousitemsaveService.remove(+id);
+  @Delete(':id/:date/:heure')
+  remove(@Param('id') id: string, @Param('date') date: Date, @Param('heure') heure: Date) {
+    return this.sousitemsaveService.remove(+id, date, heure);
   }
 }

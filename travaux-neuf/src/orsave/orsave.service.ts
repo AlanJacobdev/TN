@@ -15,7 +15,7 @@ export class OrsaveService {
   async create(createOrsaveDto: CreateOrsaveDto) {
     const orExist = this.orservice.findOne(+createOrsaveDto.idObjetRepere);
     if ( orExist != undefined) {
-      const orSave = this.findOne(+createOrsaveDto.idObjetRepere, createOrsaveDto.date, createOrsaveDto.heure);
+      const orSave = this.findOne(createOrsaveDto.idObjetRepere, createOrsaveDto.date, createOrsaveDto.heure);
       if ( orSave == undefined){
         const newOrSave = this.orsaveRepo.create(createOrsaveDto);
         await this.orsaveRepo.save(newOrSave);
@@ -38,14 +38,15 @@ export class OrsaveService {
     return this.orsaveRepo.find()
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.orsaveRepo.find({
       where : {
         idObjetRepere : id
       }
     })
   }
-  findOne(id: number, date: Date, heure:Date ){
+
+  findOne(id: string, date: Date, heure:Date ){
     return this.orsaveRepo.findOne({
       where : {
         idObjetRepere : id,
@@ -55,27 +56,14 @@ export class OrsaveService {
     })
   }
 
-  async update(id: number, updateOrsaveDto: UpdateOrsaveDto) {
-    const typeor = await this.orsaveRepo.findOne({
-      where : {
-        idObjetRepere : id
-      }
-    })
-    if (typeor == undefined) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Identifier not found'
-      }
-    }
-    await this.orsaveRepo.update(id, updateOrsaveDto);
-    return this.orsaveRepo.findOne(id);
-  }
-
-  async remove(id: number) {
+ 
+  async remove(idObjetRepere: string, date: Date, heure: Date) {
     try {
       const OR = this.orsaveRepo.findOneOrFail({
         where : {
-          idObjetRepere : id
+          idObjetRepere : idObjetRepere,
+          date : Date,
+          heure : heure
         }
       })
     } catch {
@@ -84,7 +72,14 @@ export class OrsaveService {
         error :'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
-    await this.orsaveRepo.delete(id)
-    return this.orsaveRepo.findOne(id);
+    await this.orsaveRepo.delete({
+      idObjetRepere,
+      date,
+      heure
+    })
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
   }
 }

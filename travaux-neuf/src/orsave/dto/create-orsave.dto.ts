@@ -4,7 +4,7 @@ import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
 export class CreateOrsaveDto {
     
     @IsNotEmpty()
-    idObjetRepere : Objetrepere;
+    idObjetRepere : string;
 
     @IsNotEmpty()
     libelleObjetRepere : string;

@@ -19,16 +19,17 @@ export class OrsaveController {
 
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.orsaveService.findById(+id);
+    return this.orsaveService.findById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrsaveDto: UpdateOrsaveDto) {
-    return this.orsaveService.update(+id, updateOrsaveDto);
+  @Get(':id/:date/:heure')
+  findOne(@Param('id') id: string, @Param('date') date: Date ,@Param('heure') heure: Date ) {
+    return this.orsaveService.findOne(id, date, heure );
   }
+ 
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orsaveService.remove(+id);
+  @Delete(':id/:date/:heure')
+  remove(@Param('id') id: string, @Param('date') date: Date, @Param('heure') heure: Date) {
+    return this.orsaveService.remove(id, date, heure);
   }
 }
