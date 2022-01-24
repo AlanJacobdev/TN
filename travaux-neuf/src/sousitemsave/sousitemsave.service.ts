@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SousitemService } from 'src/sousitem/sousitem.service';
 import { Repository } from 'typeorm';
 import { CreateSousitemsaveDto } from './dto/create-sousitemsave.dto';
-import { UpdateSousitemsaveDto } from './dto/update-sousitemsave.dto';
 import { Sousitemsave } from './entities/sousitemsave.entity';
 
 @Injectable()
@@ -12,9 +11,9 @@ export class SousitemsaveService {
   constructor(@InjectRepository(Sousitemsave) private sousItemSaveRepo : Repository<Sousitemsave>, private sousItemService : SousitemService){}
 
   async create(createSousitemsaveDto: CreateSousitemsaveDto) {
-    const sousItem = this.sousItemService.findOne(+createSousitemsaveDto.idSousItem);
+    const sousItem = this.sousItemService.findOne(createSousitemsaveDto.idSousItem);
     if (sousItem != undefined){
-      const sousItemSave = this.findOne(+createSousitemsaveDto.idItem, createSousitemsaveDto.date, createSousitemsaveDto.heure);
+      const sousItemSave = this.findOne(createSousitemsaveDto.idItem, createSousitemsaveDto.date, createSousitemsaveDto.heure);
       if(sousItemSave == undefined) {
         const newSousItemSave = this.sousItemSaveRepo.create(createSousitemsaveDto);
         await this.sousItemSaveRepo.save(newSousItemSave)
@@ -37,7 +36,7 @@ export class SousitemsaveService {
     return this.sousItemSaveRepo.find();
   }
 
-  findOne(id: number, date : Date, heure : Date) {
+  findOne(id: string, date : Date, heure : Date) {
     return this.sousItemSaveRepo.findOne({
       where : {
         idSousItem : id,
@@ -47,7 +46,7 @@ export class SousitemsaveService {
     })
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.sousItemSaveRepo.find({
       where : {
         idSousItem : id
@@ -55,7 +54,7 @@ export class SousitemsaveService {
     })
   }
 
-  async remove(id: number, date: Date, heure: Date) {
+  async remove(id: string, date: Date, heure: Date) {
     try {
       const sousitemsave = this.sousItemSaveRepo.findOneOrFail({
         where : {
@@ -71,6 +70,9 @@ export class SousitemsaveService {
       }, HttpStatus.NOT_FOUND)
     }
     await this.sousItemSaveRepo.delete(id)
-    return this.findOne(id, date, heure);
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
   }
 }

@@ -19,12 +19,12 @@ export class Objetrepere {
     @Column({length : 2})
     @ManyToOne(() => Typeobjetrepere)
     @JoinColumn({name: 'codeType'})
-    codeType : Typeobjetrepere;
+    codeType : string;
     
-    @Column({length : 4, type : "string"})
+    @Column({length : 4})
     @ManyToOne(() => Numerounique)
     @JoinColumn({name: 'numeroUnique'})
-    numeroUnique : Numerounique;
+    numeroUnique : string;
 
     @Column()
     valide : boolean

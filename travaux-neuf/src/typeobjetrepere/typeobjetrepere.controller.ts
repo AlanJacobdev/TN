@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { TypeobjetrepereService } from './typeobjetrepere.service';
 import { CreateTypeobjetrepereDto } from './dto/create-typeobjetrepere.dto';
 import { UpdateTypeobjetrepereDto } from './dto/update-typeobjetrepere.dto';
@@ -19,16 +19,16 @@ export class TypeobjetrepereController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.typeobjetrepereService.findOne(+id);
+    return this.typeobjetrepereService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateTypeobjetrepereDto: UpdateTypeobjetrepereDto) {
-    return this.typeobjetrepereService.update(+id, updateTypeobjetrepereDto);
+    return this.typeobjetrepereService.update(id, updateTypeobjetrepereDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.typeobjetrepereService.remove(+id);
+    return this.typeobjetrepereService.remove(id);
   }
 }

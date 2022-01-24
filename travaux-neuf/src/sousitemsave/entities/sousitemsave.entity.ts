@@ -7,7 +7,7 @@ export class Sousitemsave {
     @ManyToOne(() => Sousitem)
     @JoinColumn({name: 'idSousItem'})
     @PrimaryColumn({length : 10, type:"string"})
-    idSousItem : Sousitem;
+    idSousItem : string;
     
     @Column({length : 200})
     libelleSousItem: string;

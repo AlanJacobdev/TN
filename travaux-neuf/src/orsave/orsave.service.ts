@@ -13,7 +13,7 @@ export class OrsaveService {
   constructor(@InjectRepository(Orsave) private orsaveRepo : Repository<Orsave>, private orservice : ObjetrepereService){}
 
   async create(createOrsaveDto: CreateOrsaveDto) {
-    const orExist = this.orservice.findOne(+createOrsaveDto.idObjetRepere);
+    const orExist = this.orservice.findOne(createOrsaveDto.idObjetRepere);
     if ( orExist != undefined) {
       const orSave = this.findOne(createOrsaveDto.idObjetRepere, createOrsaveDto.date, createOrsaveDto.heure);
       if ( orSave == undefined){

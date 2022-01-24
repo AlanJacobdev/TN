@@ -6,7 +6,7 @@ export class Itemsave {
     
     @ManyToOne(() => Item)
     @JoinColumn({name: 'idItem'})
-    @PrimaryColumn({length : 10, type :"string"})
+    @PrimaryColumn({length : 10})
     idItem : string;
     
     @Column({length : 200})

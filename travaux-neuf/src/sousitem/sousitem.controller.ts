@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { SousitemService } from './sousitem.service';
 import { CreateSousitemDto } from './dto/create-sousitem.dto';
 import { UpdateSousitemDto } from './dto/update-sousitem.dto';
@@ -19,16 +19,16 @@ export class SousitemController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.sousitemService.findOne(+id);
+    return this.sousitemService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateSousitemDto: UpdateSousitemDto) {
-    return this.sousitemService.update(+id, updateSousitemDto);
+    return this.sousitemService.update(id, updateSousitemDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.sousitemService.remove(+id);
+    return this.sousitemService.remove(id);
   }
 }

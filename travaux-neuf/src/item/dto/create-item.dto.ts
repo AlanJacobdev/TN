@@ -1,6 +1,4 @@
 import { IsNotEmpty } from "class-validator";
-import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
-import { Typeobjet } from "src/typeobjet/entities/typeobjet.entity";
 
 export class CreateItemDto {
    
@@ -11,7 +9,7 @@ export class CreateItemDto {
     libelleItem : string
 
     @IsNotEmpty()
-    idOR : Objetrepere;
+    idOR : string;
 
     @IsNotEmpty()
     numeroUnique : string;
@@ -20,7 +18,7 @@ export class CreateItemDto {
     digit : number;
 
     @IsNotEmpty()
-    codeObjet : Typeobjet;
+    codeObjet : string;
 
     @IsNotEmpty()
     securite : boolean;

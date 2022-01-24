@@ -19,16 +19,16 @@ export class SousitemsaveController {
 
   @Get(':id/:date/:heure')
   findOne(@Param('id') id: string, @Param('date') date: Date, @Param('heure') heure: Date) {
-    return this.sousitemsaveService.findOne(+id, date, heure);
+    return this.sousitemsaveService.findOne(id, date, heure);
   }
 
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.sousitemsaveService.findById(+id);
+    return this.sousitemsaveService.findById(id);
   }
 
   @Delete(':id/:date/:heure')
   remove(@Param('id') id: string, @Param('date') date: Date, @Param('heure') heure: Date) {
-    return this.sousitemsaveService.remove(+id, date, heure);
+    return this.sousitemsaveService.remove(id, date, heure);
   }
 }

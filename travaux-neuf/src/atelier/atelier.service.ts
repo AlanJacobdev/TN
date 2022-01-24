@@ -67,6 +67,9 @@ export class AtelierService {
       }, HttpStatus.NOT_FOUND)
     }
     await this.AtelierRepo.delete(id)
-    return this.AtelierRepo.findOne(id);
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
   }
 }

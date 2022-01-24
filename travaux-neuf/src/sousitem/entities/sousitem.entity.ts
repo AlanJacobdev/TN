@@ -16,7 +16,7 @@ export class Sousitem {
 
     @ManyToOne(() => Item)
     @JoinColumn({name: 'idItem'})
-    @Column({length : 12, type: "string"})
+    @Column({length : 12})
     idItem : string;
 
     @ManyToOne(() => Typeobjet)

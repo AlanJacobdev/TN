@@ -13,11 +13,11 @@ export class ItemService {
   constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService, private OrService : ObjetrepereService){}
   
   async create(createItemDto: CreateItemDto) {
-    const objetrepere = this.OrService.findOne(+createItemDto.idOR);
+    const objetrepere = this.OrService.findOne(createItemDto.idOR);
     if( objetrepere != undefined) {
-      const typeObjet = this.typeObjetService.findOne(+createItemDto.codeObjet);
+      const typeObjet = this.typeObjetService.findOne(createItemDto.codeObjet);
       if (typeObjet != undefined){
-        const item = this.findOne(+createItemDto.idItem);
+        const item = this.findOne(createItemDto.idItem);
         if ( item == undefined){
           const newItem = this.itemRepo.create(createItemDto);
           await this.itemRepo.save(newItem);
@@ -46,7 +46,7 @@ export class ItemService {
     return this.itemRepo.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.itemRepo.findOne({
       where : {
         idItem : id
@@ -54,7 +54,7 @@ export class ItemService {
     })
   }
 
-  async update(id: number, updateItemDto: UpdateItemDto) {
+  async update(id: string, updateItemDto: UpdateItemDto) {
     const item = await this.itemRepo.findOne({
       where : {
         idItem : id
@@ -71,7 +71,7 @@ export class ItemService {
 
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       const Item = this.itemRepo.findOneOrFail({
         where : {
@@ -85,6 +85,9 @@ export class ItemService {
       }, HttpStatus.NOT_FOUND)
     }
     await this.itemRepo.delete(id)
-    return this.itemRepo.findOne(id);
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
   }
 }

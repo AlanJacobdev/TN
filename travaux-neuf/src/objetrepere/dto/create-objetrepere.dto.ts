@@ -11,10 +11,10 @@ export class CreateObjetrepereDto {
     libelleObjetRepere : string;
 
     @IsNotEmpty()
-    codeType : Typeobjetrepere;
+    codeType : string;
     
     @IsNotEmpty()
-    numeroUnique : Numerounique;
+    numeroUnique : string;
 
     @IsNotEmpty()
     valide : boolean;

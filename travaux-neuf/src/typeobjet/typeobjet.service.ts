@@ -12,7 +12,7 @@ export class TypeobjetService {
   constructor(@InjectRepository(Typeobjet) private typeObjetRepo : Repository<Typeobjet> ){}
 
   async create(createTypeobjetDto: CreateTypeobjetDto) {
-    const typeobjet= this.findOne(+createTypeobjetDto.idType)
+    const typeobjet= this.findOne(createTypeobjetDto.idType)
     if ( typeobjet == undefined){
       const newTO = this.typeObjetRepo.create(createTypeobjetDto);
       await this.typeObjetRepo.save(newTO);
@@ -29,7 +29,7 @@ export class TypeobjetService {
     return this.typeObjetRepo.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.typeObjetRepo.findOne({
       where : {
         idType : id
@@ -37,7 +37,7 @@ export class TypeobjetService {
     })
   }
 
-  async update(id: number, updateTypeobjetDto: UpdateTypeobjetDto) {
+  async update(id: string, updateTypeobjetDto: UpdateTypeobjetDto) {
     const typeObjet = await this.typeObjetRepo.findOne({
       where : {
         idType : id
@@ -54,7 +54,7 @@ export class TypeobjetService {
 
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       const TypeObjet = this.typeObjetRepo.findOneOrFail({
         where : {
@@ -68,6 +68,9 @@ export class TypeobjetService {
       }, HttpStatus.NOT_FOUND)
     }
     await this.typeObjetRepo.delete(id)
-    return this.typeObjetRepo.findOne(id);
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
   }
 }

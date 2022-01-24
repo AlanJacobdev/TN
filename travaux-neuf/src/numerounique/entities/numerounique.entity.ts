@@ -9,10 +9,10 @@ export class Numerounique {
     @PrimaryColumn({length : 4})
     idNumeroUnique : string;
     
-    @Column({length : 1, type: "string"})
+    @Column({length : 1})
     @ManyToOne(() => Atelier)
     @JoinColumn({name: 'idAtelier'})
-    idAtelier : Atelier;
+    idAtelier : string;
     
     @Column({type : "int", width : 3})
     numeroObjet : number

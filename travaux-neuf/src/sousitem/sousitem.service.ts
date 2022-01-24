@@ -15,11 +15,11 @@ export class SousitemService {
   constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService ){}
   
   async create(createSousitemDto: CreateSousitemDto) {
-    const item = this.itemservice.findOne(+createSousitemDto.idItem);
+    const item = this.itemservice.findOne(createSousitemDto.idItem);
     if (item != undefined) {
-      const typeObjet = this.typeObjetService.findOne(+createSousitemDto.codeSousItem);
+      const typeObjet = this.typeObjetService.findOne(createSousitemDto.codeSousItem);
       if (typeObjet != undefined){
-        const SousItem = this.findOne(+createSousitemDto.idSousItem);
+        const SousItem = this.findOne(createSousitemDto.idSousItem);
         if(SousItem == undefined){
           const newSousItem = this.sousitemRepo.create(createSousitemDto);
           await this.sousitemRepo.save(newSousItem);
@@ -48,7 +48,7 @@ export class SousitemService {
     return this.sousitemRepo.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     this.sousitemRepo.findOne({
       where: {
         idSousItem:id
@@ -56,7 +56,7 @@ export class SousitemService {
     })
   }
 
-  async update(id: number, updateSousitemDto: UpdateSousitemDto) {
+  async update(id: string, updateSousitemDto: UpdateSousitemDto) {
     const item = await this.sousitemRepo.findOne({
       where : {
         idSousItem : id
@@ -72,7 +72,7 @@ export class SousitemService {
     return this.sousitemRepo.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       const sousItem = this.sousitemRepo.findOneOrFail({
         where : {
@@ -86,6 +86,9 @@ export class SousitemService {
       }, HttpStatus.NOT_FOUND)
     }
     await this.sousitemRepo.delete(id)
-    return this.sousitemRepo.findOne(id);
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
   }
 }

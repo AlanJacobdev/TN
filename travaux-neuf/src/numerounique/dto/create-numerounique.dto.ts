@@ -7,7 +7,7 @@ export class CreateNumerouniqueDto {
     idNumeroUnique : string;
 
     @IsNotEmpty()
-    idAtelier : Atelier;
+    idAtelier : string;
     
     @IsNotEmpty()
     numeroObjet : number

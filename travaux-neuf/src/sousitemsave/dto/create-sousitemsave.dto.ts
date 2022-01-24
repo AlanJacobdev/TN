@@ -4,7 +4,7 @@ import { Sousitem } from "src/sousitem/entities/sousitem.entity";
 export class CreateSousitemsaveDto {
     
     @IsNotEmpty()
-    idSousItem : Sousitem;
+    idSousItem : string;
     
     @IsNotEmpty()
     libelleSousItem: string;

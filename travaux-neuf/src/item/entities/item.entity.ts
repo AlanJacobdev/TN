@@ -17,8 +17,8 @@ export class Item {
 
     @ManyToOne(() => Objetrepere)
     @JoinColumn({name: 'idOR'})
-    @Column({length : 6, type : "string"})
-    idOR : Objetrepere
+    @Column({length : 6})
+    idOR : string
 
     @Column({length : 4})
     numeroUnique : string;
@@ -28,8 +28,8 @@ export class Item {
 
     @ManyToOne(() => Typeobjet)
     @JoinColumn({name: 'codeObjet'})
-    @Column({length : 2, type: "string"})
-    codeObjet : Typeobjet;
+    @Column({length : 2})
+    codeObjet : string;
 
     @Column()
     securite : boolean;

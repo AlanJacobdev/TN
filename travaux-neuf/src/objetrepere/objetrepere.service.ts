@@ -13,11 +13,11 @@ export class ObjetrepereService {
   constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, private nuservice : NumerouniqueService, private typeorservice : TypeobjetrepereService){}
 
   async create(createObjetrepereDto: CreateObjetrepereDto) {
-    const typeor = this.typeorservice.findOne(+createObjetrepereDto.codeType); 
+    const typeor = this.typeorservice.findOne(createObjetrepereDto.codeType); 
     if (typeor != undefined) {
-      const nu = this.nuservice.findOne(+createObjetrepereDto.numeroUnique);
+      const nu = this.nuservice.findOne(createObjetrepereDto.numeroUnique);
       if(nu != undefined) {
-        const or = this.findOne(+createObjetrepereDto.idObjetRepere)
+        const or = this.findOne(createObjetrepereDto.idObjetRepere)
         if ( or == undefined){
           const newOr = this.OrRepo.create(createObjetrepereDto);
           await this.OrRepo.save(newOr);
@@ -46,7 +46,7 @@ export class ObjetrepereService {
     return this.OrRepo.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.OrRepo.findOne({ 
       where : {
           idObjetRepere : id
@@ -55,7 +55,7 @@ export class ObjetrepereService {
     )
   }
 
-  async update(id: number, updateObjetrepereDto: UpdateObjetrepereDto) {
+  async update(id: string, updateObjetrepereDto: UpdateObjetrepereDto) {
     try {
       const OR = this.OrRepo.findOneOrFail({
         where : {
@@ -75,7 +75,7 @@ export class ObjetrepereService {
     
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       const OR = this.OrRepo.findOneOrFail({
         where : {

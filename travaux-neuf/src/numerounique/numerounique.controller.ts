@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { NumerouniqueService } from './numerounique.service';
 import { CreateNumerouniqueDto } from './dto/create-numerounique.dto';
 import { UpdateNumerouniqueDto } from './dto/update-numerounique.dto';
@@ -19,16 +19,16 @@ export class NumerouniqueController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.numerouniqueService.findOne(+id);
+    return this.numerouniqueService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateNumerouniqueDto: UpdateNumerouniqueDto) {
-    return this.numerouniqueService.update(+id, updateNumerouniqueDto);
+    return this.numerouniqueService.update(id, updateNumerouniqueDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.numerouniqueService.remove(+id);
+    return this.numerouniqueService.remove(id);
   }
 }

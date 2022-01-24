@@ -24,7 +24,7 @@ export class ItemsaveController {
 
   @Get(':id/:date/:heure')
   findOne(@Param('id') id: string, @Param('date') date: Date, @Param('heure') heure: Date) {
-    return this.itemsaveService.findOne(+id, date, heure);
+    return this.itemsaveService.findOne(id, date, heure);
   }
 
   @Delete(':id/:date/:heure')

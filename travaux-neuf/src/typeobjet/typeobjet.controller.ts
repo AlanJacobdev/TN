@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { TypeobjetService } from './typeobjet.service';
 import { CreateTypeobjetDto } from './dto/create-typeobjet.dto';
 import { UpdateTypeobjetDto } from './dto/update-typeobjet.dto';
@@ -19,16 +19,16 @@ export class TypeobjetController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.typeobjetService.findOne(+id);
+    return this.typeobjetService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateTypeobjetDto: UpdateTypeobjetDto) {
-    return this.typeobjetService.update(+id, updateTypeobjetDto);
+    return this.typeobjetService.update(id, updateTypeobjetDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.typeobjetService.remove(+id);
+    return this.typeobjetService.remove(id);
   }
 }

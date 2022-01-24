@@ -11,7 +11,7 @@ export class TypeobjetrepereService {
   constructor(@InjectRepository(Typeobjetrepere) private TypeOrRepo : Repository<Typeobjetrepere> ){}
 
   async create(createTypeobjetrepereDto: CreateTypeobjetrepereDto) {
-    const typeor = this.findOne(+createTypeobjetrepereDto.idTypeOR)
+    const typeor = this.findOne(createTypeobjetrepereDto.idTypeOR)
     if ( typeor == undefined){
       const newOr = this.TypeOrRepo.create(createTypeobjetrepereDto);
       await this.TypeOrRepo.save(newOr);
@@ -28,7 +28,7 @@ export class TypeobjetrepereService {
     return this.TypeOrRepo.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.TypeOrRepo.findOne({
       where :{
         idTypeOR : id
@@ -36,7 +36,7 @@ export class TypeobjetrepereService {
     })
   }
 
-  async  update(id: number, updateTypeobjetrepereDto: UpdateTypeobjetrepereDto) {
+  async  update(id: string, updateTypeobjetrepereDto: UpdateTypeobjetrepereDto) {
     const typeor = await this.TypeOrRepo.findOne({
       where : {
         idTypeOR : id
@@ -54,7 +54,7 @@ export class TypeobjetrepereService {
 
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       const typeOr = this.TypeOrRepo.findOneOrFail({
         where : {
@@ -68,6 +68,9 @@ export class TypeobjetrepereService {
       }, HttpStatus.NOT_FOUND)
     }
     await this.TypeOrRepo.delete(id)
-    return this.TypeOrRepo.findOne(id);
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
   }
 }
