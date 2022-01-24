@@ -13,11 +13,11 @@ export class ObjetrepereService {
   constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, private nuservice : NumerouniqueService, private typeorservice : TypeobjetrepereService){}
 
   async create(createObjetrepereDto: CreateObjetrepereDto) {
-    const typeor = this.typeorservice.findOne(createObjetrepereDto.codeType); 
+    const typeor = await this.typeorservice.findOne(createObjetrepereDto.codeType); 
     if (typeor != undefined) {
-      const nu = this.nuservice.findOne(createObjetrepereDto.numeroUnique);
+      const nu = await this.nuservice.findOne(createObjetrepereDto.numeroUnique);
       if(nu != undefined) {
-        const or = this.findOne(createObjetrepereDto.idObjetRepere)
+        const or = await this.findOne(createObjetrepereDto.idObjetRepere)
         if ( or == undefined){
           const newOr = this.OrRepo.create(createObjetrepereDto);
           await this.OrRepo.save(newOr);
@@ -71,7 +71,7 @@ export class ObjetrepereService {
       }, HttpStatus.NOT_FOUND)
     }
     await this.OrRepo.update(id,updateObjetrepereDto);
-    return this.OrRepo.findOne(id);
+    return await this.OrRepo.findOne(id);
     
   }
 

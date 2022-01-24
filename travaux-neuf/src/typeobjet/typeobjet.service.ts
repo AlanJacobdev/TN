@@ -12,7 +12,7 @@ export class TypeobjetService {
   constructor(@InjectRepository(Typeobjet) private typeObjetRepo : Repository<Typeobjet> ){}
 
   async create(createTypeobjetDto: CreateTypeobjetDto) {
-    const typeobjet= this.findOne(createTypeobjetDto.idType)
+    const typeobjet= await this.findOne(createTypeobjetDto.idType)
     if ( typeobjet == undefined){
       const newTO = this.typeObjetRepo.create(createTypeobjetDto);
       await this.typeObjetRepo.save(newTO);
@@ -50,7 +50,7 @@ export class TypeobjetService {
     }
   }
     await this.typeObjetRepo.update(id, updateTypeobjetDto);
-    return this.typeObjetRepo.findOne(id);
+    return await this.typeObjetRepo.findOne(id);
 
   }
 

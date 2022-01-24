@@ -12,9 +12,9 @@ export class ItemsaveService {
   constructor(@InjectRepository(Itemsave) private itemSaveRepo : Repository<Itemsave> , private itemservice: ItemService){}
 
   async create(createItemsaveDto: CreateItemsaveDto) {
-    const item = this.itemservice.findOne(createItemsaveDto.idItem);
+    const item = await this.itemservice.findOne(createItemsaveDto.idItem);
     if(item != undefined) {
-      const itemsave  = this.findOne(createItemsaveDto.idItem, createItemsaveDto.date, createItemsaveDto.heure);
+      const itemsave  = await this.findOne(createItemsaveDto.idItem, createItemsaveDto.date, createItemsaveDto.heure);
       if ( itemsave == undefined){
         const newitemsave = this.itemSaveRepo.create(createItemsaveDto);
         await this.itemSaveRepo.save(newitemsave);

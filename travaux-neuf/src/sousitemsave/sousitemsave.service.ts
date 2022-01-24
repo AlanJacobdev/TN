@@ -11,9 +11,9 @@ export class SousitemsaveService {
   constructor(@InjectRepository(Sousitemsave) private sousItemSaveRepo : Repository<Sousitemsave>, private sousItemService : SousitemService){}
 
   async create(createSousitemsaveDto: CreateSousitemsaveDto) {
-    const sousItem = this.sousItemService.findOne(createSousitemsaveDto.idSousItem);
+    const sousItem = await this.sousItemService.findOne(createSousitemsaveDto.idSousItem);
     if (sousItem != undefined){
-      const sousItemSave = this.findOne(createSousitemsaveDto.idItem, createSousitemsaveDto.date, createSousitemsaveDto.heure);
+      const sousItemSave = await this.findOne(createSousitemsaveDto.idItem, createSousitemsaveDto.date, createSousitemsaveDto.heure);
       if(sousItemSave == undefined) {
         const newSousItemSave = this.sousItemSaveRepo.create(createSousitemsaveDto);
         await this.sousItemSaveRepo.save(newSousItemSave)

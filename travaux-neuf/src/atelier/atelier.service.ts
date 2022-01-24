@@ -11,7 +11,7 @@ export class AtelierService {
   constructor(@InjectRepository(Atelier) private AtelierRepo : Repository<Atelier> ){}
 
   async create(createAtelierDto: CreateAtelierDto) {
-    const atelier = this.findOne(createAtelierDto.idAtelier);
+    const atelier = await this.findOne(createAtelierDto.idAtelier);
     if ( atelier == undefined){
       const newAtelier = this.AtelierRepo.create(createAtelierDto);
       await this.AtelierRepo.save(newAtelier);
@@ -49,7 +49,7 @@ export class AtelierService {
     }
   }
     await this.AtelierRepo.update(id, updateAtelierDto);
-    return this.AtelierRepo.findOne(id);
+    return await this.AtelierRepo.findOne(id);
 
   }
 
@@ -66,7 +66,7 @@ export class AtelierService {
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
-    await this.AtelierRepo.delete(id)
+    await this.AtelierRepo.delete(id);
     return {
       status : HttpStatus.OK,
       error :'Deleted',

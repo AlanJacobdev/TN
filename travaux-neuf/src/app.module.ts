@@ -13,9 +13,14 @@ import { ItemModule } from './item/item.module';
 import { ItemsaveModule } from './itemsave/itemsave.module';
 import { SousitemModule } from './sousitem/sousitem.module';
 import { SousitemsaveModule } from './sousitemsave/sousitemsave.module';
+import { DroitModule } from './droit/droit.module';
+import { ServiceModule } from './service/service.module';
+import { DroitparserviceModule } from './droitparservice/droitparservice.module';
+import { UtilisateurModule } from './utilisateur/utilisateur.module';
+import { DroitparutilisateurModule } from './droitparutilisateur/droitparutilisateur.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule],
+  imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,0 +1,84 @@
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ServiceService } from 'src/service/service.service';
+import { Repository } from 'typeorm';
+import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
+import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
+import { Utilisateur } from './entities/utilisateur.entity';
+
+@Injectable()
+export class UtilisateurService {
+
+  constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private serviceService: ServiceService){}
+  
+  async create(createUtilisateurDto: CreateUtilisateurDto) {
+    const service = await this.serviceService.findOne(createUtilisateurDto.idService);
+    if (service != undefined) {
+      const uti = await this.findOne(createUtilisateurDto.idUtilisateur);
+      if (uti == undefined){
+        const newUti = this.utiRepo.create(createUtilisateurDto);
+        this.utiRepo.save(newUti);
+        return newUti;
+      } else {
+        return {
+          status : HttpStatus.CONFLICT,
+          error :'Already exist',
+        }
+      }
+    } else {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error :'Service doesn\'t exist',
+      }
+    }
+  }
+
+  findAll() {
+    return this.utiRepo.find();
+  }
+
+  async findOne(id: number) {
+    return this.utiRepo.findOne({
+      where : {
+        idUtilisateur : id
+      }
+    })
+  }
+
+  async update(id: number, updateUtilisateurDto: UpdateUtilisateurDto) {
+    const uti = await this.utiRepo.findOne({
+      where : {
+        idUtilisateur : id
+      }
+    })
+    if (uti == undefined) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Identifier not found'
+    }
+  }
+    await this.utiRepo.update(id, updateUtilisateurDto);
+    return await this.utiRepo.findOne(id);
+
+  }
+
+  async remove(id: number) {
+    try {
+      const uti = this.utiRepo.findOneOrFail({
+        where : {
+          idUtilisateur : id
+        }
+      })
+    } catch {
+      throw new HttpException({
+        status : HttpStatus.NOT_FOUND,
+        error : 'Not Found',
+      }, HttpStatus.NOT_FOUND)
+    }
+    await this.utiRepo.delete(id)
+    return {
+      status : HttpStatus.OK,
+      error :'Deleted',
+    }
+  }
+}

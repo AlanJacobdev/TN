@@ -13,11 +13,11 @@ export class ItemService {
   constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService, private OrService : ObjetrepereService){}
   
   async create(createItemDto: CreateItemDto) {
-    const objetrepere = this.OrService.findOne(createItemDto.idOR);
+    const objetrepere = await this.OrService.findOne(createItemDto.idOR);
     if( objetrepere != undefined) {
-      const typeObjet = this.typeObjetService.findOne(createItemDto.codeObjet);
+      const typeObjet = await this.typeObjetService.findOne(createItemDto.codeObjet);
       if (typeObjet != undefined){
-        const item = this.findOne(createItemDto.idItem);
+        const item = await this.findOne(createItemDto.idItem);
         if ( item == undefined){
           const newItem = this.itemRepo.create(createItemDto);
           await this.itemRepo.save(newItem);
@@ -67,7 +67,7 @@ export class ItemService {
       }
     }
     await this.itemRepo.update(id, updateItemDto);
-    return this.itemRepo.findOne(id);
+    return await this.itemRepo.findOne(id);
 
   }
 

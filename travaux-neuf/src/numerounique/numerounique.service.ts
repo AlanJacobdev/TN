@@ -12,9 +12,9 @@ export class NumerouniqueService {
   constructor(@InjectRepository(Numerounique) private NuRepo : Repository<Numerounique>, private atelierService: AtelierService){}
 
   async create(createNumerouniqueDto: CreateNumerouniqueDto) {
-    const AtelierExist = this.atelierService.findOne(createNumerouniqueDto.idAtelier);
+    const AtelierExist = await this.atelierService.findOne(createNumerouniqueDto.idAtelier);
     if(AtelierExist == undefined){
-      const numeroExist = this.findOne(createNumerouniqueDto.idNumeroUnique);
+      const numeroExist = await this.findOne(createNumerouniqueDto.idNumeroUnique);
       if(numeroExist == undefined) {
         const NU = this.NuRepo.create(createNumerouniqueDto);
         await this.NuRepo.save(NU);
@@ -55,7 +55,7 @@ export class NumerouniqueService {
       }
     }
     await this.NuRepo.update(id, updateNumerouniqueDto);
-    return this.NuRepo.findOne(id);
+    return await this.NuRepo.findOne(id);
 }
 
   async remove(id: string) {

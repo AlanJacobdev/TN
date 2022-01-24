@@ -11,7 +11,7 @@ export class TypeobjetrepereService {
   constructor(@InjectRepository(Typeobjetrepere) private TypeOrRepo : Repository<Typeobjetrepere> ){}
 
   async create(createTypeobjetrepereDto: CreateTypeobjetrepereDto) {
-    const typeor = this.findOne(createTypeobjetrepereDto.idTypeOR)
+    const typeor = await this.findOne(createTypeobjetrepereDto.idTypeOR)
     if ( typeor == undefined){
       const newOr = this.TypeOrRepo.create(createTypeobjetrepereDto);
       await this.TypeOrRepo.save(newOr);
@@ -49,7 +49,7 @@ export class TypeobjetrepereService {
     }
   }
     await this.TypeOrRepo.update(id, updateTypeobjetrepereDto);
-    return this.TypeOrRepo.findOne(id);
+    return await this.TypeOrRepo.findOne(id);
 
 
   }

@@ -15,11 +15,11 @@ export class SousitemService {
   constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService ){}
   
   async create(createSousitemDto: CreateSousitemDto) {
-    const item = this.itemservice.findOne(createSousitemDto.idItem);
+    const item = await this.itemservice.findOne(createSousitemDto.idItem);
     if (item != undefined) {
-      const typeObjet = this.typeObjetService.findOne(createSousitemDto.codeSousItem);
+      const typeObjet = await this.typeObjetService.findOne(createSousitemDto.codeSousItem);
       if (typeObjet != undefined){
-        const SousItem = this.findOne(createSousitemDto.idSousItem);
+        const SousItem = await this.findOne(createSousitemDto.idSousItem);
         if(SousItem == undefined){
           const newSousItem = this.sousitemRepo.create(createSousitemDto);
           await this.sousitemRepo.save(newSousItem);
@@ -48,7 +48,7 @@ export class SousitemService {
     return this.sousitemRepo.find();
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     this.sousitemRepo.findOne({
       where: {
         idSousItem:id
@@ -69,7 +69,7 @@ export class SousitemService {
       }
     } 
     await this.sousitemRepo.update(id, updateSousitemDto);
-    return this.sousitemRepo.findOne(id);
+    return await this.sousitemRepo.findOne(id);
   }
 
   async remove(id: string) {
