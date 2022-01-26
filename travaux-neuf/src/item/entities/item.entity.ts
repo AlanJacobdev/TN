@@ -12,7 +12,7 @@ export class Item {
     @PrimaryColumn({length : 10})
     idItem : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
     libelleItem : string
 
     @ManyToOne(() => Objetrepere)
@@ -37,12 +37,26 @@ export class Item {
     @Column()
     actif : boolean;
 
-    @Column({type : "date"})
-    dateCreation : Date;
-
-    @Column({length : 200})
+    @Column({length : 50})
     profilCreation : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
+    posteCréation : string;
+
+    @Column({type : "datetime"})
+    dateCreation : Date;
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
+
+    @Column({type : "datetime"})
+    dateModification : Date;
+
+    @Column({length : 50})
     description : string;
+
+
 }

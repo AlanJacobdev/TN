@@ -17,5 +17,22 @@ export class Droitparservice {
 
     @Column()
     valeur : boolean;
+    @Column({length : 50})
+    profilCreation : string;
+
+    @Column({length : 50})
+    posteCréation : string;
+
+    @Column({type : "datetime"})
+    dateCreation : Date;
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
+
+    @Column({type : "datetime"})
+    dateModification : Date;
 
 }

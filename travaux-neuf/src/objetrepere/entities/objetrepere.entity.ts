@@ -13,7 +13,7 @@ export class Objetrepere {
     @PrimaryColumn({length : 6, unique: true})
     idObjetRepere : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
     libelleObjetRepere : string;
 
     @Column({length : 2})
@@ -29,13 +29,25 @@ export class Objetrepere {
     @Column()
     valide : boolean
 
-    @Column({type : "date"})
-    dateCreation : Date
-
-    @Column({length : 200})
+    @Column({length : 50})
     profilCreation : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
+    posteCréation : string;
+
+    @Column({type : "datetime"})
+    dateCreation : Date;
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
+
+    @Column({type : "datetime"})
+    dateModification : Date;
+
+    @Column({length : 50})
     description : string;
 
 }

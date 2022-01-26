@@ -9,7 +9,7 @@ export class Orsave {
     @PrimaryColumn({type :"string", length : 6})
     idObjetRepere : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
     libelleObjetRepere : string;
     
     @Column({length : 2})
@@ -21,7 +21,7 @@ export class Orsave {
     @Column()
     valide : boolean;
 
-    @Column({length: 200})
+    @Column({length: 50})
     description: string;
 
     @Column()
@@ -32,5 +32,11 @@ export class Orsave {
 
     @PrimaryColumn({type : "time"})
     heure : Date;
+    
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
 
 }

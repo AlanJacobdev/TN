@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { DroitService } from './droit.service';
 import { CreateDroitDto } from './dto/create-droit.dto';
 import { UpdateDroitDto } from './dto/update-droit.dto';
@@ -22,7 +22,7 @@ export class DroitController {
     return this.droitService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateDroitDto: UpdateDroitDto) {
     return this.droitService.update(id, updateDroitDto);
   }

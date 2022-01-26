@@ -8,7 +8,28 @@ export class Atelier {
     @PrimaryColumn({length : 1})
     idAtelier : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
     libelleAtelier : string;
+
+    @Column({length : 10 })
+    codeGMAO : string;
+
+    @Column({length : 50})
+    profilCreation : string;
+
+    @Column({length : 50})
+    posteCréation : string;
+
+    @Column({type : "datetime"})
+    dateCreation : Date;
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
+
+    @Column({type : "datetime"})
+    dateModification : Date;
 
 }

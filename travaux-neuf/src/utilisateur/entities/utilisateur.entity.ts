@@ -10,10 +10,10 @@ export class Utilisateur {
     @PrimaryGeneratedColumn()
     idUtilisateur: number;
 
-    @Column({length : 200})
+    @Column({length : 50})
     nom : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
     prenom : string;
 
 
@@ -24,5 +24,23 @@ export class Utilisateur {
 
     @Column()
     estAdministrateur : boolean;
+
+    @Column({length : 50})
+    profilCreation : string;
+
+    @Column({length : 50})
+    posteCréation : string;
+
+    @Column({type : "datetime"})
+    dateCreation : Date;
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
+
+    @Column({type : "datetime"})
+    dateModification : Date;
 
 }

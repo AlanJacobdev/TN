@@ -8,7 +8,25 @@ export class Typeobjetrepere {
     @PrimaryColumn({length : 2})
     idTypeOR : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
     libelleTypeOR : string;
+
+    @Column({length : 50})
+    profilCreation : string;
+
+    @Column({length : 50})
+    posteCréation : string;
+
+    @Column({type : "datetime"})
+    dateCreation : Date;
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
+
+    @Column({type : "datetime"})
+    dateModification : Date;
 
 }

@@ -9,7 +9,7 @@ export class Itemsave {
     @PrimaryColumn({length : 10})
     idItem : string;
     
-    @Column({length : 200})
+    @Column({length : 50})
     libelleItem : string;
     
     @Column({length : 6})
@@ -35,8 +35,14 @@ export class Itemsave {
 
     @PrimaryColumn({type : "time"})
     heure : Date;
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
     
-    @Column({length : 200})
+    @Column({length : 50})
     description : string;
 
     @Column()

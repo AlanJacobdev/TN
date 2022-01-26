@@ -10,8 +10,25 @@ export class Droit {
     @PrimaryColumn({length:50})
     idDroit : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
     libelleDroit : string;
 
+    @Column({length : 50})
+    profilCreation : string;
+
+    @Column({length : 50})
+    posteCréation : string;
+
+    @Column({type : "datetime"})
+    dateCreation : Date;
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
+
+    @Column({type : "datetime"})
+    dateModification : Date;
 
 }

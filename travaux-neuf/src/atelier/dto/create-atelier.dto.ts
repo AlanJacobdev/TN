@@ -7,4 +7,6 @@ export class CreateAtelierDto {
     @IsNotEmpty()
     libelleAtelier : string;
 
+    @IsNotEmpty()
+    codeGMAO : string;
 }

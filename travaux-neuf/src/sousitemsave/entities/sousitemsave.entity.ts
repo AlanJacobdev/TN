@@ -6,10 +6,10 @@ export class Sousitemsave {
 
     @ManyToOne(() => Sousitem)
     @JoinColumn({name: 'idSousItem'})
-    @PrimaryColumn({length : 10, type:"string"})
+    @PrimaryColumn({length : 20, type:"string"})
     idSousItem : string;
     
-    @Column({length : 200})
+    @Column({length : 50})
     libelleSousItem: string;
     
     @Column({length : 12})
@@ -32,11 +32,17 @@ export class Sousitemsave {
 
     @PrimaryColumn({type : "time"})
     heure : Date;
-    
-    @Column({length : 200})
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
+
+    @Column({length : 50})
     description: string;
 
-    @Column({length : 200})
+    @Column({length : 50})
     etat: string;
 
 }

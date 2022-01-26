@@ -4,13 +4,16 @@ import { Repository } from 'typeorm';
 import { CreateAtelierDto } from './dto/create-atelier.dto';
 import { UpdateAtelierDto } from './dto/update-atelier.dto';
 import { Atelier } from './entities/atelier.entity';
+import odbc from 'odbc';
 
 @Injectable()
 export class AtelierService {
-  
+
   constructor(@InjectRepository(Atelier) private AtelierRepo : Repository<Atelier> ){}
 
+  
   async create(createAtelierDto: CreateAtelierDto) {
+    
     const atelier = await this.findOne(createAtelierDto.idAtelier);
     if ( atelier == undefined){
       const newAtelier = this.AtelierRepo.create(createAtelierDto);

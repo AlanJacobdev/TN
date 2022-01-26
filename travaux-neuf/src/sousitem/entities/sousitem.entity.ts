@@ -8,10 +8,10 @@ export class Sousitem {
 
 
     @OneToMany (() => Sousitemsave, (sousitemsave : Sousitemsave) => sousitemsave.idSousItem)
-    @PrimaryColumn({length : 10})
+    @PrimaryColumn({length : 20})
     idSousItem : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
     libelleSousItem : string;
 
     @ManyToOne(() => Item)
@@ -33,13 +33,25 @@ export class Sousitem {
     @Column()
     actif : boolean;
 
-    @Column({type : "date"})
-    dateCreation : Date;
-
-    @Column({length : 200})
+    @Column({length : 50})
     profilCreation : string;
 
-    @Column({length : 200})
+    @Column({length : 50})
+    posteCréation : string;
+
+    @Column({type : "datetime"})
+    dateCreation : Date;
+
+    @Column({length : 50})
+    profilModification : string;
+
+    @Column({length : 50})
+    posteModification : string;
+
+    @Column({type : "datetime"})
+    dateModification : Date;
+
+    @Column({length : 50})
     description : string;
 
 }
