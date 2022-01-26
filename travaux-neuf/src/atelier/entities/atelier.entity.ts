@@ -1,10 +1,10 @@
 import { Numerounique } from "src/numerounique/entities/numerounique.entity";
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn, Timestamp } from "typeorm";
 
 @Entity('atelier')
 export class Atelier {
 
-    @OneToMany (() => Numerounique, (NU : Numerounique) => NU.idAtelier)
+    
     @PrimaryColumn({length : 1})
     idAtelier : string;
 
@@ -18,7 +18,7 @@ export class Atelier {
     profilCreation : string;
 
     @Column({length : 50})
-    posteCréation : string;
+    posteCreation : string;
 
     @Column({type : "datetime"})
     dateCreation : Date;

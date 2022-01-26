@@ -7,5 +7,12 @@ export class CreateTypeobjetrepereDto {
 
     @IsNotEmpty()
     libelleTypeOR : string;
+   
+    @IsNotEmpty()
+    profilCreation : string;
+
+    posteCreation : string;
+
+    dateCreation : Date;
 
 }

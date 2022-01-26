@@ -1,4 +1,23 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateAtelierDto } from './create-atelier.dto';
+import { IsNotEmpty } from 'class-validator';
 
-export class UpdateAtelierDto extends PartialType(CreateAtelierDto) {}
+export class UpdateAtelierDto {
+
+        @IsNotEmpty()
+        idAtelier : string;
+    
+        @IsNotEmpty()
+        libelleAtelier : string;
+    
+        @IsNotEmpty()
+        codeGMAO : string;
+       
+        @IsNotEmpty()
+        profilModification : string;
+    
+        posteModification : string;
+        
+        dateModification : Date;
+       
+    
+
+}

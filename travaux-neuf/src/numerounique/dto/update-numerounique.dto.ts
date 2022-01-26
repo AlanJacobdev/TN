@@ -1,4 +1,21 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateNumerouniqueDto } from './create-numerounique.dto';
+import { IsNotEmpty } from 'class-validator';
+import { Atelier } from 'src/atelier/entities/atelier.entity';
 
-export class UpdateNumerouniqueDto extends PartialType(CreateNumerouniqueDto) {}
+export class UpdateNumerouniqueDto {
+    @IsNotEmpty()
+    idNumeroUnique : string;
+
+    @IsNotEmpty()
+    idAtelier : Atelier;
+    
+    @IsNotEmpty()
+    numeroObjet : string
+
+    @IsNotEmpty()
+    profilModification : string;
+
+    posteModification : string;
+    
+    dateModification : Date;
+    
+}

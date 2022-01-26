@@ -4,7 +4,6 @@ import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 @Entity('typeobjetrepere')
 export class Typeobjetrepere {
 
-    @OneToMany (() => Objetrepere, (or : Objetrepere) => or.codeType)
     @PrimaryColumn({length : 2})
     idTypeOR : string;
 
@@ -15,7 +14,7 @@ export class Typeobjetrepere {
     profilCreation : string;
 
     @Column({length : 50})
-    posteCréation : string;
+    posteCreation : string;
 
     @Column({type : "datetime"})
     dateCreation : Date;

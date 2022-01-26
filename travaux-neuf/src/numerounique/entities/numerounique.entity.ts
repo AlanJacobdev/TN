@@ -5,23 +5,23 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 
 @Entity('numerounique')
 export class Numerounique {
     
-    @OneToMany (() => Objetrepere, (Or : Objetrepere) => Or.numeroUnique)
+    
     @PrimaryColumn({length : 4})
     idNumeroUnique : string;
     
-    @Column({length : 1})
-    @ManyToOne(() => Atelier)
+    @Column("string", {length : 1, unique:false} )
+    @ManyToOne(() => Atelier, {nullable : false})
     @JoinColumn({name: 'idAtelier'})
-    idAtelier : string;
+    idAtelier : Atelier;
     
-    @Column({type : "int", width : 3})
-    numeroObjet : number
+    @Column({length : 3})
+    numeroObjet : string;
 
     @Column({length : 50})
     profilCreation : string;
 
     @Column({length : 50})
-    posteCréation : string;
+    posteCreation : string;
 
     @Column({type : "datetime"})
     dateCreation : Date;

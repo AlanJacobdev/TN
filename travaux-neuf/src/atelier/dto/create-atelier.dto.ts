@@ -1,5 +1,6 @@
 import { IsNotEmpty } from "class-validator";
 
+
 export class CreateAtelierDto {
     @IsNotEmpty()
     idAtelier : string;
@@ -9,4 +10,12 @@ export class CreateAtelierDto {
 
     @IsNotEmpty()
     codeGMAO : string;
+   
+    @IsNotEmpty()
+    profilCreation : string;
+
+    posteCreation : string;
+    
+    dateCreation : Date;
+   
 }

@@ -1,16 +1,23 @@
 import { IsNotEmpty } from "class-validator";
 import { Atelier } from "src/atelier/entities/atelier.entity";
 
+
 export class CreateNumerouniqueDto {
 
     @IsNotEmpty()
     idNumeroUnique : string;
 
     @IsNotEmpty()
-    idAtelier : string;
+    idAtelier : Atelier;
     
     @IsNotEmpty()
-    numeroObjet : number
+    numeroObjet : string
 
+    @IsNotEmpty()
+    profilCreation : string;
 
+    posteCreation : string;
+    
+    dateCreation : Date;
+    
 }

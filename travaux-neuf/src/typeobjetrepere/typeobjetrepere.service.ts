@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Type } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { type } from 'os';
 import { config } from 'rxjs';
 import { Repository } from 'typeorm';
 import { CreateTypeobjetrepereDto } from './dto/create-typeobjetrepere.dto';
@@ -13,6 +14,7 @@ export class TypeobjetrepereService {
   async create(createTypeobjetrepereDto: CreateTypeobjetrepereDto) {
     const typeor = await this.findOne(createTypeobjetrepereDto.idTypeOR)
     if ( typeor == undefined){
+      createTypeobjetrepereDto.dateCreation = new Date();
       const newOr = this.TypeOrRepo.create(createTypeobjetrepereDto);
       await this.TypeOrRepo.save(newOr);
       return newOr;
@@ -48,6 +50,7 @@ export class TypeobjetrepereService {
         error : 'Identifier not found'
     }
   }
+    updateTypeobjetrepereDto.dateModification = new Date();
     await this.TypeOrRepo.update(id, updateTypeobjetrepereDto);
     return await this.TypeOrRepo.findOne(id);
 
@@ -55,18 +58,19 @@ export class TypeobjetrepereService {
   }
 
   async remove(id: string) {
-    try {
-      const typeOr = this.TypeOrRepo.findOneOrFail({
-        where : {
-          idTypeOR : id
-        }
-      })
-    } catch {
+    const typeOr = await this.TypeOrRepo.findOne({
+      where : {
+        idTypeOR : id
+      }
+    })
+    
+    if( typeOr == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
+      
     await this.TypeOrRepo.delete(id)
     return {
       status : HttpStatus.OK,
