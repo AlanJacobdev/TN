@@ -14,6 +14,7 @@ export class TypeobjetService {
   async create(createTypeobjetDto: CreateTypeobjetDto) {
     const typeobjet= await this.findOne(createTypeobjetDto.idType)
     if ( typeobjet == undefined){
+      createTypeobjetDto.dateCreation = new Date();
       const newTO = this.typeObjetRepo.create(createTypeobjetDto);
       await this.typeObjetRepo.save(newTO);
       return newTO;
@@ -49,25 +50,32 @@ export class TypeobjetService {
         error : 'Identifier not found'
     }
   }
+    updateTypeobjetDto.dateModification = new Date();
     await this.typeObjetRepo.update(id, updateTypeobjetDto);
     return await this.typeObjetRepo.findOne(id);
 
   }
 
   async remove(id: string) {
-    try {
-      const TypeObjet = this.typeObjetRepo.findOneOrFail({
-        where : {
-          idType : id
-        }
-      })
-    } catch {
+    const TypeObjet = await this.typeObjetRepo.findOne({
+      where : {
+        idType : id
+      }
+    })
+    if (TypeObjet == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
         error : 'Not Found',
-      }, HttpStatus.NOT_FOUND)
+      }, HttpStatus.NOT_FOUND);
     }
-    await this.typeObjetRepo.delete(id)
+    try { 
+      await this.typeObjetRepo.delete(id);
+    } catch ( e: any ) {
+      return {
+        status : HttpStatus.CONFLICT,
+        error :'Impossible to delete',
+      }
+    }
     return {
       status : HttpStatus.OK,
       error :'Deleted',

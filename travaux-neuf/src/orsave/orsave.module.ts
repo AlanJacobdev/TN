@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { OrsaveService } from './orsave.service';
 import { OrsaveController } from './orsave.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,8 +9,9 @@ import { NumerouniqueService } from 'src/numerounique/numerounique.service';
 import { ObjetrepereModule } from 'src/objetrepere/objetrepere.module';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Orsave, Objetrepere]),ObjetrepereModule],
+  imports : [TypeOrmModule.forFeature([Orsave, Objetrepere]), forwardRef(() =>ObjetrepereModule)],
   controllers: [OrsaveController],
-  providers: [OrsaveService]
+  providers: [OrsaveService],
+  exports : [OrsaveService]
 })
 export class OrsaveModule {}

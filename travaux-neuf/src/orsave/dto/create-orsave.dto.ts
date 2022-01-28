@@ -1,5 +1,5 @@
 import { IsNotEmpty } from "class-validator";
-import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
+
 
 export class CreateOrsaveDto {
     
@@ -22,12 +22,17 @@ export class CreateOrsaveDto {
     description: string;
 
     @IsNotEmpty()
-    etat : boolean;
+    etat : string;
 
     @IsNotEmpty()
     date : Date
 
     @IsNotEmpty()
     heure : Date;
+
+    @IsNotEmpty()
+    profilModification : string;
+
+    posteModification : string;
 
 }

@@ -4,8 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 @Entity('itemsauvegarde')
 export class Itemsave {
     
-    @ManyToOne(() => Item)
-    @JoinColumn({name: 'idItem'})
+  
     @PrimaryColumn({length : 10})
     idItem : string;
     
@@ -45,6 +44,6 @@ export class Itemsave {
     @Column({length : 50})
     description : string;
 
-    @Column()
-    etat : boolean;
+    @Column({length : 1})
+    etat : string;
 }

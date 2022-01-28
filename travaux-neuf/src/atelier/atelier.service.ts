@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { CreateAtelierDto } from './dto/create-atelier.dto';
 import { UpdateAtelierDto } from './dto/update-atelier.dto';
 import { Atelier } from './entities/atelier.entity';
@@ -68,7 +68,14 @@ export class AtelierService {
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND);
     }
-    await this.AtelierRepo.delete(id);
+    try {
+      await this.AtelierRepo.delete(id);
+    } catch ( e: any ) {
+      return {
+        status : HttpStatus.CONFLICT,
+        error :'Impossible to delete',
+      }
+    }
     return {
       status : HttpStatus.OK,
       error :'Deleted',

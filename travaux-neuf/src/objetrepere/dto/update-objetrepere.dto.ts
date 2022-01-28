@@ -1,4 +1,31 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateObjetrepereDto } from './create-objetrepere.dto';
+import { IsNotEmpty } from "class-validator";
 
-export class UpdateObjetrepereDto extends PartialType(CreateObjetrepereDto) {}
+
+export class UpdateObjetrepereDto {
+
+    @IsNotEmpty()
+    idObjetRepere : string;
+
+    @IsNotEmpty()
+    libelleObjetRepere : string;
+
+    @IsNotEmpty()
+    codeType : string;
+    
+    @IsNotEmpty()
+    numeroUnique : string;
+
+    @IsNotEmpty()
+    valide : boolean;
+
+    @IsNotEmpty()
+    description : string;
+
+    @IsNotEmpty()
+    profilModification : string;
+
+    posteModification : string;
+    
+    dateModification : Date;
+
+}

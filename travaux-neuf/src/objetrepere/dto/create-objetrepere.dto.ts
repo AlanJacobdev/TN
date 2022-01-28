@@ -1,6 +1,4 @@
 import { IsNotEmpty } from "class-validator";
-import { Numerounique } from "src/numerounique/entities/numerounique.entity";
-import { Typeobjetrepere } from "src/typeobjetrepere/entities/typeobjetrepere.entity";
 
 export class CreateObjetrepereDto {
 
@@ -20,12 +18,14 @@ export class CreateObjetrepereDto {
     valide : boolean;
 
     @IsNotEmpty()
-    dateCreation : Date;
+    description : string;
 
     @IsNotEmpty()
     profilCreation : string;
 
-    @IsNotEmpty()
-    description : string;
+    posteCreation : string;
+    
+    dateCreation : Date;
+
 
 }

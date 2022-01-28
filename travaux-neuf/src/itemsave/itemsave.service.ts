@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ItemService } from 'src/item/item.service';
 import { Repository } from 'typeorm';
@@ -9,7 +9,7 @@ import { Itemsave } from './entities/itemsave.entity';
 @Injectable()
 export class ItemsaveService {
   
-  constructor(@InjectRepository(Itemsave) private itemSaveRepo : Repository<Itemsave> , private itemservice: ItemService){}
+  constructor(@InjectRepository(Itemsave) private itemSaveRepo : Repository<Itemsave> , @Inject(forwardRef(() => ItemService)) private itemservice: ItemService){}
 
   async create(createItemsaveDto: CreateItemsaveDto) {
     const item = await this.itemservice.findOne(createItemsaveDto.idItem);

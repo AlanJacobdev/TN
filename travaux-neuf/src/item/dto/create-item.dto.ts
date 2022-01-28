@@ -27,12 +27,13 @@ export class CreateItemDto {
     actif : boolean;
 
     @IsNotEmpty()
-    dateCreation : Date;
-
+    description : string;
+    
     @IsNotEmpty()
     profilCreation : string;
 
-    @IsNotEmpty()
-    description : string;
+    dateCreation : Date;
+
+    posteCreation : string;
 
 }

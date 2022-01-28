@@ -70,8 +70,14 @@ export class TypeobjetrepereService {
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
-      
-    await this.TypeOrRepo.delete(id)
+    try {  
+      await this.TypeOrRepo.delete(id)
+    } catch (e : any) {
+      return {
+        status : HttpStatus.CONFLICT,
+        error :'Impossible to delete',
+      }
+    }
     return {
       status : HttpStatus.OK,
       error :'Deleted',

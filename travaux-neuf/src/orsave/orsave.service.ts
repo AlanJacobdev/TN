@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LargeNumberLike } from 'crypto';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
@@ -10,7 +10,8 @@ import { Orsave } from './entities/orsave.entity';
 @Injectable()
 export class OrsaveService {
 
-  constructor(@InjectRepository(Orsave) private orsaveRepo : Repository<Orsave>, private orservice : ObjetrepereService){}
+
+  constructor(@InjectRepository(Orsave) private orsaveRepo : Repository<Orsave>,  @Inject(forwardRef(() => ObjetrepereService)) private orservice : ObjetrepereService){}
 
   async create(createOrsaveDto: CreateOrsaveDto) {
     const orExist = await this.orservice.findOne(createOrsaveDto.idObjetRepere);

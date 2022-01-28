@@ -7,4 +7,14 @@ export class CreateTypeobjetDto {
 
     @IsNotEmpty()
     libelleType : string;
+   
+    @IsNotEmpty()
+    profilCreation : string;
+
+    posteCreation : string;
+
+    dateCreation : Date;
+
+    
+    
 }
