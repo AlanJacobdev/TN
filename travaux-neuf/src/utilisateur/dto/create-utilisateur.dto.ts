@@ -16,5 +16,13 @@ export class CreateUtilisateurDto {
 
     @IsNotEmpty()
     estAdministrateur : boolean;
+    
+    @IsNotEmpty()
+    profilCreation : string;
+
+    @IsNotEmpty()
+    posteCreation : string;
+    
+    dateCreation : Date;
 
 }

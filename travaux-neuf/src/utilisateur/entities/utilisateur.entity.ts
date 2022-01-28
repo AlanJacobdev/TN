@@ -6,7 +6,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, Primar
 @Entity('utilisateur')
 export class Utilisateur {
     
-    @OneToMany (() => Droitparutilisateur, (dpu : Droitparutilisateur) => dpu.idUtilisateur)
+   
     @PrimaryGeneratedColumn()
     idUtilisateur: number;
 
@@ -15,7 +15,6 @@ export class Utilisateur {
 
     @Column({length : 50})
     prenom : string;
-
 
     @ManyToOne(() => Service)
     @JoinColumn({name: 'idService'})
@@ -29,7 +28,7 @@ export class Utilisateur {
     profilCreation : string;
 
     @Column({length : 50})
-    posteCréation : string;
+    posteCreation : string;
 
     @Column({type : "datetime"})
     dateCreation : Date;

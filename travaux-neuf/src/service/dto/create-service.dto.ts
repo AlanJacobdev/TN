@@ -6,4 +6,13 @@ export class CreateServiceDto {
 
     @IsNotEmpty()
     libelleService : string;
+   
+    @IsNotEmpty()
+    profilCreation : string;
+    
+    posteCreation : string;
+
+    dateCreation : Date;
+
+   
 }

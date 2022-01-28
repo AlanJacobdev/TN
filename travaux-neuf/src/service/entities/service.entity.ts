@@ -5,8 +5,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 @Entity('service')
 export class Service {
     
-    @OneToMany (() => Utilisateur, (uti : Utilisateur) => uti.idService)
-    @OneToMany (() => Droitparservice, (dps : Droitparservice) => dps.idService)
+
     @PrimaryColumn({length : 50})
     idService : string;
 
@@ -17,7 +16,7 @@ export class Service {
     profilCreation : string;
 
     @Column({length : 50})
-    posteCréation : string;
+    posteCreation : string;
 
     @Column({type : "datetime"})
     dateCreation : Date;

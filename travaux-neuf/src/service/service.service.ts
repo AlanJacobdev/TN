@@ -54,19 +54,26 @@ export class ServiceService {
   }
 
   async remove(id: string) {
-    try {
-      const Service = this.serviceRepo.findOneOrFail({
+    
+      const Service = await this.serviceRepo.findOne({
         where : {
           idService : id
         }
       })
-    } catch {
+    if (Service == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
-    await this.serviceRepo.delete(id);
+    try {
+      await this.serviceRepo.delete(id);
+    } catch ( e : any) {
+      return {
+        status : HttpStatus.CONFLICT,
+        error :'Impossible to delete',
+      }
+    }
     return {
       status : HttpStatus.OK,
       error :'Deleted',

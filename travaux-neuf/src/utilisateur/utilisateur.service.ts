@@ -16,6 +16,7 @@ export class UtilisateurService {
     if (service != undefined) {
       const uti = await this.findOne(createUtilisateurDto.idUtilisateur);
       if (uti == undefined){
+        createUtilisateurDto.dateCreation = new Date();
         const newUti = this.utiRepo.create(createUtilisateurDto);
         this.utiRepo.save(newUti);
         return newUti;
@@ -57,25 +58,32 @@ export class UtilisateurService {
         error : 'Identifier not found'
     }
   }
+    updateUtilisateurDto.dateModification = new Date();
     await this.utiRepo.update(id, updateUtilisateurDto);
     return await this.utiRepo.findOne(id);
 
   }
 
   async remove(id: number) {
-    try {
-      const uti = this.utiRepo.findOneOrFail({
-        where : {
-          idUtilisateur : id
-        }
-      })
-    } catch {
+    const uti = await this.utiRepo.findOne({
+      where : {
+        idUtilisateur : id
+      }
+    })
+    if (uti == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
-    await this.utiRepo.delete(id)
+    try {
+      await this.utiRepo.delete(id);
+    } catch ( e : any) {
+      return {
+        status : HttpStatus.CONFLICT,
+        error :'Impossible to delete',
+      }
+    }
     return {
       status : HttpStatus.OK,
       error :'Deleted',
