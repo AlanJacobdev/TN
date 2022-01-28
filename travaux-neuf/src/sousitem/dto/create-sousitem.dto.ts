@@ -24,12 +24,13 @@ export class CreateSousitemDto {
     actif : boolean;
 
     @IsNotEmpty()
-    dateCreation : Date;
-
+    description : string;
+    
     @IsNotEmpty()
     profilCreation : string;
 
-    @IsNotEmpty()
-    description : string;
+    posteCreation : string; 
+
+    dateCreation : Date;
 
 }

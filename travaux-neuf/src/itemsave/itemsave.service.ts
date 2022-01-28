@@ -57,15 +57,14 @@ export class ItemsaveService {
 
 
   async remove(idItem: string, date: Date, heure: Date) {
-    try {
-      const itemsave = this.itemSaveRepo.findOneOrFail({
-        where : {
-          idItem : idItem,
-          date: date,
-          heure : heure
-        }
-      })
-    } catch {
+    const itemsave = await this.itemSaveRepo.findOne({
+      where : {
+        idItem : idItem,
+        date: date.toISOString().slice(0,10),
+        heure : heure.toLocaleTimeString()
+      }
+    })
+        if (itemsave == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
         error : 'Not Found',
@@ -73,8 +72,8 @@ export class ItemsaveService {
     }
     await this.itemSaveRepo.delete({
       idItem,
-      date,
-      heure
+      date : date.toISOString().slice(0,10),
+      heure : heure.toLocaleTimeString()
     })
     return {
       status : HttpStatus.OK,

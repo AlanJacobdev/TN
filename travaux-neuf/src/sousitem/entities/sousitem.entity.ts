@@ -6,8 +6,6 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 
 @Entity('sousitem')
 export class Sousitem {
 
-
-    @OneToMany (() => Sousitemsave, (sousitemsave : Sousitemsave) => sousitemsave.idSousItem)
     @PrimaryColumn({length : 20})
     idSousItem : string;
 
@@ -37,7 +35,7 @@ export class Sousitem {
     profilCreation : string;
 
     @Column({length : 50})
-    posteCréation : string;
+    posteCreation : string;
 
     @Column({type : "datetime"})
     dateCreation : Date;

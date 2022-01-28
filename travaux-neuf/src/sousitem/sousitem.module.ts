@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { SousitemService } from './sousitem.service';
 import { SousitemController } from './sousitem.controller';
 import { SousitemsaveService } from 'src/sousitemsave/sousitemsave.service';
@@ -7,9 +7,10 @@ import { Sousitem } from './entities/sousitem.entity';
 import { ItemService } from 'src/item/item.service';
 import { ItemModule } from 'src/item/item.module';
 import { TypeobjetModule } from 'src/typeobjet/typeobjet.module';
+import { SousitemsaveModule } from 'src/sousitemsave/sousitemsave.module';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Sousitem]), ItemModule, TypeobjetModule],
+  imports : [TypeOrmModule.forFeature([Sousitem]), ItemModule, TypeobjetModule, forwardRef(() => SousitemsaveModule) ],
   controllers: [SousitemController],
   providers: [SousitemService],
   exports : [SousitemService]

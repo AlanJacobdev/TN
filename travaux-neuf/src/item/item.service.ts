@@ -125,10 +125,11 @@ export class ItemService {
       profilModification : "",
       posteModification : ""
       }    
-    this.itemSaveService.create(itemSaveDTO);
+    await this.itemSaveService.create(itemSaveDTO);
     try {
       await this.itemRepo.delete(id)
     } catch ( e : any) {
+      await this.itemSaveService.remove(itemSaveDTO.idItem, itemSaveDTO.date, itemSaveDTO.heure);
       return {
         status : HttpStatus.CONFLICT,
         error :'Impossible to delete',

@@ -1,10 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateAtelierDto } from 'src/atelier/dto/create-atelier.dto';
 import { Item } from 'src/item/entities/item.entity';
 import { ItemService } from 'src/item/item.service';
+import { CreateSousitemsaveDto } from 'src/sousitemsave/dto/create-sousitemsave.dto';
+import { SousitemsaveService } from 'src/sousitemsave/sousitemsave.service';
 import { Typeobjet } from 'src/typeobjet/entities/typeobjet.entity';
 import { TypeobjetService } from 'src/typeobjet/typeobjet.service';
-import { Repository } from 'typeorm';
+import { Repository, UpdateDateColumn } from 'typeorm';
 import { CreateSousitemDto } from './dto/create-sousitem.dto';
 import { UpdateSousitemDto } from './dto/update-sousitem.dto';
 import { Sousitem } from './entities/sousitem.entity';
@@ -12,7 +15,7 @@ import { Sousitem } from './entities/sousitem.entity';
 @Injectable()
 export class SousitemService {
   
-  constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService ){}
+  constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService, private sousitemSaveService : SousitemsaveService ){}
   
   async create(createSousitemDto: CreateSousitemDto) {
     const item = await this.itemservice.findOne(createSousitemDto.idItem);
@@ -20,7 +23,8 @@ export class SousitemService {
       const typeObjet = await this.typeObjetService.findOne(createSousitemDto.codeSousItem);
       if (typeObjet != undefined){
         const SousItem = await this.findOne(createSousitemDto.idSousItem);
-        if(SousItem == undefined){
+        if(SousItem == undefined){ 
+          createSousitemDto.dateCreation = new Date();
           const newSousItem = this.sousitemRepo.create(createSousitemDto);
           await this.sousitemRepo.save(newSousItem);
           return newSousItem;               
@@ -49,7 +53,7 @@ export class SousitemService {
   }
 
   async findOne(id: string) {
-    this.sousitemRepo.findOne({
+    return this.sousitemRepo.findOne({
       where: {
         idSousItem:id
       }
@@ -57,35 +61,83 @@ export class SousitemService {
   }
 
   async update(id: string, updateSousitemDto: UpdateSousitemDto) {
-    const item = await this.sousitemRepo.findOne({
+    const sousitem = await this.sousitemRepo.findOne({
       where : {
         idSousItem : id
       }
     })
-    if (item == undefined) {
+    if (sousitem == undefined) {
       return {
         status : HttpStatus.NOT_FOUND,
         error : 'Identifier not found'
       }
     } 
+    let sousitemsaveDTO = new CreateSousitemsaveDto();
+    sousitemsaveDTO = {
+      idSousItem : sousitem.idSousItem,
+      libelleSousItem : sousitem.libelleSousItem,
+      codeSousItem : sousitem.codeSousItem,
+      idItem : sousitem.idItem,
+      securite : sousitem.securite,
+      estPrefixe : sousitem.estPrefixe,
+      actif : sousitem.actif,
+      date : new Date(),
+      heure : new Date(),
+      etat : 'M',
+      description : sousitem.description,
+      profilModification : updateSousitemDto.profilModification,
+      posteModification : updateSousitemDto.posteModification
+
+    }
+    
+    await this.sousitemSaveService.create(sousitemsaveDTO);
+    updateSousitemDto.dateModification = new Date();
     await this.sousitemRepo.update(id, updateSousitemDto);
     return await this.sousitemRepo.findOne(id);
   }
 
   async remove(id: string) {
-    try {
-      const sousItem = this.sousitemRepo.findOneOrFail({
-        where : {
-          idSousItem : id
-        }
-      })
-    } catch {
+    const sousitem = await this.sousitemRepo.findOne({
+      where : {
+        idSousItem : id
+      }
+    })
+    if (sousitem == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
-    await this.sousitemRepo.delete(id)
+
+    let sousitemsaveDTO = new CreateSousitemsaveDto();
+    sousitemsaveDTO = {
+      idSousItem : sousitem.idSousItem,
+      libelleSousItem : sousitem.libelleSousItem,
+      codeSousItem : sousitem.codeSousItem,
+      idItem : sousitem.idItem,
+      securite : sousitem.securite,
+      estPrefixe : sousitem.estPrefixe,
+      actif : sousitem.actif,
+      date : new Date(),
+      heure : new Date(),
+      etat : 'D',
+      description : sousitem.description,
+      profilModification : "",
+      posteModification : ""
+
+    }
+    await this.sousitemSaveService.create(sousitemsaveDTO);
+
+    try {
+      await this.sousitemRepo.delete(id);
+    } catch ( e : any) {
+      await this.sousitemSaveService.remove(sousitemsaveDTO.idSousItem, sousitemsaveDTO.date, sousitemsaveDTO.heure);
+      return {
+        status : HttpStatus.CONFLICT,
+        error :'Impossible to delete',
+      }
+    }
+    
     return {
       status : HttpStatus.OK,
       error :'Deleted',

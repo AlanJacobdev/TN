@@ -1,4 +1,36 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateSousitemDto } from './create-sousitem.dto';
+import { IsNotEmpty } from 'class-validator';
 
-export class UpdateSousitemDto extends PartialType(CreateSousitemDto) {}
+export class UpdateSousitemDto {
+
+    @IsNotEmpty()
+    idSousItem : string;
+
+    @IsNotEmpty()
+    libelleSousItem : string;
+
+    @IsNotEmpty()
+    idItem : string;
+
+    @IsNotEmpty()
+    codeSousItem : string;
+
+    @IsNotEmpty()
+    securite : boolean;
+
+    @IsNotEmpty()
+    estPrefixe : boolean;
+
+    @IsNotEmpty()
+    actif : boolean;
+
+    @IsNotEmpty()
+    description : string;
+    
+    @IsNotEmpty()
+    profilModification : string;
+
+    posteModification : string; 
+
+    dateModification : Date;
+    
+}

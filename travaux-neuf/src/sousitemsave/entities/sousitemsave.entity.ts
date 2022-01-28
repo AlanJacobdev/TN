@@ -4,9 +4,8 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
 @Entity('sousitemsauvegarde')
 export class Sousitemsave {
 
-    @ManyToOne(() => Sousitem)
-    @JoinColumn({name: 'idSousItem'})
-    @PrimaryColumn({length : 20, type:"string"})
+   
+    @PrimaryColumn({length : 20})
     idSousItem : string;
     
     @Column({length : 50})

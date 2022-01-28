@@ -36,4 +36,9 @@ export class CreateSousitemsaveDto {
     @IsNotEmpty()
     etat: string;
 
+    @IsNotEmpty()
+    profilModification : string;
+
+    posteModification : string;
+
 }

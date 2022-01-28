@@ -127,6 +127,7 @@ export class ObjetrepereService {
     try {
       await this.OrRepo.delete(id);
     } catch ( e : any) {
+      await this.orsaveservice.remove(orsaveDto.idObjetRepere, orsaveDto.date, orsaveDto.heure);
       return {
         status : HttpStatus.CONFLICT,
         error :'Impossible to delete',
