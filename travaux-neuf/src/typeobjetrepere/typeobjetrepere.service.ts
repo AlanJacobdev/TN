@@ -48,8 +48,14 @@ export class TypeobjetrepereService {
       return {
         status : HttpStatus.NOT_FOUND,
         error : 'Identifier not found'
+      }
     }
-  }
+    if (updateTypeobjetrepereDto.idTypeOR != id){
+      return {
+        status : HttpStatus.CONFLICT,
+        error : 'Impossible to change ID'
+      }
+    }
     updateTypeobjetrepereDto.dateModification = new Date();
     await this.TypeOrRepo.update(id, updateTypeobjetrepereDto);
     return await this.TypeOrRepo.findOne(id);

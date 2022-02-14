@@ -89,7 +89,12 @@ export class SousitemService {
       posteModification : updateSousitemDto.posteModification
 
     }
-    
+    if (updateSousitemDto.idSousItem != id){
+      return {
+        status : HttpStatus.CONFLICT,
+        error : 'Impossible to change ID'
+      }
+    }
     await this.sousitemSaveService.create(sousitemsaveDTO);
     updateSousitemDto.dateModification = new Date();
     await this.sousitemRepo.update(id, updateSousitemDto);

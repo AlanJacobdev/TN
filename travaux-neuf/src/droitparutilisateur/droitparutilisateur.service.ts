@@ -68,8 +68,14 @@ export class DroitparutilisateurService {
       return {
         status : HttpStatus.NOT_FOUND,
         error : 'Identifier not found'
+      }
     }
-  }
+    if (updateDroitparutilisateurDto.idDroit != idDroit || updateDroitparutilisateurDto.idUtilisateur != idUtilisateur){
+      return {
+        status : HttpStatus.CONFLICT,
+        error : 'Impossible to change ID'
+      }
+    }
     updateDroitparutilisateurDto.dateModification = new Date();
     await this.DpuRepo.update({
       idDroit,

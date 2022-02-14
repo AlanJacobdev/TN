@@ -18,8 +18,8 @@ export class UtilisateurService {
       if (uti == undefined){
         createUtilisateurDto.dateCreation = new Date();
         const newUti = this.utiRepo.create(createUtilisateurDto);
-        this.utiRepo.save(newUti);
-        return newUti;
+        const u = await this.utiRepo.save(newUti);
+        return u;
       } else {
         return {
           status : HttpStatus.CONFLICT,
@@ -56,8 +56,14 @@ export class UtilisateurService {
       return {
         status : HttpStatus.NOT_FOUND,
         error : 'Identifier not found'
+      }
     }
-  }
+    if (updateUtilisateurDto.idUtilisateur != id){
+      return {
+        status : HttpStatus.CONFLICT,
+        error : 'Impossible to change ID'
+      }
+    }
     updateUtilisateurDto.dateModification = new Date();
     await this.utiRepo.update(id, updateUtilisateurDto);
     return await this.utiRepo.findOne(id);

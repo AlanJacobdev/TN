@@ -72,7 +72,12 @@ export class ObjetrepereService {
       }, HttpStatus.NOT_FOUND)
     }
 
-        
+    if (updateObjetrepereDto.idObjetRepere != id){
+      return {
+        status : HttpStatus.CONFLICT,
+        error : 'Impossible to change ID'
+      }
+    }    
     updateObjetrepereDto.dateModification = new Date();
     await this.OrRepo.update(id,updateObjetrepereDto);
     let orsaveDto = new CreateOrsaveDto;
@@ -89,8 +94,9 @@ export class ObjetrepereService {
       profilModification : updateObjetrepereDto.profilModification,
       posteModification : updateObjetrepereDto.posteModification    
     }
-    await this.orsaveservice.create(orsaveDto);
 
+
+    await this.orsaveservice.create(orsaveDto);
     return await this.OrRepo.findOne(id);
     
   }

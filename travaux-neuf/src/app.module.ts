@@ -18,9 +18,15 @@ import { ServiceModule } from './service/service.module';
 import { DroitparserviceModule } from './droitparservice/droitparservice.module';
 import { UtilisateurModule } from './utilisateur/utilisateur.module';
 import { DroitparutilisateurModule } from './droitparutilisateur/droitparutilisateur.module';
-
+import { ConfigModule } from '@nestjs/config';
+import configuration from './config';
 @Module({
-  imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule],
+  imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule,
+  ConfigModule.forRoot({
+    isGlobal: true,
+    load:[configuration]
+  }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

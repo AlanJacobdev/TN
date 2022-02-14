@@ -85,9 +85,14 @@ export class ItemService {
       date : new Date(),
       profilModification : updateItemDto.profilModification,
       posteModification : updateItemDto.posteModification
-  }
+    }
 
-    
+    if (updateItemDto.idItem != id){
+      return {
+        status : HttpStatus.CONFLICT,
+        error : 'Impossible to change ID'
+      }
+    }
     await this.itemSaveService.create(itemSaveDTO);
     updateItemDto.dateModification = new Date;
     await this.itemRepo.update(id, updateItemDto);

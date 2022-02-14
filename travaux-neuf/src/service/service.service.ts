@@ -49,6 +49,12 @@ export class ServiceService {
         error : 'Identifier not found'
     }
   }
+    if (updateServiceDto.idService != id){
+      return {
+        status : HttpStatus.CONFLICT,
+        error : 'Impossible to change ID'
+      }
+    }
     await this.serviceRepo.update(id, updateServiceDto);
     return await this.serviceRepo.findOne(id);
   }

@@ -55,6 +55,12 @@ export class NumerouniqueService {
         error : 'Identifier Not Found'
       }
     }
+    if (updateNumerouniqueDto.idNumeroUnique != id){
+      return {
+        status : HttpStatus.CONFLICT,
+        error : 'Impossible to change ID'
+      }
+    }
     updateNumerouniqueDto.dateModification = new Date();
     await this.NuRepo.update(id, updateNumerouniqueDto);
     return await this.NuRepo.findOne(id);
