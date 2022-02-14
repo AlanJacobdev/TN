@@ -1,4 +1,21 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDroitparserviceDto } from './create-droitparservice.dto';
+import { IsNotEmpty } from "class-validator";
 
-export class UpdateDroitparserviceDto extends PartialType(CreateDroitparserviceDto) {}
+export class UpdateDroitparserviceDto {
+    @IsNotEmpty()
+    idDroit : string;
+
+    @IsNotEmpty()
+    idService : string;
+
+    @IsNotEmpty()
+    valeur : boolean;
+    
+    @IsNotEmpty()
+    profilModification : string;
+
+    posteModification : string;
+    
+    dateModification : Date;
+    
+}
+

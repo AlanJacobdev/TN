@@ -19,7 +19,8 @@ export class DroitparutilisateurService {
       const service = await this.utiservice.findOne(createDroitparutilisateurDto.idUtilisateur);
       if(service != undefined){
         const droitParUtilisateur = await this.findOne(createDroitparutilisateurDto.idDroit,createDroitparutilisateurDto.idUtilisateur);
-        if(droitParUtilisateur == undefined){
+        if(droitParUtilisateur == undefined ){
+          createDroitparutilisateurDto.dateCreation = new Date();
           const newDPU = this.DpuRepo.create(createDroitparutilisateurDto);
           await this.DpuRepo.save(newDPU);
           return newDPU;
@@ -32,7 +33,7 @@ export class DroitparutilisateurService {
       } else {
         return {
           status : HttpStatus.NOT_FOUND,
-          error :'Service doesn\'t exist',
+          error :'Utilisateur doesn\'t exist',
         }
       }
     } else {
@@ -48,7 +49,7 @@ export class DroitparutilisateurService {
   }
 
   async findOne(idDroit: string, idUtilisateur: number) {
-    return this.DpuRepo.find({
+    return this.DpuRepo.findOne({
       where :{
         idUtilisateur : idUtilisateur,
         idDroit : idDroit
@@ -69,24 +70,38 @@ export class DroitparutilisateurService {
         error : 'Identifier not found'
     }
   }
-    await this.DpuRepo.update(droitParService, updateDroitparutilisateurDto);
+    updateDroitparutilisateurDto.dateModification = new Date();
+    await this.DpuRepo.update({
+      idDroit,
+      idUtilisateur
+    }, updateDroitparutilisateurDto);
     return await this.findOne(idDroit,idUtilisateur);
   }
 
   async remove(idDroit: string, idUtilisateur: number) {
-    try {
       const droitParService = await this.DpuRepo.findOneOrFail({
         where : {
           idDroit : idDroit,
           idUtilisateur : idUtilisateur
         }
       })
-    await this.DpuRepo.delete(droitParService);
-  } catch {
+   
+  if (droitParService == undefined) {
     throw new HttpException({
       status : HttpStatus.NOT_FOUND,
       error : 'Not Found',
     }, HttpStatus.NOT_FOUND)
+  } 
+  try {
+    await this.DpuRepo.delete({
+      idDroit,
+      idUtilisateur
+    });
+  } catch ( e :any) {
+    return {
+      status : HttpStatus.CONFLICT,
+      error :'Impossible to delete',
+    }
   }
     return {
       status : HttpStatus.OK,

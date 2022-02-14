@@ -1,4 +1,20 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDroitDto } from './create-droit.dto';
+import { isEmpty, IsNotEmpty } from 'class-validator';
 
-export class UpdateDroitDto extends PartialType(CreateDroitDto) {}
+export class UpdateDroitDto {
+
+
+    @IsNotEmpty()
+    libelleDroit : string;
+
+    @IsNotEmpty()
+    profilModification : string;
+
+    @IsNotEmpty()
+    posteModification : string;
+    
+    dateModification : Date;
+    
+    idDroit: string;
+}
+
+

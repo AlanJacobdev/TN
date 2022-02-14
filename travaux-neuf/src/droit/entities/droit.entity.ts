@@ -5,8 +5,6 @@ import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 @Entity('droit')
 export class Droit {
 
-    @OneToMany (() => Droitparutilisateur, (dpu : Droitparutilisateur) => dpu.idDroit)
-    @OneToMany (() => Droitparservice, (dps : Droitparservice) => dps.idDroit)
     @PrimaryColumn({length:50})
     idDroit : string;
 
@@ -17,7 +15,7 @@ export class Droit {
     profilCreation : string;
 
     @Column({length : 50})
-    posteCréation : string;
+    posteCreation : string;
 
     @Column({type : "datetime"})
     dateCreation : Date;

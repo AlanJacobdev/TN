@@ -20,6 +20,7 @@ export class DroitparserviceService {
       if(service != undefined){
         const droitParService = await this.findOne(createDroitparserviceDto.idDroit,createDroitparserviceDto.idService);
         if(droitParService == undefined){
+          createDroitparserviceDto.dateCreation = new Date();
           const newDPS = this.droitParServiceRepo.create(createDroitparserviceDto);
           await this.droitParServiceRepo.save(newDPS);
           return newDPS;
@@ -63,31 +64,45 @@ export class DroitparserviceService {
         idService : idService
       }
     })
+
     if (droitParService == undefined) {
       return {
         status : HttpStatus.NOT_FOUND,
         error : 'Identifier not found'
     }
   }
-    await this.droitParServiceRepo.update(droitParService, updateDroitparserviceDto);
+    updateDroitparserviceDto.dateModification = new Date();
+    await this.droitParServiceRepo.update({
+      idDroit,
+      idService
+    }, updateDroitparserviceDto);
     return await this.findOne(idDroit,idService);
 
   }
 
   async remove(idDroit: string, idService: string) {
-    try {
-      const droitParService = await this.droitParServiceRepo.findOneOrFail({
-        where : {
-          idDroit : idDroit,
-          idService : idService
-        }
-      })
-    await this.droitParServiceRepo.delete(droitParService);
-    } catch {
+    const droitParService = await this.droitParServiceRepo.findOne({
+      where : {
+        idDroit : idDroit,
+        idService : idService
+      }
+    })
+    if(droitParService == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
+    }
+    try {
+      await this.droitParServiceRepo.delete({
+        idDroit,
+        idService
+      });
+    } catch ( e : any){
+      return {
+        status : HttpStatus.CONFLICT,
+        error :'Impossible to delete',
+      }
     }
     return {
       status : HttpStatus.OK,

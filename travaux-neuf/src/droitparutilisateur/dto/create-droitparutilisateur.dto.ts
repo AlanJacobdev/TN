@@ -11,4 +11,10 @@ export class CreateDroitparutilisateurDto {
     @IsNotEmpty()
     valeur : boolean;
 
+    @IsNotEmpty()
+    profilCreation : string;
+
+    posteCreation : string;
+    
+    dateCreation : Date;
 }

@@ -10,5 +10,12 @@ export class CreateDroitparserviceDto {
 
     @IsNotEmpty()
     valeur : boolean;
+    
+    @IsNotEmpty()
+    profilCreation : string;
+
+    posteCreation : string;
+    
+    dateCreation : Date;
 
 }

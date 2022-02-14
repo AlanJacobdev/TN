@@ -8,4 +8,12 @@ export class CreateDroitDto {
     @IsNotEmpty()
     libelleDroit : string;
 
+    @IsNotEmpty()
+    profilCreation : string;
+
+    @IsNotEmpty()
+    posteCreation : string;
+    
+    dateCreation : Date;
+
 }

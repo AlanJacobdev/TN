@@ -1,4 +1,19 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDroitparutilisateurDto } from './create-droitparutilisateur.dto';
+import { IsNotEmpty } from "class-validator";
 
-export class UpdateDroitparutilisateurDto extends PartialType(CreateDroitparutilisateurDto) {}
+
+export class UpdateDroitparutilisateurDto {
+
+   
+    @IsNotEmpty()
+    idUtilisateur : number;
+
+    @IsNotEmpty()
+    idDroit : string;
+
+    @IsNotEmpty()
+    valeur : boolean;
+    
+    posteModification : string;
+    
+    dateModification : Date;
+}

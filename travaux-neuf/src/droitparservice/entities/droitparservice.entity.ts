@@ -17,11 +17,12 @@ export class Droitparservice {
 
     @Column()
     valeur : boolean;
+
     @Column({length : 50})
     profilCreation : string;
 
     @Column({length : 50})
-    posteCréation : string;
+    posteCreation : string;
 
     @Column({type : "datetime"})
     dateCreation : Date;
