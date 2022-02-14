@@ -19,7 +19,7 @@ export class ItemsaveController {
 
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.itemsaveService.findById(+id);
+    return this.itemsaveService.findById(id);
   }
 
   @Get(':id/:date/:heure')

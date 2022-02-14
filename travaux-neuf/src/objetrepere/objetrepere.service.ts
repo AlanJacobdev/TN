@@ -145,6 +145,12 @@ export class ObjetrepereService {
       error :'Deleted',
     }
   }
+
+  async getHistory(idItem : string) {
+    return this.orsaveservice.findById(idItem);
+  }
+
+
 }
 
 

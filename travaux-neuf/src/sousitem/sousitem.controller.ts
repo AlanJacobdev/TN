@@ -22,6 +22,11 @@ export class SousitemController {
     return this.sousitemService.findOne(id);
   }
 
+  @Get('history/:id')
+  getHistory(@Param('id') id: string){
+    return this.sousitemService.getHistory(id);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateSousitemDto: UpdateSousitemDto) {
     return this.sousitemService.update(id, updateSousitemDto);

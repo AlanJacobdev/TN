@@ -17,6 +17,11 @@ export class ItemController {
     return this.itemService.findAll();
   }
 
+  @Get('history/:id')
+  getHistory(@Param('id') id: string){
+    return this.itemService.getHistory(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.itemService.findOne(id);

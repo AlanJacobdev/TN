@@ -22,6 +22,11 @@ export class ObjetrepereController {
     return this.objetrepereService.findOne(id);
   }
 
+  @Get('history/:id')
+  getHistory(@Param('id') id: string){
+    return this.objetrepereService.getHistory(id);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateObjetrepereDto: UpdateObjetrepereDto) {
     return this.objetrepereService.update(id, updateObjetrepereDto);

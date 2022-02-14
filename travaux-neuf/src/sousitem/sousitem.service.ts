@@ -148,4 +148,9 @@ export class SousitemService {
       error :'Deleted',
     }
   }
+
+  async getHistory(idItem : string) {
+    return this.sousitemSaveService.findById(idItem);
+  }
+
 }

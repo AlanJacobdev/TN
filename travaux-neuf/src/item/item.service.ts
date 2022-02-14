@@ -145,4 +145,8 @@ export class ItemService {
       error :'Deleted',
     }
   }
+
+  async getHistory(idItem : string) {
+    return this.itemSaveService.findById(idItem);
+  }
 }

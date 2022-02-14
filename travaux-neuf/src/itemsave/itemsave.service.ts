@@ -57,7 +57,7 @@ export class ItemsaveService {
     })
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.itemSaveRepo.find({
       where : {
         idItem : id
