@@ -57,6 +57,14 @@ export class ItemService {
     })
   }
 
+  findAllItemOfOR (id : string) {
+    return this.itemRepo.find({
+      where : {
+        idOR : id
+      }
+    })
+  }
+
   async update(id: string, updateItemDto: UpdateItemDto) {
     const item = await this.itemRepo.findOne({
       where : {

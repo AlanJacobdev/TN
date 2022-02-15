@@ -5,7 +5,6 @@ import { SousitemService } from 'src/sousitem/sousitem.service';
 import { Repository } from 'typeorm';
 import { CreateSousitemsaveDto } from './dto/create-sousitemsave.dto';
 import { Sousitemsave } from './entities/sousitemsave.entity';
-import { config } from 'process';
 
 
 @Injectable()
