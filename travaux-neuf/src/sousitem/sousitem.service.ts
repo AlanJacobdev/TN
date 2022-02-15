@@ -52,6 +52,14 @@ export class SousitemService {
     return this.sousitemRepo.find();
   }
 
+  findAllSousItemOfItem(id : string){
+    return this.sousitemRepo.find({
+      where : {
+        idItem : id
+      }
+    })
+  }
+
   async findOne(id: string) {
     return this.sousitemRepo.findOne({
       where: {

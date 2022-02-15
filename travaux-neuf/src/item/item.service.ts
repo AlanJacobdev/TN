@@ -65,6 +65,8 @@ export class ItemService {
     })
   }
 
+  
+
   async update(id: string, updateItemDto: UpdateItemDto) {
     const item = await this.itemRepo.findOne({
       where : {

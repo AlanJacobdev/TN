@@ -1,25 +1,19 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateItemDto } from 'src/item/dto/create-item.dto';
-import { Item } from 'src/item/entities/item.entity';
 import { ItemService } from 'src/item/item.service';
-import { Objetrepere } from 'src/objetrepere/entities/objetrepere.entity';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
-import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { SousitemService } from 'src/sousitem/sousitem.service';
-import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { create } from 'domain';
+import { CreateSousitemDto } from 'src/sousitem/dto/create-sousitem.dto';
 
 
 @Injectable()
 export class ServiceRecopieService {
 
-    constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, @InjectRepository(Sousitem) private SiRepo : Repository<Sousitem>,
-                @InjectRepository(Item) private ItemRepo : Repository<Item>, private OrService : ObjetrepereService, private itemService:ItemService,
+    constructor(private OrService : ObjetrepereService, private itemService:ItemService,
                 private SiService : SousitemService, private configservice : ConfigService
                 ){}
-
 
     async recopyItemFromObjetRepere(or: string, nu : string ) {
         const orSourceExist = await this.OrService.findOne(or);
@@ -29,7 +23,8 @@ export class ServiceRecopieService {
                 const ItemsOfOrOrigin = await this.itemService.findAllItemOfOR(or);
                 if(ItemsOfOrOrigin.length != 0){ 
                     for (const item of ItemsOfOrOrigin ){
-                        const itemExist = await this.itemService.findOne(item.codeObjet + nu + item.digit)
+                        const idTargetItem = (item.securite ? item.codeObjet + nu + item.digit + 'Z' : item.codeObjet + nu + item.digit);
+                        const itemExist = await this.itemService.findOne(idTargetItem);
                         if (itemExist == undefined){
                             const idTargetItem = (item.securite ? item.codeObjet + nu + item.digit + 'Z' : item.codeObjet + nu + item.digit)
                             let createitem = new CreateItemDto();
@@ -54,7 +49,7 @@ export class ServiceRecopieService {
                 } else {
                     return  {
                         status : HttpStatus.NOT_FOUND,
-                        error :'Source Objet Repere hasn\'t item'
+                        error :'Source Objet Repere hasn\'t items'
                     }
                 }
             } else {
@@ -67,6 +62,155 @@ export class ServiceRecopieService {
             return  {
                 status : HttpStatus.NOT_FOUND,
                 error :'Origin Objet repere doesn\'t exist'
+            }
+        }
+    }
+
+    async recopySousItemFromItem(item: string, nu : string ) {
+        const itemSourceExist = await this.itemService.findOne(item);
+        if (itemSourceExist != undefined) {
+            const idTargetItem = (itemSourceExist.securite ? itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit)
+            const itemTargetExist = await this.itemService.findOne(idTargetItem);
+            if (itemTargetExist != undefined) {
+                const SousItemsOfItemOrigin = await this.SiService.findAllSousItemOfItem(item);
+                if(SousItemsOfItemOrigin.length != 0){ 
+                    for (const sousItem of SousItemsOfItemOrigin ){
+                        const idSousItem = (itemSourceExist.securite ? (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem + 'Z' ): (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem ));
+                        const sousItemExist = await this.SiService.findOne(idSousItem)
+                        if (sousItemExist == undefined){
+                            let createsousitem = new CreateSousitemDto();
+                            createsousitem = {
+                                idSousItem : idSousItem,
+                                libelleSousItem : `SousItem issue de la recopie de ${sousItem.idSousItem}`,
+                                idItem : idTargetItem,
+                                codeSousItem : sousItem.codeSousItem,
+                                securite : sousItem.securite,
+                                estPrefixe : sousItem.estPrefixe,
+                                actif : sousItem.actif,
+                                description : "",
+                                profilCreation : this.configservice.get('profil'),
+                                posteCreation : "",
+                                dateCreation : new Date(),
+                            }
+                            await this.SiService.create(createsousitem);
+                        }
+                    }
+                    return await this.SiService.findAllSousItemOfItem(idTargetItem);
+                } else {
+                    return  {
+                        status : HttpStatus.NOT_FOUND,
+                        error :'Source Item hasn\'t sousItems'
+                    }
+                }
+            } else {
+                return  {
+                    status : HttpStatus.NOT_FOUND,
+                    error :'Item doesn\'t exist'
+                }
+            }
+        } else {
+            return  {
+                status : HttpStatus.NOT_FOUND,
+                error :'Origin Item doesn\'t exist'
+            }
+        }
+    }
+
+    async recopyOneItemFromOR(IdOR: string, IdItem: string, nu:string){
+        const orSourceExist = await this.OrService.findOne(IdOR);
+        if (orSourceExist != undefined) {
+            const orTargetExist = await this.OrService.findOne(orSourceExist.codeType + nu);
+            if (orTargetExist != undefined) {
+                const item = await this.itemService.findOne(IdItem);
+                if(item != undefined){ 
+                        const idTargetItem = (item.securite ? item.codeObjet + nu + item.digit + 'Z' : item.codeObjet + nu + item.digit);
+                        const itemExist = await this.itemService.findOne(idTargetItem);
+                        if (itemExist == undefined){
+                            const idTargetItem = (item.securite ? item.codeObjet + nu + item.digit + 'Z' : item.codeObjet + nu + item.digit)
+                            let createitem = new CreateItemDto();
+                            createitem = {
+                                idItem : idTargetItem ,
+                                libelleItem :  `Item issue de la recopie de ${item.idItem}`,
+                                idOR : orSourceExist.codeType + nu,
+                                numeroUnique : nu,
+                                digit : item.digit,
+                                codeObjet : item.codeObjet,
+                                securite : item.securite,
+                                actif : item.actif,
+                                description : "",
+                                profilCreation : this.configservice.get('profil') ,
+                                dateCreation : new Date(),
+                                posteCreation : ""
+                            }
+                            await this.itemService.create(createitem);
+                        
+                    }
+                    return await this.itemService.findAllItemOfOR(orSourceExist.codeType + nu);
+                } else {
+                    return  {
+                        status : HttpStatus.NOT_FOUND,
+                        error :'Source Item doesn\'t exist'
+                    }
+                }
+            } else {
+                return  {
+                    status : HttpStatus.NOT_FOUND,
+                    error :'Origin Objet repere doesn\'t exist'
+                }
+            }
+        } else {
+            return  {
+                status : HttpStatus.NOT_FOUND,
+                error :'Origin Objet repere doesn\'t exist'
+            }
+        }
+    }
+
+    async recopyOneSousItemFromItem(IdItem: string, IdSousItem: string, nu:string){
+        const itemSourceExist = await this.itemService.findOne(IdItem);
+        if (itemSourceExist != undefined) {
+            const idTargetItem = (itemSourceExist.securite ? itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit)
+            const itemTargetExist = await this.itemService.findOne(idTargetItem);
+            if (itemTargetExist != undefined) {
+                const sousItem = await this.SiService.findOne(IdSousItem);
+                if(sousItem != undefined){ 
+                    const idSousItem = (itemSourceExist.securite ? (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem + 'Z' ): (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem ));
+                    const sousItemExist = await this.SiService.findOne(idSousItem)
+                    if (sousItemExist == undefined){
+                        let createsousitem = new CreateSousitemDto();
+                        createsousitem = {
+                            idSousItem : idSousItem,
+                            libelleSousItem : `SousItem issue de la recopie de ${sousItem.idSousItem}`,
+                            idItem : idTargetItem,
+                            codeSousItem : sousItem.codeSousItem,
+                            securite : sousItem.securite,
+                            estPrefixe : sousItem.estPrefixe,
+                            actif : sousItem.actif,
+                            description : "",
+                            profilCreation : this.configservice.get('profil'),
+                            posteCreation : "",
+                            dateCreation : new Date(),
+                        }
+                        await this.SiService.create(createsousitem);
+                    }
+                    
+                    return await this.SiService.findAllSousItemOfItem(idTargetItem);
+                } else {
+                    return  {
+                        status : HttpStatus.NOT_FOUND,
+                        error :'Source Item doesn\'t exist'
+                    }
+                }
+            } else {
+                return  {
+                    status : HttpStatus.NOT_FOUND,
+                    error :'Item doesn\'t exist'
+                }
+            }
+        } else {
+            return  {
+                status : HttpStatus.NOT_FOUND,
+                error :'Origin Item doesn\'t exist'
             }
         }
     }
