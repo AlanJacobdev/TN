@@ -12,8 +12,7 @@ import { CreateSousitemDto } from 'src/sousitem/dto/create-sousitem.dto';
 export class ServiceRecopieService {
 
     constructor(private OrService : ObjetrepereService, private itemService:ItemService,
-                private SiService : SousitemService, private configservice : ConfigService
-                ){}
+                private SiService : SousitemService, private configservice : ConfigService){}
 
     async recopyItemFromObjetRepere(or: string, nu : string ) {
         const orSourceExist = await this.OrService.findOne(or);

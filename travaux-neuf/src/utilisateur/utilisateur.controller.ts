@@ -31,4 +31,10 @@ export class UtilisateurController {
   remove(@Param('id') id: string) {
     return this.utilisateurService.remove(+id);
   }
+
+
+  @Get('connexion/exist/:id/:pwd')
+  findUserOnCimaint(@Param('id') id: string, @Param('pwd') pwd: string){
+    return this.utilisateurService.findUserOnCimaint(id,pwd);
+  }
 }

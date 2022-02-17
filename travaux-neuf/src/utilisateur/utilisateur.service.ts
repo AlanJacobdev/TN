@@ -95,4 +95,21 @@ export class UtilisateurService {
       error :'Deleted',
     }
   }
+
+  async findUserOnCimaint (login: string, pwd:string) {
+    const odbc = require('odbc');
+    try {
+      const co = await odbc.connect('DSN=EVNADMIN;Uid=XTC02SPA;Password=xtc02002');
+      const res = await co.query('SELECT NOMUTILI, PRENOMUT FROM GEN99.GWUTI WHERE LOGINUTI = ? AND PASSWORD = ?', [login, pwd]);
+      if (res.count == 0) {
+        return undefined;
+      }
+      return res;
+    } catch ( e :any) {
+      console.log(e);
+    }
+    
+  }
+
+
 }
