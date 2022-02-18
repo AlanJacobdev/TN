@@ -14,6 +14,7 @@ export class ServiceService {
   async create(createServiceDto: CreateServiceDto) {
     const service = await this.findOne(createServiceDto.idService);
     if ( service == undefined){
+      createServiceDto.dateCreation = new Date();
       const newService = this.serviceRepo.create(createServiceDto);
       await this.serviceRepo.save(newService);
       return newService;
@@ -55,6 +56,7 @@ export class ServiceService {
         error : 'Impossible to change ID'
       }
     }
+    updateServiceDto.dateModification = new Date();
     await this.serviceRepo.update(id, updateServiceDto);
     return await this.serviceRepo.findOne(id);
   }

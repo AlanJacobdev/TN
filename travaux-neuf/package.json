@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
     "class-validator": "^0.13.2",
+    "mssql": "^8.0.2",
     "mysql2": "^2.3.3",
     "nestjs-common": "^0.0.5",
     "odbc": "^2.4.1",

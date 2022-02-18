@@ -27,7 +27,7 @@ import configuration from './config';
     isGlobal: true,
     load:[configuration]
   }),
-  ServiceRecopieModule,
+  ServiceRecopieModule
   ],
   controllers: [AppController],
   providers: [AppService],

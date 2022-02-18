@@ -1,7 +1,6 @@
 import { Item } from "src/item/entities/item.entity";
-import { Sousitemsave } from "src/sousitemsave/entities/sousitemsave.entity";
 import { Typeobjet } from "src/typeobjet/entities/typeobjet.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 
 @Entity('sousitem')
 export class Sousitem {
@@ -14,7 +13,7 @@ export class Sousitem {
 
     @ManyToOne(() => Item)
     @JoinColumn({name: 'idItem'})
-    @Column({length : 12})
+    @Column({length : 10})
     idItem : string;
 
     @ManyToOne(() => Typeobjet)

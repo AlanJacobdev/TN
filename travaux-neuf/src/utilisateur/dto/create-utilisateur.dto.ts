@@ -2,7 +2,6 @@ import { IsNotEmpty } from "class-validator";
 
 export class CreateUtilisateurDto {
     
-    @IsNotEmpty()
     idUtilisateur: number;
 
     @IsNotEmpty()
