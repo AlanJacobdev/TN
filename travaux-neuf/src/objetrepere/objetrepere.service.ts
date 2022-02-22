@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateAtelierDto } from 'src/atelier/dto/create-atelier.dto';
 import { NumerouniqueService } from 'src/numerounique/numerounique.service';
 import { CreateOrsaveDto } from 'src/orsave/dto/create-orsave.dto';
+import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { OrsaveService } from 'src/orsave/orsave.service';
 import { TypeobjetrepereService } from 'src/typeobjetrepere/typeobjetrepere.service';
 import { Repository } from 'typeorm';
@@ -72,14 +72,20 @@ export class ObjetrepereService {
       }, HttpStatus.NOT_FOUND)
     }
 
-    if (updateObjetrepereDto.idObjetRepere != id){
+    if (updateObjetrepereDto.codeType != OR.codeType) {
       return {
-        status : HttpStatus.CONFLICT,
-        error : 'Impossible to change ID'
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change Code Type'
       }
-    }    
-    updateObjetrepereDto.dateModification = new Date();
-    await this.OrRepo.update(id,updateObjetrepereDto);
+    }
+
+    if (updateObjetrepereDto.numeroUnique != OR.numeroUnique) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change Numero Unique'
+      }
+    }
+ 
     let orsaveDto = new CreateOrsaveDto;
     orsaveDto = {
       idObjetRepere : OR.idObjetRepere,
@@ -89,16 +95,15 @@ export class ObjetrepereService {
       valide : OR.valide,
       description : OR.description,
       date : new Date(),
-      heure : new Date(),
       etat : "M",
       profilModification : updateObjetrepereDto.profilModification,
       posteModification : updateObjetrepereDto.posteModification    
     }
 
-
-    await this.orsaveservice.create(orsaveDto);
+    await this.orsaveservice.create(orsaveDto);   
+    updateObjetrepereDto.dateModification = new Date();
+    await this.OrRepo.update(id,updateObjetrepereDto);
     return await this.OrRepo.findOne(id);
-    
   }
 
   async remove(id: string) {
@@ -113,6 +118,8 @@ export class ObjetrepereService {
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND);
     }
+
+
     let orsaveDto = new CreateOrsaveDto;
     orsaveDto = {
       idObjetRepere : OR.idObjetRepere,
@@ -122,7 +129,6 @@ export class ObjetrepereService {
       valide : OR.valide,
       description : OR.description,
       date : new Date(),
-      heure : new Date(),
       etat : "D",
       profilModification : "",
       posteModification : ""    
@@ -133,7 +139,7 @@ export class ObjetrepereService {
     try {
       await this.OrRepo.delete(id);
     } catch ( e : any) {
-      await this.orsaveservice.remove(orsaveDto.idObjetRepere, orsaveDto.date, orsaveDto.heure);
+      await this.orsaveservice.remove(orsaveDto.idObjetRepere, orsaveDto.date);
       return {
         status : HttpStatus.CONFLICT,
         error :'Impossible to delete',

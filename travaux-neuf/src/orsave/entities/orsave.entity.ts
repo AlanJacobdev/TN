@@ -24,16 +24,13 @@ export class Orsave {
     @Column({ length : 1})
     etat : String ;
 
-    @PrimaryColumn({type : "date"})
+    @PrimaryColumn({type : "datetime"})
     date : Date
-
-    @PrimaryColumn({type : "time"})
-    heure : Date;
     
     @Column({length : 50})
     profilModification : string;
 
-    @Column({length : 50})
+    @Column({length : 50, nullable:true})
     posteModification : string;
 
 }

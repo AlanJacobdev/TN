@@ -1,11 +1,9 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 
 export class UpdateObjetrepereDto {
 
-    @IsNotEmpty()
-    idObjetRepere : string;
-
+  
     @IsNotEmpty()
     libelleObjetRepere : string;
 
@@ -18,12 +16,13 @@ export class UpdateObjetrepereDto {
     @IsNotEmpty()
     valide : boolean;
 
-    @IsNotEmpty()
+    @Allow()
     description : string;
 
     @IsNotEmpty()
     profilModification : string;
-
+    
+    @Allow()
     posteModification : string;
     
     dateModification : Date;

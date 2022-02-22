@@ -1,11 +1,6 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 export class UpdateDroitparserviceDto {
-    @IsNotEmpty()
-    idDroit : string;
-
-    @IsNotEmpty()
-    idService : string;
 
     @IsNotEmpty()
     valeur : boolean;
@@ -13,6 +8,7 @@ export class UpdateDroitparserviceDto {
     @IsNotEmpty()
     profilModification : string;
 
+    @Allow()
     posteModification : string;
     
     dateModification : Date;

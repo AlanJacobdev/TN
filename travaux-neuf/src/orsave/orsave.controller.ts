@@ -22,14 +22,14 @@ export class OrsaveController {
     return this.orsaveService.findById(id);
   }
 
-  @Get(':id/:date/:heure')
-  findOne(@Param('id') id: string, @Param('date') date: Date ,@Param('heure') heure: Date ) {
-    return this.orsaveService.findOne(id, date, heure );
+  @Get(':id/:date')
+  findOne(@Param('id') id: string, @Param('date') date: Date) {
+    return this.orsaveService.findOne(id, date);
   }
 
 
-  @Delete(':id/:date/:heure')
-  remove(@Param('id') id: string, @Param('date') date: Date, @Param('heure') heure: Date) {
-    return this.orsaveService.remove(id, date, heure);
+  @Delete(':id/:date')
+  remove(@Param('id') id: string, @Param('date') date: Date) {
+    return this.orsaveService.remove(id, date);
   }
 }

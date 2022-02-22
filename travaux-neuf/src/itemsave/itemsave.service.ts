@@ -14,7 +14,7 @@ export class ItemsaveService {
   async create(createItemsaveDto: CreateItemsaveDto) {
     const item = await this.itemservice.findOne(createItemsaveDto.idItem);
     if(item != undefined) {
-      const itemsave  = await this.findOne(createItemsaveDto.idItem, createItemsaveDto.date, createItemsaveDto.heure);
+      const itemsave  = await this.findOne(createItemsaveDto.idItem, createItemsaveDto.date);
       if ( itemsave == undefined){
         try {
           const newitemsave = this.itemSaveRepo.create(createItemsaveDto);
@@ -47,12 +47,11 @@ export class ItemsaveService {
     return this.itemSaveRepo.find();
   }
 
-  findOne(id: string, date : Date, heure : Date) {
+  findOne(id: string, date : Date) {
     return this.itemSaveRepo.findOne({
       where : {
         idItem : id,
-        date : date,
-        heure : heure
+        date : date
       }
     })
   }
@@ -66,28 +65,23 @@ export class ItemsaveService {
   }
 
 
-  async remove(idItem: string, date: Date, heure: Date) {
+  async remove(idItem: string, date: Date) {
     date = new Date(date);
-    let newHeure = new Date();
-    const heureSplit = heure.toString().split(':');
-    newHeure.setHours(parseInt(heureSplit[0]), parseInt(heureSplit[1]),parseInt(heureSplit[2]));
     const itemsave = await this.itemSaveRepo.findOne({
       where : {
         idItem : idItem,
-        date: date.toISOString().slice(0,10),
-        heure : newHeure.toLocaleTimeString()
+        date: date
       }
     })
     if (itemsave == undefined) {
-      throw new HttpException({
+      throw new HttpException ({
         status : HttpStatus.NOT_FOUND,
         error : 'Not Found',
-      }, HttpStatus.NOT_FOUND)
+      },HttpStatus.NOT_FOUND)
     }
     await this.itemSaveRepo.delete({
       idItem,
-      date : date.toISOString().slice(0,10),
-      heure : newHeure.toLocaleTimeString()
+      date : date
     })
     return {
       status : HttpStatus.OK,
@@ -101,8 +95,7 @@ export class ItemsaveService {
         idItem : id
       },
       order : {
-        date : "ASC",
-        heure : "ASC"
+        date : "ASC"
       }
     })
 
@@ -112,12 +105,11 @@ export class ItemsaveService {
           idItem : id
         },
         order : {
-          date : "ASC",
-          heure : "ASC"
+          date : "ASC"
         },
         take: 1,
       })
-      this.remove(DeletedBackUp[0].idItem, DeletedBackUp[0].date ,DeletedBackUp[0].heure);
+      this.remove(DeletedBackUp[0].idItem, DeletedBackUp[0].date );
     }
 
   }

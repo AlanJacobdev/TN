@@ -49,12 +49,7 @@ export class DroitService {
         error : 'Identifier not found'
       }
     }
-    if (updateDroitDto.idDroit != id){
-      return {
-        status : HttpStatus.CONFLICT,
-        error : 'Impossible to change ID'
-      }
-    }
+
     updateDroitDto.dateModification = new Date();
     await this.DroitRepo.update(id, updateDroitDto);
     return await this.DroitRepo.findOne(id);

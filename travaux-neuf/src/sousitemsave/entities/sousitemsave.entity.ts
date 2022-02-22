@@ -26,19 +26,16 @@ export class Sousitemsave {
     @Column()
     actif: boolean;
     
-    @PrimaryColumn({type : "date"})
+    @PrimaryColumn({type : "datetime"})
     date : Date
 
-    @PrimaryColumn({type : "time"})
-    heure : Date;
-
-    @Column({length : 50})
+    @Column({length : 50, nullable:true})
     profilModification : string;
 
-    @Column({length : 50})
+    @Column({length : 50, nullable:true})
     posteModification : string;
 
-    @Column({length : 50})
+    @Column({length : 50, nullable:true})
     description: string;
 
     @Column({length : 50})

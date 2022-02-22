@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 export class CreateObjetrepereDto {
 
@@ -17,12 +17,13 @@ export class CreateObjetrepereDto {
     @IsNotEmpty()
     valide : boolean;
 
-    @IsNotEmpty()
+    @Allow()
     description : string;
 
     @IsNotEmpty()
     profilCreation : string;
-
+    
+    @Allow()
     posteCreation : string;
     
     dateCreation : Date;

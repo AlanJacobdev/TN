@@ -1,12 +1,7 @@
-import { IsNotEmpty } from 'class-validator';
+import { Allow, IsNotEmpty } from 'class-validator';
 import { Atelier } from 'src/atelier/entities/atelier.entity';
 
 export class UpdateNumerouniqueDto {
-    @IsNotEmpty()
-    idNumeroUnique : string;
-
-    @IsNotEmpty()
-    idAtelier : Atelier;
     
     @IsNotEmpty()
     numeroObjet : string
@@ -14,6 +9,7 @@ export class UpdateNumerouniqueDto {
     @IsNotEmpty()
     profilModification : string;
 
+    @Allow()
     posteModification : string;
     
     dateModification : Date;

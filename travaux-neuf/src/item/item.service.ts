@@ -79,6 +79,42 @@ export class ItemService {
         error : 'Identifier not found'
       }
     }
+
+    if (updateItemDto.idOR != item.idOR) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change Objet Repere'
+      }
+    }
+
+    if (updateItemDto.codeObjet != item.codeObjet) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change Code Objet'
+      }
+    }
+
+    if (updateItemDto.numeroUnique != item.numeroUnique) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change numeroUnique'
+      }
+    }
+
+    if (updateItemDto.securite != item.securite) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change Securite'
+      }
+    }
+
+    if (updateItemDto.digit != item.digit) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change Digit'
+      }
+    }
+
     let itemSaveDTO = new CreateItemsaveDto();
     itemSaveDTO = {
       idItem : item.idItem,
@@ -91,18 +127,12 @@ export class ItemService {
       actif : item.actif,
       etat : "M",
       description : item.description,
-      heure : new Date(),
       date : new Date(),
       profilModification : updateItemDto.profilModification,
       posteModification : updateItemDto.posteModification
     }
 
-    if (updateItemDto.idItem != id){
-      return {
-        status : HttpStatus.CONFLICT,
-        error : 'Impossible to change ID'
-      }
-    }
+
     await this.itemSaveService.create(itemSaveDTO);
     updateItemDto.dateModification = new Date;
     await this.itemRepo.update(id, updateItemDto);
@@ -135,7 +165,6 @@ export class ItemService {
       actif : item.actif,
       etat : "D",
       description : item.description,
-      heure : new Date(),
       date : new Date(),
       profilModification : "",
       posteModification : ""
@@ -144,7 +173,7 @@ export class ItemService {
     try {
       await this.itemRepo.delete(id)
     } catch ( e : any) {
-      await this.itemSaveService.remove(itemSaveDTO.idItem, itemSaveDTO.date, itemSaveDTO.heure);
+      await this.itemSaveService.remove(itemSaveDTO.idItem, itemSaveDTO.date);
       return {
         status : HttpStatus.CONFLICT,
         error :'Impossible to delete',

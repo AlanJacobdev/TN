@@ -80,6 +80,28 @@ export class SousitemService {
         error : 'Identifier not found'
       }
     } 
+
+    if (updateSousitemDto.codeSousItem != sousitem.codeSousItem) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change Code Sous Item'
+      }
+    }
+
+    if (updateSousitemDto.idItem != sousitem.idItem) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change Item'
+      }
+    }
+
+    if (updateSousitemDto.securite != sousitem.securite) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible to change Securite'
+      }
+    }
+
     let sousitemsaveDTO = new CreateSousitemsaveDto();
     sousitemsaveDTO = {
       idSousItem : sousitem.idSousItem,
@@ -90,19 +112,13 @@ export class SousitemService {
       estPrefixe : sousitem.estPrefixe,
       actif : sousitem.actif,
       date : new Date(),
-      heure : new Date(),
       etat : 'M',
       description : sousitem.description,
       profilModification : updateSousitemDto.profilModification,
       posteModification : updateSousitemDto.posteModification
 
     }
-    if (updateSousitemDto.idSousItem != id){
-      return {
-        status : HttpStatus.CONFLICT,
-        error : 'Impossible to change ID'
-      }
-    }
+    
     await this.sousitemSaveService.create(sousitemsaveDTO);
     updateSousitemDto.dateModification = new Date();
     await this.sousitemRepo.update(id, updateSousitemDto);
@@ -132,7 +148,6 @@ export class SousitemService {
       estPrefixe : sousitem.estPrefixe,
       actif : sousitem.actif,
       date : new Date(),
-      heure : new Date(),
       etat : 'D',
       description : sousitem.description,
       profilModification : "",
@@ -144,7 +159,7 @@ export class SousitemService {
     try {
       await this.sousitemRepo.delete(id);
     } catch ( e : any) {
-      await this.sousitemSaveService.remove(sousitemsaveDTO.idSousItem, sousitemsaveDTO.date, sousitemsaveDTO.heure);
+      await this.sousitemSaveService.remove(sousitemsaveDTO.idSousItem, sousitemsaveDTO.date);
       return {
         status : HttpStatus.CONFLICT,
         error :'Impossible to delete',

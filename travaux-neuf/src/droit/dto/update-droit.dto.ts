@@ -1,4 +1,4 @@
-import { isEmpty, IsNotEmpty } from 'class-validator';
+import { Allow, isEmpty, IsNotEmpty } from 'class-validator';
 
 export class UpdateDroitDto {
 
@@ -9,12 +9,11 @@ export class UpdateDroitDto {
     @IsNotEmpty()
     profilModification : string;
 
-    @IsNotEmpty()
+    @Allow()
     posteModification : string;
     
     dateModification : Date;
-    
-    idDroit: string;
+
 }
 
 

@@ -48,14 +48,9 @@ export class TypeobjetService {
       return {
         status : HttpStatus.NOT_FOUND,
         error : 'Identifier not found'
-    }
-  }
-    if (updateTypeobjetDto.idType != id){
-      return {
-        status : HttpStatus.CONFLICT,
-        error : 'Impossible to change ID'
       }
     }
+    
     updateTypeobjetDto.dateModification = new Date();
     await this.typeObjetRepo.update(id, updateTypeobjetDto);
     return await this.typeObjetRepo.findOne(id);

@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 export class CreateTypeobjetrepereDto {
 
@@ -11,6 +11,7 @@ export class CreateTypeobjetrepereDto {
     @IsNotEmpty()
     profilCreation : string;
 
+    @Allow()
     posteCreation : string;
 
     dateCreation : Date;

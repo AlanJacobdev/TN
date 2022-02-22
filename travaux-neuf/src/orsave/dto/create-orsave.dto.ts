@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 
 export class CreateOrsaveDto {
@@ -28,11 +28,9 @@ export class CreateOrsaveDto {
     date : Date
 
     @IsNotEmpty()
-    heure : Date;
-
-    @IsNotEmpty()
     profilModification : string;
 
+    @Allow()
     posteModification : string;
 
 }

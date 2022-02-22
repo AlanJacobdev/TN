@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 export class CreateSousitemDto {
 
@@ -23,12 +23,13 @@ export class CreateSousitemDto {
     @IsNotEmpty()
     actif : boolean;
 
-    @IsNotEmpty()
+    @Allow()
     description : string;
     
     @IsNotEmpty()
     profilCreation : string;
 
+    @Allow()
     posteCreation : string; 
 
     dateCreation : Date;

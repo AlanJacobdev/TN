@@ -58,12 +58,7 @@ export class UtilisateurService {
         error : 'Identifier not found'
       }
     }
-    if (updateUtilisateurDto.idUtilisateur != id){
-      return {
-        status : HttpStatus.CONFLICT,
-        error : 'Impossible to change ID'
-      }
-    }
+    
     updateUtilisateurDto.dateModification = new Date();
     await this.utiRepo.update(id, updateUtilisateurDto);
     return await this.utiRepo.findOne(id);

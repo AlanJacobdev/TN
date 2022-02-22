@@ -1,9 +1,9 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 export class UpdateUtilisateurDto {
 
-    @IsNotEmpty()
-    idUtilisateur: number;
+        
+ 
 
     @IsNotEmpty()
     nom : string;
@@ -20,7 +20,7 @@ export class UpdateUtilisateurDto {
     @IsNotEmpty()
     profilModification : string;
 
-    @IsNotEmpty()
+    @Allow()
     posteModification : string;
     
     dateModification : Date;

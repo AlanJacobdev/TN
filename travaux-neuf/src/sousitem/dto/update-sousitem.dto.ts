@@ -1,9 +1,6 @@
-import { IsNotEmpty } from 'class-validator';
+import { Allow, IsNotEmpty } from 'class-validator';
 
 export class UpdateSousitemDto {
-
-    @IsNotEmpty()
-    idSousItem : string;
 
     @IsNotEmpty()
     libelleSousItem : string;
@@ -23,12 +20,13 @@ export class UpdateSousitemDto {
     @IsNotEmpty()
     actif : boolean;
 
-    @IsNotEmpty()
+    @Allow()
     description : string;
     
     @IsNotEmpty()
     profilModification : string;
 
+    @Allow()
     posteModification : string; 
 
     dateModification : Date;

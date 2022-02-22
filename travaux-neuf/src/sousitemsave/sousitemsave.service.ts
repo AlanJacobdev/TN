@@ -15,7 +15,7 @@ export class SousitemsaveService {
   async create(createSousitemsaveDto: CreateSousitemsaveDto) {
     const sousItem = await this.sousItemService.findOne(createSousitemsaveDto.idSousItem);
     if (sousItem != undefined){
-      const sousItemSave = await this.findOne(createSousitemsaveDto.idItem, createSousitemsaveDto.date, createSousitemsaveDto.heure);
+      const sousItemSave = await this.findOne(createSousitemsaveDto.idItem, createSousitemsaveDto.date);
       if(sousItemSave == undefined) {
         try{
           const newSousItemSave = this.sousItemSaveRepo.create(createSousitemsaveDto);
@@ -25,10 +25,10 @@ export class SousitemsaveService {
           }
           return newSousItemSave;
         } catch (e :any){
-          return {
+          throw new HttpException ({
             status : HttpStatus.CONFLICT,
             error : "Two insertions at same time",
-          }
+          },HttpStatus.CONFLICT)
         }
       } else {
         return {
@@ -50,12 +50,11 @@ export class SousitemsaveService {
     return this.sousItemSaveRepo.find();
   }
 
-  findOne(id: string, date : Date, heure : Date) {
+  findOne(id: string, date : Date) {
     return this.sousItemSaveRepo.findOne({
       where : {
         idSousItem : id,
-        date : date,
-        heure : heure
+        date : date
       }
     })
   }
@@ -68,16 +67,13 @@ export class SousitemsaveService {
     })
   }
 
-  async remove(idSousItem: string, date: Date, heure: Date) {
+  async remove(idSousItem: string, date: Date) {
     date = new Date(date);
-    let newHeure = new Date();
-    const heureSplit = heure.toString().split(':');
-    newHeure.setHours(parseInt(heureSplit[0]), parseInt(heureSplit[1]),parseInt(heureSplit[2]));
+ 
     const sousitemsave = await this.sousItemSaveRepo.findOne({
       where : {
         idSousItem : idSousItem,
-        date : date.toISOString().slice(0,10),
-        heure : newHeure.toLocaleTimeString()
+        date : date
       }
     })
 
@@ -90,8 +86,7 @@ export class SousitemsaveService {
     
     await this.sousItemSaveRepo.delete({
       idSousItem,
-      date : date.toISOString().slice(0,10),
-      heure : newHeure.toLocaleTimeString()
+      date : date
     })
     return {
       status : HttpStatus.OK,
@@ -107,8 +102,7 @@ export class SousitemsaveService {
         idSousItem : id
       },
       order : {
-        date : "ASC",
-        heure : "ASC"
+        date : "ASC"
       }
     })
 
@@ -118,12 +112,11 @@ export class SousitemsaveService {
           idSousItem : id
         },
         order : {
-          date : "ASC",
-          heure : "ASC"
+          date : "ASC"
         },
         take: 1,
       })
-      this.remove(DeletedBackUp[0].idSousItem, DeletedBackUp[0].date ,DeletedBackUp[0].heure);
+      this.remove(DeletedBackUp[0].idSousItem, DeletedBackUp[0].date );
     }
 
   }

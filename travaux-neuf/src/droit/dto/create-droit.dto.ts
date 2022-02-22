@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 export class CreateDroitDto {
 
@@ -11,7 +11,7 @@ export class CreateDroitDto {
     @IsNotEmpty()
     profilCreation : string;
 
-    @IsNotEmpty()
+    @Allow()
     posteCreation : string;
     
     dateCreation : Date;

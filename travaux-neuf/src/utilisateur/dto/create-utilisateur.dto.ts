@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 export class CreateUtilisateurDto {
     
@@ -19,7 +19,7 @@ export class CreateUtilisateurDto {
     @IsNotEmpty()
     profilCreation : string;
 
-    @IsNotEmpty()
+    @Allow()
     posteCreation : string;
     
     dateCreation : Date;

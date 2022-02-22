@@ -45,12 +45,7 @@ export class AtelierService {
         idAtelier : id
       }
     })
-    if (updateAtelierDto.idAtelier != id){
-      return {
-        status : HttpStatus.CONFLICT,
-        error : 'Impossible to change ID'
-      }
-    }
+
     if (atelier == undefined) {
       return {
         status : HttpStatus.NOT_FOUND,

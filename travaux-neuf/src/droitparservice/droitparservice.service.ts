@@ -71,12 +71,7 @@ export class DroitparserviceService {
         error : 'Identifier not found'
       }
     }
-    if (updateDroitparserviceDto.idDroit != idDroit || updateDroitparserviceDto.idService != idService){
-      return {
-        status : HttpStatus.CONFLICT,
-        error : 'Impossible to change ID'
-      }
-    }
+
     updateDroitparserviceDto.dateModification = new Date();
     await this.droitParServiceRepo.update({
       idDroit,

@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty } from "class-validator";
 
 export class CreateItemDto {
    
@@ -26,7 +26,7 @@ export class CreateItemDto {
     @IsNotEmpty()
     actif : boolean;
 
-    @IsNotEmpty()
+    @Allow()
     description : string;
     
     @IsNotEmpty()
@@ -34,6 +34,7 @@ export class CreateItemDto {
 
     dateCreation : Date;
 
+    @Allow()
     posteCreation : string;
 
 }

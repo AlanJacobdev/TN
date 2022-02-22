@@ -29,11 +29,8 @@ export class Itemsave {
     @Column()
     actif : boolean
     
-    @PrimaryColumn({type : "date"})
+    @PrimaryColumn({type : "datetime"})
     date : Date
-
-    @PrimaryColumn({type : "time"})
-    heure : Date;
 
     @Column({length : 50})
     profilModification : string;

@@ -14,20 +14,21 @@ export class OrsaveService {
   async create(createOrsaveDto: CreateOrsaveDto) {
     const orExist = await this.orservice.findOne(createOrsaveDto.idObjetRepere);
     if ( orExist != undefined) {
-      const orSave = await this.findOne(createOrsaveDto.idObjetRepere, createOrsaveDto.date, createOrsaveDto.heure);
+      const orSave = await this.findOne(createOrsaveDto.idObjetRepere, createOrsaveDto.date);
       if ( orSave == undefined){
         try{
         const newOrSave = this.orsaveRepo.create(createOrsaveDto);
-        await this.orsaveRepo.save(newOrSave);
+        const save = await this.orsaveRepo.save(newOrSave);
         if(createOrsaveDto.etat === 'M') {
           await this.deleteSaveOlderThan(createOrsaveDto.idObjetRepere);
         }
-        return newOrSave;
+        return save;
         } catch (e : any){
-          return {
+          
+          throw new HttpException ({
             status : HttpStatus.CONFLICT,
             error : "Two insertions at same time",
-          }
+          },HttpStatus.CONFLICT)
         }
       } else {
         return  {
@@ -55,41 +56,37 @@ export class OrsaveService {
     })
   }
 
-  findOne(id: string, date: Date, heure:Date ){
+  findOne(id: string, date: Date){
+    
     return this.orsaveRepo.findOne({
       where : {
         idObjetRepere : id,
-        date : date,
-        heure : heure
+        date : date
       }
     })
   }
 
  
-  async remove(idObjetRepere: string, date: Date, heure: Date) {
+  async remove(idObjetRepere: string, date: Date) {
     date = new Date(date);
-    let newHeure = new Date();
-    const heureSplit = heure.toString().split(':');
-    newHeure.setHours(parseInt(heureSplit[0]), parseInt(heureSplit[1]),parseInt(heureSplit[2]));
+    
 
     const OR = await this.orsaveRepo.findOne({
       where : {
         idObjetRepere : idObjetRepere,
-        date : date.toISOString().slice(0,10),
-        heure : newHeure.toLocaleTimeString()
+        date : date
       }
     })
     
     if (OR == undefined ) {
-      throw new HttpException({
+      return ({
         status : HttpStatus.NOT_FOUND,
         error :'Not Found',
-      }, HttpStatus.NOT_FOUND)
+      })
     }
     await this.orsaveRepo.delete({
       idObjetRepere ,
-      date : date.toISOString().slice(0,10),
-      heure: newHeure.toLocaleTimeString()
+      date : date
     })
     return {
       status : HttpStatus.OK,
@@ -103,8 +100,7 @@ export class OrsaveService {
         idObjetRepere : id
       },
       order : {
-        date : "ASC",
-        heure : "ASC"
+        date : "ASC"
       }
     })
 
@@ -114,12 +110,11 @@ export class OrsaveService {
           idObjetRepere : id
         },
         order : {
-          date : "ASC",
-          heure : "ASC"
+          date : "ASC"
         },
         take: 1,
       })
-      this.remove(DeletedBackUp[0].idObjetRepere, DeletedBackUp[0].date ,DeletedBackUp[0].heure);
+      this.remove(DeletedBackUp[0].idObjetRepere, DeletedBackUp[0].date);
     }
 
   }
