@@ -1,6 +1,6 @@
 import { Numerounique } from 'src/numerounique/entities/numerounique.entity';
 import { Typeobjetrepere } from 'src/typeobjetrepere/entities/typeobjetrepere.entity';
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToMany, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToMany, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity('objetrepere')
 export class Objetrepere {
@@ -17,7 +17,7 @@ export class Objetrepere {
     codeType : string;
     
     @Column({length : 4})
-    @ManyToOne(() => Numerounique)
+    @OneToOne(() => Numerounique)
     @JoinColumn({name: 'numeroUnique'})
     numeroUnique : string;
 

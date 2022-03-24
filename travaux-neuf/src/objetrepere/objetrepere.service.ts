@@ -5,13 +5,14 @@ import { CreateOrsaveDto } from 'src/orsave/dto/create-orsave.dto';
 import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { OrsaveService } from 'src/orsave/orsave.service';
 import { TypeobjetrepereService } from 'src/typeobjetrepere/typeobjetrepere.service';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateObjetrepereDto } from './dto/create-objetrepere.dto';
 import { UpdateObjetrepereDto } from './dto/update-objetrepere.dto';
 import { Objetrepere } from './entities/objetrepere.entity';
 
 @Injectable()
 export class ObjetrepereService {
+  
 
   constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, private nuservice : NumerouniqueService, private typeorservice : TypeobjetrepereService,  private orsaveservice : OrsaveService){}
 
@@ -22,10 +23,17 @@ export class ObjetrepereService {
       if(nu != undefined) {
         const or = await this.findOne(createObjetrepereDto.idObjetRepere)
         if ( or == undefined){
+          try {
           createObjetrepereDto.dateCreation = new Date();
           const newOr = this.OrRepo.create(createObjetrepereDto);
           await this.OrRepo.save(newOr);
           return newOr;
+          } catch (e:any){
+            throw new HttpException({
+              status : HttpStatus.CONFLICT,
+              error :'Numéro Unique already use',
+            }, HttpStatus.CONFLICT)
+          }
         } else {
           return  {
             status : HttpStatus.CONFLICT,
@@ -57,6 +65,14 @@ export class ObjetrepereService {
         }
       }
     )
+  }
+
+  getORByAtelier(id: string) {
+    return this.OrRepo.find({
+      where : {
+        numeroUnique : ILike(id+"%")
+      }
+    })
   }
 
   async update(id: string, updateObjetrepereDto: UpdateObjetrepereDto) {

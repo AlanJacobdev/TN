@@ -99,6 +99,7 @@ export class UtilisateurService {
       if (res.count == 0) {
         return undefined;
       }
+      console.log(res[0].NOMUTILI)
       return res;
     } catch ( e :any) {
       console.log(e);

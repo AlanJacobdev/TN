@@ -22,6 +22,11 @@ export class ItemController {
     return this.itemService.getHistory(id);
   }
 
+  @Get('getItemByOR/:id')
+  getItemByOR(@Param('id') id: string){
+    return this.itemService.getItemByOR(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.itemService.findOne(id);

@@ -15,6 +15,7 @@ import { Sousitem } from './entities/sousitem.entity';
 @Injectable()
 export class SousitemService {
   
+  
   constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService, private sousitemSaveService : SousitemsaveService ){}
   
   async create(createSousitemDto: CreateSousitemDto) {
@@ -64,6 +65,14 @@ export class SousitemService {
     return this.sousitemRepo.findOne({
       where: {
         idSousItem:id
+      }
+    })
+  }
+
+  getSousItemByItem(id: string) {
+    return this.sousitemRepo.find({
+      where : {
+        idItem : id
       }
     })
   }

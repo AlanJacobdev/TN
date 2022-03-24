@@ -22,5 +22,4 @@ export const config: ConnectionOptions = {
       options: {
             encrypt: false 
       }
-
-      }
+}

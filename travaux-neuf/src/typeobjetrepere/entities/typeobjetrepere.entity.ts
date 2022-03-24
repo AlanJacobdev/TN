@@ -7,7 +7,7 @@ export class Typeobjetrepere {
     @PrimaryColumn({length : 2})
     idTypeOR : string;
 
-    @Column({length : 50})
+    @Column({length : 100})
     libelleTypeOR : string;
 
     @Column({length : 50})

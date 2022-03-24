@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/
 import { ObjetrepereService } from './objetrepere.service';
 import { CreateObjetrepereDto } from './dto/create-objetrepere.dto';
 import { UpdateObjetrepereDto } from './dto/update-objetrepere.dto';
+import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 
 @Controller('objetrepere')
 export class ObjetrepereController {
@@ -20,6 +21,11 @@ export class ObjetrepereController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.objetrepereService.findOne(id);
+  }
+
+  @Get('getORByAtelier/:id')
+  getORByAtelier(@Param('id') id: string){
+    return this.objetrepereService.getORByAtelier(id);
   }
 
   @Get('history/:id')

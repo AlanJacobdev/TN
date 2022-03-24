@@ -27,6 +27,11 @@ export class SousitemController {
     return this.sousitemService.getHistory(id);
   }
 
+  @Get('getSousItemByItem/:id')
+  getSousItemByItem(@Param('id') id: string){
+    return this.sousitemService.getSousItemByItem(id);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateSousitemDto: UpdateSousitemDto) {
     return this.sousitemService.update(id, updateSousitemDto);
