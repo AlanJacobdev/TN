@@ -23,18 +23,25 @@ export class SousitemService {
     if (item != undefined) {
       const typeObjet = await this.typeObjetService.findOne(createSousitemDto.codeSousItem);
       if (typeObjet != undefined){
-        const SousItem = await this.findOne(createSousitemDto.idSousItem);
-        if(SousItem == undefined){ 
-          createSousitemDto.dateCreation = new Date();
-          const newSousItem = this.sousitemRepo.create(createSousitemDto);
-          await this.sousitemRepo.save(newSousItem);
-          return newSousItem;               
-        } else {
+        const idwithoutSec = (createSousitemDto.estPrefixe) ? createSousitemDto.codeSousItem + createSousitemDto.idItem : createSousitemDto.idItem + createSousitemDto.codeSousItem  ;
+        const SousItemwithoutSec = await this.findOne(idwithoutSec);
+        const idwithSec = (createSousitemDto.estPrefixe) ?  createSousitemDto.codeSousItem + createSousitemDto.idItem + "Z" : createSousitemDto.idItem + createSousitemDto.codeSousItem + "Z" ;
+        const SousItemwithSec = await this.findOne(idwithSec);
+        if (SousItemwithoutSec != undefined || SousItemwithSec != undefined ){
           return {
             status : HttpStatus.CONFLICT,
             error :'Already exist',
           }
         }
+        if (createSousitemDto.securite) {
+          createSousitemDto.idSousItem = idwithSec;
+        }else{
+          createSousitemDto.idSousItem = idwithoutSec;
+        }
+        createSousitemDto.dateCreation = new Date();
+        const newSousItem = this.sousitemRepo.create(createSousitemDto);
+        await this.sousitemRepo.save(newSousItem);
+        return newSousItem;               
       } else {
         return {
           status : HttpStatus.NOT_FOUND,

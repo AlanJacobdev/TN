@@ -2,7 +2,7 @@ import { Allow, IsNotEmpty } from "class-validator";
 
 export class CreateObjetrepereDto {
 
-    @IsNotEmpty()
+   
     idObjetRepere : string;
 
     @IsNotEmpty()

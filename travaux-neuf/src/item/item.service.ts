@@ -19,18 +19,26 @@ export class ItemService {
     if( objetrepere != undefined) {
       const typeObjet = await this.typeObjetService.findOne(createItemDto.codeObjet);
       if (typeObjet != undefined){
-        const item = await this.findOne(createItemDto.idItem);
-        if ( item == undefined){
-          createItemDto.dateCreation = new Date();
-          const newItem = this.itemRepo.create(createItemDto);
-          await this.itemRepo.save(newItem);
-          return newItem;
-        } else {
+        const idWithSec = createItemDto.codeObjet + createItemDto.numeroUnique + createItemDto.digit + "Z" ;
+        const itemWithSec = await this.findOne(idWithSec)
+        const idWithoutSec = createItemDto.codeObjet + createItemDto.numeroUnique + createItemDto.digit ;
+        const itemWithoutSec = await this.findOne(idWithoutSec);
+        if (itemWithSec != undefined || itemWithoutSec != undefined) {
           return {
             status : HttpStatus.CONFLICT,
             error :'Already exist',
           }
         }
+
+        if(createItemDto.securite) {
+          createItemDto.idItem = idWithSec;
+        }else{
+          createItemDto.idItem = idWithoutSec;
+        }
+        createItemDto.dateCreation = new Date();
+        const newItem = this.itemRepo.create(createItemDto);
+        await this.itemRepo.save(newItem);
+        return newItem;
       } else {
         return {
           status : HttpStatus.NOT_FOUND,

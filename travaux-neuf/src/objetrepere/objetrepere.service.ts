@@ -21,6 +21,7 @@ export class ObjetrepereService {
     if (typeor != undefined) {
       const nu = await this.nuservice.findOne(createObjetrepereDto.numeroUnique);
       if(nu != undefined) {
+        createObjetrepereDto.idObjetRepere = createObjetrepereDto.codeType + createObjetrepereDto.numeroUnique;
         const or = await this.findOne(createObjetrepereDto.idObjetRepere)
         if ( or == undefined){
           try {

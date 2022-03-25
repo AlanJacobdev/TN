@@ -2,7 +2,6 @@ import { Allow, IsNotEmpty } from "class-validator";
 
 export class CreateSousitemDto {
 
-    @IsNotEmpty()
     idSousItem : string;
 
     @IsNotEmpty()
