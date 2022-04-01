@@ -81,7 +81,7 @@ export class TypeobjetrepereService {
     }
     return {
       status : HttpStatus.OK,
-      error :'Deleted',
+      message :'Deleted',
     }
   }
 }

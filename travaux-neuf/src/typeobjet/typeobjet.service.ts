@@ -79,7 +79,7 @@ export class TypeobjetService {
     }
     return {
       status : HttpStatus.OK,
-      error :'Deleted',
+      message :'Deleted',
     }
   }
 }
