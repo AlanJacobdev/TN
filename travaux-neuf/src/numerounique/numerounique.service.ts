@@ -38,6 +38,15 @@ export class NumerouniqueService {
     return this.NuRepo.find();
   }
 
+  findAllOnlyID(atelier:string) {
+    return this.NuRepo.find({
+      select : ['idNumeroUnique'],
+      where : {
+        idAtelier : atelier,
+      }
+    });
+  }
+  
   findOne(id: string) {
     return this.NuRepo.findOne({
       where : {

@@ -28,6 +28,11 @@ export class ObjetrepereController {
     return this.objetrepereService.getORByAtelier(id);
   }
 
+  @Get('getAllNUAndORByAtelier/:atelier')
+  getAllNUAndORByAtelier(@Param('atelier') id: string){
+    return this.objetrepereService.getAllNUAndORByAtelier(id);
+  }
+
   @Get('history/:id')
   getHistory(@Param('id') id: string){
     return this.objetrepereService.getHistory(id);

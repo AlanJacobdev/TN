@@ -4,8 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 
 
 @Entity('numerounique')
 export class Numerounique {
-    
-    
+
     @PrimaryColumn({length : 4})
     idNumeroUnique : string;
     

@@ -68,6 +68,15 @@ export class ObjetrepereService {
     )
   }
 
+  findOneByNU(nu : string) {
+    return this.OrRepo.findOne({
+      select : ['libelleObjetRepere'],
+      where : {
+        numeroUnique : nu
+      }
+    })
+  }
+
   getORByAtelier(id: string) {
     return this.OrRepo.find({
       where : {
@@ -174,7 +183,25 @@ export class ObjetrepereService {
   }
 
 
+  async getAllNUAndORByAtelier(Atelier : string) {
+    let res= []
+    let allNU = await this.nuservice.findAllOnlyID(Atelier);
+    let allORByAtelier = await this.getORByAtelier(Atelier);
+    for (const nu of allNU) {
+      res.push({
+        "numeroUnique" : nu.idNumeroUnique,
+        "libelleOR" : ""
+      })
+    }
+    for (const or of allORByAtelier) {
+      let index = res.findIndex((element) => element.numeroUnique === or.numeroUnique)
+      res[index] = {
+        "numeroUnique" : or.numeroUnique,
+        "libelleOR" : or.libelleObjetRepere
+      }
+    }
+    return res;
+  }
+
 }
-
-
 
