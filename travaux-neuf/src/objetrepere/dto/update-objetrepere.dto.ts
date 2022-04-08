@@ -8,12 +8,6 @@ export class UpdateObjetrepereDto {
     libelleObjetRepere : string;
 
     @IsNotEmpty()
-    codeType : string;
-    
-    @IsNotEmpty()
-    numeroUnique : string;
-
-    @IsNotEmpty()
     valide : boolean;
 
     @Allow()

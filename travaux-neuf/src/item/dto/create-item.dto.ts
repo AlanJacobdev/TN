@@ -1,4 +1,4 @@
-import { Allow, IsNotEmpty } from "class-validator";
+import { Allow, IsInt, IsNotEmpty } from "class-validator";
 
 export class CreateItemDto {
    
@@ -14,6 +14,9 @@ export class CreateItemDto {
     @IsNotEmpty()
     numeroUnique : string;
 
+    @IsInt({
+        "message": "Le digit doit être un nombre"
+    })
     @IsNotEmpty()
     digit : number;
 

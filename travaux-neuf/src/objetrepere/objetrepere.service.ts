@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { validate } from 'class-validator';
 import { NumerouniqueService } from 'src/numerounique/numerounique.service';
 import { CreateOrsaveDto } from 'src/orsave/dto/create-orsave.dto';
 import { Orsave } from 'src/orsave/entities/orsave.entity';
@@ -98,19 +99,19 @@ export class ObjetrepereService {
       }, HttpStatus.NOT_FOUND)
     }
 
-    if (updateObjetrepereDto.codeType != OR.codeType) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change Code Type'
-      }
-    }
+    // if (updateObjetrepereDto.codeType != OR.codeType) {
+    //   return {
+    //     status : HttpStatus.NOT_FOUND,
+    //     error : 'Impossible to change Code Type'
+    //   }
+    // }
 
-    if (updateObjetrepereDto.numeroUnique != OR.numeroUnique) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change Numero Unique'
-      }
-    }
+    // if (updateObjetrepereDto.numeroUnique != OR.numeroUnique) {
+    //   return {
+    //     status : HttpStatus.NOT_FOUND,
+    //     error : 'Impossible to change Numero Unique'
+    //   }
+    // }
  
     let orsaveDto = new CreateOrsaveDto;
     orsaveDto = {

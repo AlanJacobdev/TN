@@ -1,3 +1,4 @@
+import { IsNumber, isNumber } from "class-validator";
 import { Itemsave } from "src/itemsave/entities/itemsave.entity";
 import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
 import { Sousitem } from "src/sousitem/entities/sousitem.entity";

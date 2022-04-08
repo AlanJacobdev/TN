@@ -27,6 +27,12 @@ export class ItemController {
     return this.itemService.getItemByOR(id);
   }
 
+
+  @Get('getItemFromOrAndDispo/:id/:type')
+  getItemFromOrAndDispo(@Param('id') id: string, @Param('type') type: string){
+    return this.itemService.getItemFromOrAndDispo(id, type);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.itemService.findOne(id);

@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { type } from 'os';
 import { Repository } from 'typeorm';
 import { CreateTypeobjetDto } from './dto/create-typeobjet.dto';
 import { UpdateTypeobjetDto } from './dto/update-typeobjet.dto';

@@ -81,6 +81,15 @@ export class ItemService {
     })
   }
 
+  getItemByORAndType(id: string, type : string) {
+    return this.itemRepo.find({
+      where : {
+         idOR : id,
+         codeObjet : type
+      }
+    })
+  }
+
   async update(id: string, updateItemDto: UpdateItemDto) {
     const item = await this.itemRepo.findOne({
       where : {
@@ -93,41 +102,7 @@ export class ItemService {
         error : 'Identifier not found'
       }
     }
-
-    if (updateItemDto.idOR != item.idOR) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change Objet Repere'
-      }
-    }
-
-    if (updateItemDto.codeObjet != item.codeObjet) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change Code Objet'
-      }
-    }
-
-    if (updateItemDto.numeroUnique != item.numeroUnique) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change numeroUnique'
-      }
-    }
-
-    if (updateItemDto.securite != item.securite) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change Securite'
-      }
-    }
-
-    if (updateItemDto.digit != item.digit) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change Digit'
-      }
-    }
+ 
 
     let itemSaveDTO = new CreateItemsaveDto();
     itemSaveDTO = {
@@ -201,5 +176,29 @@ export class ItemService {
 
   async getHistory(idItem : string) {
     return this.itemSaveService.findById(idItem);
+  }
+
+
+  async getItemFromOrAndDispo(idOr : string, type : string){
+    let ItemByORAndType = await this.getItemByOR(idOr);
+    let itemAndDispo= [];
+    for (let i = 0 ; i<10; i++){
+      itemAndDispo.push({
+        "idItem" : type + idOr.substring(2,6) + i,
+        "libelle" : ""
+      })
+    }
+
+    for (const item of ItemByORAndType) {
+      let index = itemAndDispo.findIndex((element) => element.idItem === item.idItem || element.idItem + 'Z' === item.idItem)
+      itemAndDispo[index] = {
+        "idItem" : item.idItem,
+        "libelle" : item.libelleItem
+      }
+    }
+
+    return itemAndDispo;
+
+
   }
 }
