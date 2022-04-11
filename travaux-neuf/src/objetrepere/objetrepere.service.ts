@@ -33,25 +33,25 @@ export class ObjetrepereService {
           } catch (e:any){
             throw new HttpException({
               status : HttpStatus.CONFLICT,
-              error :'Numéro Unique already use',
+              error :'Numéro Unique déja utilisé',
             }, HttpStatus.CONFLICT)
           }
         } else {
           return  {
             status : HttpStatus.CONFLICT,
-            error :'Already exist'
+            error :'L\'objet repère déja existant'
           }
         }
       } else {
         return  {
           status : HttpStatus.NOT_FOUND,
-          error :'Numero Unique doesn\'t exist'
+          error :'Le numero unique n\'existe pas'
         }
       } 
     } else {
       return  {
         status : HttpStatus.NOT_FOUND,
-        error :'Type doesn\'t exist'
+        error :'Le type d\'objet n\'existe pas'
       }
     }  
   }
@@ -95,23 +95,10 @@ export class ObjetrepereService {
     if (OR == undefined){
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
-        error :'Not Found',
+        error :'Objet repère inconnu',
       }, HttpStatus.NOT_FOUND)
     }
 
-    // if (updateObjetrepereDto.codeType != OR.codeType) {
-    //   return {
-    //     status : HttpStatus.NOT_FOUND,
-    //     error : 'Impossible to change Code Type'
-    //   }
-    // }
-
-    // if (updateObjetrepereDto.numeroUnique != OR.numeroUnique) {
-    //   return {
-    //     status : HttpStatus.NOT_FOUND,
-    //     error : 'Impossible to change Numero Unique'
-    //   }
-    // }
  
     let orsaveDto = new CreateOrsaveDto;
     orsaveDto = {
@@ -142,7 +129,7 @@ export class ObjetrepereService {
     if ( OR == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
-        error : 'Not Found',
+        error : 'Identifiant d\'objet inconnu',
       }, HttpStatus.NOT_FOUND);
     }
 
@@ -169,13 +156,13 @@ export class ObjetrepereService {
       await this.orsaveservice.remove(orsaveDto.idObjetRepere, orsaveDto.date);
       return {
         status : HttpStatus.CONFLICT,
-        error :'Impossible to delete',
+        error :'Impossible de supprimer l\'objet (item lié)',
       }
     }
     
     return {
       status : HttpStatus.OK,
-      error :'Deleted',
+      message :'Objet repère supprimé',
     }
   }
 

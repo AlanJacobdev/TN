@@ -26,7 +26,7 @@ export class ItemService {
         if (itemWithSec != undefined || itemWithoutSec != undefined) {
           return {
             status : HttpStatus.CONFLICT,
-            error :'Already exist',
+            error :'Item déjà existant',
           }
         }
 
@@ -42,13 +42,13 @@ export class ItemService {
       } else {
         return {
           status : HttpStatus.NOT_FOUND,
-          error :'Code Objet doesn\'t exist',
+          error :'Code Objet n\'existe pas',
         }
       }
     } else {
       return {
         status : HttpStatus.NOT_FOUND,
-        error :'Objet Repere doesn\'t exist',
+        error :'Objet Repere n\'existe pas',
       }
     }
   }
@@ -99,7 +99,7 @@ export class ItemService {
     if (item == undefined) {
       return {
         status : HttpStatus.NOT_FOUND,
-        error : 'Identifier not found'
+        error : 'Identifiant non trouvé'
       }
     }
  
@@ -138,7 +138,7 @@ export class ItemService {
     if(item == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
-        error : 'Not Found',
+        error : 'Item non trouvé',
       }, HttpStatus.NOT_FOUND);
     }
 
@@ -165,12 +165,12 @@ export class ItemService {
       await this.itemSaveService.remove(itemSaveDTO.idItem, itemSaveDTO.date);
       return {
         status : HttpStatus.CONFLICT,
-        error :'Impossible to delete',
+        error :'Impossible de supprimer l\'item (sous-item lié)',
       }
     }
     return {
       status : HttpStatus.OK,
-      error :'Deleted',
+      message :'Item supprimé',
     }
   }
 
