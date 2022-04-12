@@ -37,8 +37,8 @@ export class SousitemController {
     return this.sousitemService.update(id, updateSousitemDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sousitemService.remove(id);
+  @Delete(':id/:user')
+  remove(@Param('id') id: string, @Param('user') user : string) {
+    return this.sousitemService.remove(id, user);
   }
 }

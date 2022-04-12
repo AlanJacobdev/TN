@@ -43,8 +43,8 @@ export class ItemController {
     return this.itemService.update(id, updateItemDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.itemService.remove(id);
+  @Delete(':id/:user')
+  remove(@Param('id') id: string, @Param('user') user : string) {
+    return this.itemService.remove(id, user);
   }
 }

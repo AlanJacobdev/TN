@@ -141,7 +141,7 @@ export class SousitemService {
     return await this.sousitemRepo.findOne(id);
   }
 
-  async remove(id: string) {
+  async remove(id: string, user : string) {
     const sousitem = await this.sousitemRepo.findOne({
       where : {
         idSousItem : id
@@ -166,7 +166,7 @@ export class SousitemService {
       date : new Date(),
       etat : 'D',
       description : sousitem.description,
-      profilModification : "",
+      profilModification : user,
       posteModification : ""
 
     }

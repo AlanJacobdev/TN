@@ -120,7 +120,7 @@ export class ObjetrepereService {
     return await this.OrRepo.findOne(id);
   }
 
-  async remove(id: string) {
+  async remove(id: string, user : string) {
     const OR = await this.OrRepo.findOne({
       where : {
         idObjetRepere : id
@@ -144,7 +144,7 @@ export class ObjetrepereService {
       description : OR.description,
       date : new Date(),
       etat : "D",
-      profilModification : "",
+      profilModification : user,
       posteModification : ""    
     }
     

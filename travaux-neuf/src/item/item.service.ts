@@ -129,7 +129,7 @@ export class ItemService {
 
   }
 
-  async remove(id: string) {
+  async remove(id: string, user : string) {
     const item = await this.itemRepo.findOne({
       where : {
         idItem : id
@@ -155,7 +155,7 @@ export class ItemService {
       etat : "D",
       description : item.description,
       date : new Date(),
-      profilModification : "",
+      profilModification : user,
       posteModification : ""
       }    
     await this.itemSaveService.create(itemSaveDTO);

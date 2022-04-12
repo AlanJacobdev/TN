@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Request } from '@nestjs/common';
 import { ObjetrepereService } from './objetrepere.service';
 import { CreateObjetrepereDto } from './dto/create-objetrepere.dto';
 import { UpdateObjetrepereDto } from './dto/update-objetrepere.dto';
@@ -43,8 +43,8 @@ export class ObjetrepereController {
     return this.objetrepereService.update(id, updateObjetrepereDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.objetrepereService.remove(id);
+  @Delete(':id/:user')
+  remove(@Param('id') id: string, @Param('user') user : string) {
+    return this.objetrepereService.remove(id, user);
   }
 }
