@@ -63,6 +63,9 @@ export class SousitemsaveService {
     return this.sousItemSaveRepo.find({
       where : {
         idSousItem : id
+      },
+      order : {
+        date : 'DESC'
       }
     })
   }

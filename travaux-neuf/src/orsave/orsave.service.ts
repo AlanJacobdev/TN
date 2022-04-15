@@ -52,6 +52,9 @@ export class OrsaveService {
     return this.orsaveRepo.find({
       where : {
         idObjetRepere : id
+      },
+      order : {
+        date : 'DESC'
       }
     })
   }

@@ -9,12 +9,15 @@ import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { Item } from './entities/item.entity';
 
+
 @Injectable()
 export class ItemService {
   
   constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService, private OrService : ObjetrepereService, private itemSaveService : ItemsaveService){}
   
   async create(createItemDto: CreateItemDto) {
+    console.log("tetst");
+    
     const objetrepere = await this.OrService.findOne(createItemDto.idOR);
     if( objetrepere != undefined) {
       const typeObjet = await this.typeObjetService.findOne(createItemDto.codeObjet);
@@ -23,6 +26,7 @@ export class ItemService {
         const itemWithSec = await this.findOne(idWithSec)
         const idWithoutSec = createItemDto.codeObjet + createItemDto.numeroUnique + createItemDto.digit ;
         const itemWithoutSec = await this.findOne(idWithoutSec);
+        console.log("ia " +itemWithSec + " is " + itemWithoutSec)
         if (itemWithSec != undefined || itemWithoutSec != undefined) {
           return {
             status : HttpStatus.CONFLICT,
@@ -199,6 +203,18 @@ export class ItemService {
 
     return itemAndDispo;
 
+
+  }
+
+  async getTypeOfItemsOfOR(idOR : string) {
+
+    const res = await this.itemRepo.createQueryBuilder("Item")
+    .select(['Item.codeObjet as idTypeObjet'])
+    .where("Item.idOR = :id", { id : idOR})
+    .distinct()
+    .getRawMany()
+      
+    return res;
 
   }
 }

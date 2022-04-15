@@ -6,10 +6,12 @@ import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { SousitemService } from 'src/sousitem/sousitem.service';
 import { ConfigService } from '@nestjs/config';
 import { CreateSousitemDto } from 'src/sousitem/dto/create-sousitem.dto';
+import { recopieItem } from './interface/RecopieInterface';
 
 
 @Injectable()
 export class ServiceRecopieService {
+
 
     constructor(private OrService : ObjetrepereService, private itemService:ItemService,
                 private SiService : SousitemService, private configservice : ConfigService){}
@@ -141,10 +143,12 @@ export class ServiceRecopieService {
                                 dateCreation : new Date(),
                                 posteCreation : ""
                             }
-                            await this.itemService.create(createitem);
-                        
+                            return await this.itemService.create(createitem);
                     }
-                    return await this.itemService.findAllItemOfOR(orSourceExist.codeType + nu);
+                    return  {
+                        status : HttpStatus.NOT_FOUND,
+                        error :'L\'item '+ idTargetItem +' existe déjà'
+                    }
                 } else {
                     return  {
                         status : HttpStatus.NOT_FOUND,
@@ -154,7 +158,7 @@ export class ServiceRecopieService {
             } else {
                 return  {
                     status : HttpStatus.NOT_FOUND,
-                    error :'Origin Objet repere doesn\'t exist'
+                    error :'Target Objet repere doesn\'t exist'
                 }
             }
         } else {
@@ -213,5 +217,49 @@ export class ServiceRecopieService {
             }
         }
     }
+
+    async recopySpecificItemFromOR(idOr:string, NU:string, itemsRecopie: recopieItem[]) {
+        let retour : string = "";
+        let error = 0;
+        let listIdError = [];
+        let stringError : string = "";
+
+        for(const item of itemsRecopie){
+            const recopieItem = await this.recopyOneItemFromOR(idOr, item.idItem,NU);
+            if(recopieItem.hasOwnProperty('error')){
+                error =+ 1 ;
+                listIdError.push(item.idItem)
+            }
+        }
+    
+        if( error > 0 ){
+            listIdError.forEach(function(item, index, array) {
+                if(index == 0) {
+                    stringError += item
+                } else {
+                    stringError += ", " + item
+                }
+              });
+
+            retour = JSON.stringify(
+                { 
+                    status : HttpStatus.NOT_FOUND, 
+                    error :'Les items '+ stringError + ' n\'ont pas pu être créé'
+                }
+                    )
+        } else {
+            retour = JSON.stringify(
+                { 
+                    status : HttpStatus.NOT_FOUND, 
+                    message :'Les items ont été recopiés' 
+                }
+            )
+        }
+        
+        return retour;
+    }
+
+
+
 
 }

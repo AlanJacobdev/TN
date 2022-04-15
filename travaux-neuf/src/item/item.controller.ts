@@ -38,6 +38,11 @@ export class ItemController {
     return this.itemService.findOne(id);
   }
 
+  @Get('getTypeOfItemsOfOR/:id')
+  getTypeOfItemsOfOR(@Param('id') id: string) {
+    return this.itemService.getTypeOfItemsOfOR(id);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateItemDto: UpdateItemDto) {
     return this.itemService.update(id, updateItemDto);
