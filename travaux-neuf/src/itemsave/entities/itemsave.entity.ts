@@ -1,5 +1,6 @@
+import { Description } from "src/description/entities/description.entity";
 import { Item } from "src/item/entities/item.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
 
 @Entity('itemsauvegarde')
 export class Itemsave {
@@ -38,8 +39,9 @@ export class Itemsave {
     @Column({length : 50})
     posteModification : string;
     
-    @Column({length : 50})
-    description : string;
+    @ManyToMany(() => Description)
+    @JoinTable({name : "descriptionParItemSave"})
+    description : Description[];
 
     @Column({length : 1})
     etat : string;

@@ -1,4 +1,5 @@
 import { Allow, IsNotEmpty } from "class-validator";
+import { Description } from "src/description/entities/description.entity";
 import { Sousitem } from "src/sousitem/entities/sousitem.entity";
 
 export class CreateSousitemsaveDto {
@@ -28,7 +29,7 @@ export class CreateSousitemsaveDto {
     date : Date
     
     @Allow()
-    description: string;
+    description: Description[];
 
     @IsNotEmpty()
     etat: string;

@@ -23,6 +23,12 @@ export class ObjetrepereController {
     return this.objetrepereService.findOne(id);
   }
 
+ 
+  @Get('getORByNU/:nu')
+  getORByNU(@Param('nu') nu: string){
+    return this.objetrepereService.getORByNU(nu);
+  }
+
   @Get('getORByAtelier/:id')
   getORByAtelier(@Param('id') id: string){
     return this.objetrepereService.getORByAtelier(id);

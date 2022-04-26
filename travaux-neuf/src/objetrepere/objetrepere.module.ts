@@ -9,10 +9,11 @@ import { Atelier } from 'src/atelier/entities/atelier.entity';
 import { NumerouniqueModule } from 'src/numerounique/numerounique.module';
 import { TypeobjetrepereModule } from 'src/typeobjetrepere/typeobjetrepere.module';
 import { OrsaveModule } from 'src/orsave/orsave.module';
+import { DescriptionModule } from 'src/description/description.module';
 
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Objetrepere, Typeobjetrepere, Numerounique, Atelier]), NumerouniqueModule, TypeobjetrepereModule, forwardRef(() =>OrsaveModule)] ,
+  imports : [TypeOrmModule.forFeature([Objetrepere, Typeobjetrepere, Numerounique, Atelier]), NumerouniqueModule, TypeobjetrepereModule, forwardRef(() =>OrsaveModule), DescriptionModule] ,
   controllers: [ObjetrepereController],
   providers: [ObjetrepereService],
   exports : [ObjetrepereService]

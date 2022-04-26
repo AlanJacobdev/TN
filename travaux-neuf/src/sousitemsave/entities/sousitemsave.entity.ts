@@ -1,5 +1,6 @@
+import { Description } from "src/description/entities/description.entity";
 import { Sousitem } from "src/sousitem/entities/sousitem.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm"
 
 @Entity('sousitemsauvegarde')
 export class Sousitemsave {
@@ -35,8 +36,9 @@ export class Sousitemsave {
     @Column({length : 50, nullable:true})
     posteModification : string;
 
-    @Column({length : 50, nullable:true})
-    description: string;
+    @ManyToMany(() => Description)
+    @JoinTable({name : "descriptionParSousItemSave"})
+    description : Description[];
 
     @Column({length : 50})
     etat: string;

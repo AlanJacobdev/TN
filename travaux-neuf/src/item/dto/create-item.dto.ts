@@ -1,4 +1,5 @@
 import { Allow, IsInt, IsNotEmpty } from "class-validator";
+import { Description } from "src/description/entities/description.entity";
 
 export class CreateItemDto {
    
@@ -30,7 +31,7 @@ export class CreateItemDto {
     actif : boolean;
 
     @Allow()
-    description : string;
+    description : Description[];
     
     @IsNotEmpty()
     profilCreation : string;

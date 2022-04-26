@@ -1,4 +1,5 @@
 import { Allow, isNotEmpty, IsNotEmpty } from "class-validator";
+import { Description } from "src/description/entities/description.entity";
 
 export class UpdateItemDto {
 
@@ -9,7 +10,7 @@ export class UpdateItemDto {
     actif : boolean;
 
     @Allow()
-    description : string;
+    description : Description[];
     
     @IsNotEmpty()
     profilModification : string;

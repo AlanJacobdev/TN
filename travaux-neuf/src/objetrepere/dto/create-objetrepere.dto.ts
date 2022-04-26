@@ -1,4 +1,5 @@
 import { Allow, IsNotEmpty, MaxLength } from "class-validator";
+import { Description } from "src/description/entities/description.entity";
 
 export class CreateObjetrepereDto {
 
@@ -27,7 +28,7 @@ export class CreateObjetrepereDto {
     valide : boolean;
 
     @Allow()
-    description : string;
+    description : Description[];
 
     @IsNotEmpty()
     profilCreation : string;

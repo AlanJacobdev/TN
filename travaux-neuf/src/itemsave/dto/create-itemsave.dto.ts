@@ -1,4 +1,5 @@
 import { Allow, IsNotEmpty } from "class-validator";
+import { Description } from "src/description/entities/description.entity";
 
 export class CreateItemsaveDto {
 
@@ -30,7 +31,7 @@ export class CreateItemsaveDto {
     date : Date
       
     @IsNotEmpty()
-    description : string;
+    description : Description[];
 
     @IsNotEmpty()
     etat : string;

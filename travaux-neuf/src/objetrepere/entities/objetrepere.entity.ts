@@ -1,6 +1,7 @@
+import { Description } from 'src/description/entities/description.entity';
 import { Numerounique } from 'src/numerounique/entities/numerounique.entity';
 import { Typeobjetrepere } from 'src/typeobjetrepere/entities/typeobjetrepere.entity';
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToMany, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToOne, JoinTable, ManyToMany } from 'typeorm';
 
 @Entity('objetrepere')
 export class Objetrepere {
@@ -42,7 +43,8 @@ export class Objetrepere {
     @Column({type : "datetime", nullable:true})
     dateModification : Date;
 
-    @Column({length : 50, nullable:true})
-    description : string;
+    @ManyToMany(() => Description)
+    @JoinTable({name : "descriptionParObjetRepere"})
+    description : Description[];
 
 }

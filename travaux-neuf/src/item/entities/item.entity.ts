@@ -1,9 +1,10 @@
 import { IsNumber, isNumber } from "class-validator";
+import { Description } from "src/description/entities/description.entity";
 import { Itemsave } from "src/itemsave/entities/itemsave.entity";
 import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
 import { Sousitem } from "src/sousitem/entities/sousitem.entity";
 import { Typeobjet } from "src/typeobjet/entities/typeobjet.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 
 @Entity('item')
 export class Item {
@@ -55,7 +56,8 @@ export class Item {
     @Column({type : "datetime", nullable:true})
     dateModification : Date;
 
-    @Column({length : 50, nullable:true})
-    description : string;
+    @ManyToMany(() => Description)
+    @JoinTable({name : "descriptionParItem"})
+    description : Description[];
 
 }

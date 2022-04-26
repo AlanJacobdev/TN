@@ -1,7 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DescriptionService } from 'src/description/description.service';
+import { CreateDescriptionDto } from 'src/description/dto/create-description.dto';
 import { CreateItemsaveDto } from 'src/itemsave/dto/create-itemsave.dto';
 import { ItemsaveService } from 'src/itemsave/itemsave.service';
+import { UpdateObjetrepereDto } from 'src/objetrepere/dto/update-objetrepere.dto';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { TypeobjetService } from 'src/typeobjet/typeobjet.service';
 import { Repository } from 'typeorm';
@@ -13,11 +16,17 @@ import { Item } from './entities/item.entity';
 @Injectable()
 export class ItemService {
   
-  constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService, private OrService : ObjetrepereService, private itemSaveService : ItemsaveService){}
+  constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService, private OrService : ObjetrepereService, private itemSaveService : ItemsaveService,
+              private descriptionService: DescriptionService){}
   
   async create(createItemDto: CreateItemDto) {
-    console.log("tetst");
-    
+ 
+    if (createItemDto.idOR.substring(2,6) !== createItemDto.numeroUnique) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error :'Le numéro unique de l\'item ne correspond pas à celui de l\'objet repère',
+      }
+    }
     const objetrepere = await this.OrService.findOne(createItemDto.idOR);
     if( objetrepere != undefined) {
       const typeObjet = await this.typeObjetService.findOne(createItemDto.codeObjet);
@@ -26,7 +35,7 @@ export class ItemService {
         const itemWithSec = await this.findOne(idWithSec)
         const idWithoutSec = createItemDto.codeObjet + createItemDto.numeroUnique + createItemDto.digit ;
         const itemWithoutSec = await this.findOne(idWithoutSec);
-        console.log("ia " +itemWithSec + " is " + itemWithoutSec)
+       
         if (itemWithSec != undefined || itemWithoutSec != undefined) {
           return {
             status : HttpStatus.CONFLICT,
@@ -39,7 +48,26 @@ export class ItemService {
         }else{
           createItemDto.idItem = idWithoutSec;
         }
+
+        let tabDescription = [];
+        
+        
+        if( createItemDto.description !== null ) {
+        
+          for (const desc of createItemDto.description){
+            let newDescDTO:CreateDescriptionDto = {
+              lien: desc.lien
+            }
+            const newDesc = await this.descriptionService.create(newDescDTO);
+            let index = tabDescription.findIndex((element) => element.idDescription === newDesc.idDescription)
+            if (index === -1) {
+              tabDescription.push(newDesc)
+            }
+          }
+        }
+
         createItemDto.dateCreation = new Date();
+        createItemDto.description = tabDescription;
         const newItem = this.itemRepo.create(createItemDto);
         await this.itemRepo.save(newItem);
         return newItem;
@@ -58,14 +86,17 @@ export class ItemService {
   }
 
   findAll() {
-    return this.itemRepo.find();
+    return this.itemRepo.find({
+      relations: ["description"]
+    });
   }
 
   findOne(id: string) {
     return this.itemRepo.findOne({
       where : {
         idItem : id
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -98,7 +129,8 @@ export class ItemService {
     const item = await this.itemRepo.findOne({
       where : {
         idItem : id
-      }
+      },
+      relations : ["description"]
     })
     if (item == undefined) {
       return {
@@ -107,6 +139,22 @@ export class ItemService {
       }
     }
  
+    let tabDescriptionBefore = [];
+
+    if( updateItemDto.description !== null ) {
+     
+      for (const desc of updateItemDto.description){
+        let newDescDTO:CreateDescriptionDto = {
+          lien: desc.lien
+        }
+        const newDesc = await this.descriptionService.create(newDescDTO);
+        let index = tabDescriptionBefore.findIndex((element) => element.idDescription === newDesc.idDescription)
+        if (index === -1) {
+          tabDescriptionBefore.push(newDesc)
+        }
+      }
+    }
+   
 
     let itemSaveDTO = new CreateItemsaveDto();
     itemSaveDTO = {
@@ -125,11 +173,21 @@ export class ItemService {
       posteModification : updateItemDto.posteModification
     }
 
-
     await this.itemSaveService.create(itemSaveDTO);
-    updateItemDto.dateModification = new Date;
-    await this.itemRepo.update(id, updateItemDto);
-    return await this.itemRepo.findOne(id);
+    item.dateModification = new Date;
+    item.libelleItem = updateItemDto.libelleItem;
+    item.actif = updateItemDto.actif;
+    item.description = tabDescriptionBefore;
+    item.profilModification = updateItemDto.profilModification;
+    item.posteModification = updateItemDto.posteModification;
+    await this.itemRepo.save(item);
+    
+    return await this.itemRepo.findOne({
+      where : {
+        idItem : id
+      },
+      relations : ["description"]
+    });
 
   }
 
@@ -137,7 +195,8 @@ export class ItemService {
     const item = await this.itemRepo.findOne({
       where : {
         idItem : id
-      }
+      },
+      relations: ["description"]
     })
     if(item == undefined) {
       throw new HttpException({

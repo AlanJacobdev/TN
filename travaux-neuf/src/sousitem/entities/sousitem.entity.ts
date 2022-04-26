@@ -1,6 +1,7 @@
+import { Description } from "src/description/entities/description.entity";
 import { Item } from "src/item/entities/item.entity";
 import { Typeobjet } from "src/typeobjet/entities/typeobjet.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
 
 @Entity('sousitem')
 export class Sousitem {
@@ -48,7 +49,8 @@ export class Sousitem {
     @Column({type : "datetime", nullable:true})
     dateModification : Date;
 
-    @Column({length : 50, nullable:true})
-    description : string;
+    @ManyToMany(() => Description)
+    @JoinTable({name : "descriptionParSousItem"})
+    description : Description[];
 
 }

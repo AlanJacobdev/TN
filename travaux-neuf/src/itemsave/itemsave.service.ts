@@ -60,7 +60,8 @@ export class ItemsaveService {
     return this.itemSaveRepo.find({
       where : {
         idItem : id
-      }
+      },
+      relations: ["description"]
     })
   }
 

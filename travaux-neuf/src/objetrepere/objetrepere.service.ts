@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validate } from 'class-validator';
+import { DescriptionService } from 'src/description/description.service';
+import { CreateDescriptionDto } from 'src/description/dto/create-description.dto';
 import { NumerouniqueService } from 'src/numerounique/numerounique.service';
 import { CreateOrsaveDto } from 'src/orsave/dto/create-orsave.dto';
 import { Orsave } from 'src/orsave/entities/orsave.entity';
@@ -15,7 +17,8 @@ import { Objetrepere } from './entities/objetrepere.entity';
 export class ObjetrepereService {
   
 
-  constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, private nuservice : NumerouniqueService, private typeorservice : TypeobjetrepereService,  private orsaveservice : OrsaveService){}
+  constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, private nuservice : NumerouniqueService, private typeorservice : TypeobjetrepereService,  private orsaveservice : OrsaveService,
+              private descriptionService: DescriptionService ){}
 
   async create(createObjetrepereDto: CreateObjetrepereDto) {
     const typeor = await this.typeorservice.findOne(createObjetrepereDto.codeType); 
@@ -25,8 +28,24 @@ export class ObjetrepereService {
         createObjetrepereDto.idObjetRepere = createObjetrepereDto.codeType + createObjetrepereDto.numeroUnique;
         const or = await this.findOne(createObjetrepereDto.idObjetRepere)
         if ( or == undefined){
+          let tabDescription = [];
+
+          if( createObjetrepereDto.description !== null ) {
+          
+            for (const desc of createObjetrepereDto.description){
+              let newDescDTO:CreateDescriptionDto = {
+                lien: desc.lien
+              }
+              const newDesc = await this.descriptionService.create(newDescDTO);
+              let index = tabDescription.findIndex((element) => element.idDescription === newDesc.idDescription)
+              if (index === -1) {
+                tabDescription.push(newDesc)
+              }
+            }
+          }
           try {
           createObjetrepereDto.dateCreation = new Date();
+          createObjetrepereDto.description = tabDescription;
           const newOr = this.OrRepo.create(createObjetrepereDto);
           await this.OrRepo.save(newOr);
           return newOr;
@@ -57,14 +76,17 @@ export class ObjetrepereService {
   }
 
   findAll() {
-    return this.OrRepo.find();
+    return this.OrRepo.find({
+      relations: ["description"]
+    });
   }
 
   findOne(id: string) {
     return this.OrRepo.findOne({ 
       where : {
           idObjetRepere : id
-        }
+        },
+      relations: ["description"]
       }
     )
   }
@@ -74,7 +96,18 @@ export class ObjetrepereService {
       select : ['libelleObjetRepere'],
       where : {
         numeroUnique : nu
-      }
+      },
+      relations: ["description"]
+    })
+  }
+
+  getORByNU(nu : string) {
+    return this.OrRepo.findOne({
+      select : ['idObjetRepere','libelleObjetRepere'],
+      where : {
+        numeroUnique : nu
+      },
+      relations: ["description"]
     })
   }
 
@@ -90,7 +123,8 @@ export class ObjetrepereService {
     const OR = await this.OrRepo.findOne({
       where : {
         idObjetRepere : id
-      }
+      },
+      relations: ["description"]
     })
     if (OR == undefined){
       throw new HttpException({
@@ -99,6 +133,21 @@ export class ObjetrepereService {
       }, HttpStatus.NOT_FOUND)
     }
 
+    let tabDescription = [];
+
+    if( updateObjetrepereDto.description !== null ) {
+    
+      for (const desc of updateObjetrepereDto.description){
+        let newDescDTO:CreateDescriptionDto = {
+          lien: desc.lien
+        }
+        const newDesc = await this.descriptionService.create(newDescDTO);
+        let index = tabDescription.findIndex((element) => element.idDescription === newDesc.idDescription)
+        if (index === -1) {
+          tabDescription.push(newDesc)
+        }
+      }
+    }
  
     let orsaveDto = new CreateOrsaveDto;
     orsaveDto = {
@@ -114,17 +163,29 @@ export class ObjetrepereService {
       posteModification : updateObjetrepereDto.posteModification    
     }
 
+    OR.libelleObjetRepere = updateObjetrepereDto.libelleObjetRepere;
+    OR.valide = updateObjetrepereDto.valide;
+    OR.description = tabDescription;
+    OR.profilModification = updateObjetrepereDto.profilModification;
+    OR.posteModification = updateObjetrepereDto.posteModification;
+    OR.dateModification = new Date();
+
     await this.orsaveservice.create(orsaveDto);   
-    updateObjetrepereDto.dateModification = new Date();
-    await this.OrRepo.update(id,updateObjetrepereDto);
-    return await this.OrRepo.findOne(id);
+    await this.OrRepo.save(OR);
+    return await this.OrRepo.findOne({
+      where : {
+        idObjetRepere : id
+      },
+      relations: ["description"]
+    });
   }
 
   async remove(id: string, user : string) {
     const OR = await this.OrRepo.findOne({
       where : {
-        idObjetRepere : id
-      }
+        idObjetRepere : id,
+      },
+      relations: ["description"]
     })
     if ( OR == undefined) {
       throw new HttpException({
