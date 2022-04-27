@@ -55,7 +55,8 @@ export class OrsaveService {
       },
       order : {
         date : 'DESC'
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -65,7 +66,8 @@ export class OrsaveService {
       where : {
         idObjetRepere : id,
         date : date
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -115,11 +117,13 @@ export class OrsaveService {
         order : {
           date : "ASC"
         },
-        take: 1,
+        take: existingBackUp.length - this.configservice.get('maxSave'),
       })
-      this.remove(DeletedBackUp[0].idObjetRepere, DeletedBackUp[0].date);
+      for (const or of DeletedBackUp){
+        this.remove(or.idObjetRepere, or.date );
+      }
     }
-
+   
   }
 
 }

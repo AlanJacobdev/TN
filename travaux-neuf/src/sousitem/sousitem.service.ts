@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAtelierDto } from 'src/atelier/dto/create-atelier.dto';
+import { DescriptionService } from 'src/description/description.service';
+import { CreateDescriptionDto } from 'src/description/dto/create-description.dto';
 import { Item } from 'src/item/entities/item.entity';
 import { ItemService } from 'src/item/item.service';
 import { CreateSousitemsaveDto } from 'src/sousitemsave/dto/create-sousitemsave.dto';
@@ -16,7 +18,8 @@ import { Sousitem } from './entities/sousitem.entity';
 export class SousitemService {
   
   
-  constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService, private sousitemSaveService : SousitemsaveService ){}
+  constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService, private sousitemSaveService : SousitemsaveService,
+              private descriptionService: DescriptionService ){}
   
   async create(createSousitemDto: CreateSousitemDto) {
     const item = await this.itemservice.findOne(createSousitemDto.idItem);
@@ -38,6 +41,24 @@ export class SousitemService {
         }else{
           createSousitemDto.idSousItem = idwithoutSec;
         }
+
+        let tabDescription = [];
+        
+        
+        if( createSousitemDto.description !== null ) {
+        
+          for (const desc of createSousitemDto.description){
+            let newDescDTO:CreateDescriptionDto = {
+              lien: desc.lien
+            }
+            const newDesc = await this.descriptionService.create(newDescDTO);
+            let index = tabDescription.findIndex((element) => element.idDescription === newDesc.idDescription)
+            if (index === -1) {
+              tabDescription.push(newDesc)
+            }
+          }
+        }
+        createSousitemDto.description = tabDescription;
         createSousitemDto.dateCreation = new Date();
         const newSousItem = this.sousitemRepo.create(createSousitemDto);
         await this.sousitemRepo.save(newSousItem);
@@ -57,14 +78,17 @@ export class SousitemService {
   }
 
   findAll() {
-    return this.sousitemRepo.find();
+    return this.sousitemRepo.find({
+      relations: ["description"]
+    });
   }
 
   findAllSousItemOfItem(id : string){
     return this.sousitemRepo.find({
       where : {
         idItem : id
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -72,7 +96,8 @@ export class SousitemService {
     return this.sousitemRepo.findOne({
       where: {
         idSousItem:id
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -80,7 +105,8 @@ export class SousitemService {
     return this.sousitemRepo.find({
       where : {
         idItem : id
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -88,7 +114,8 @@ export class SousitemService {
     const sousitem = await this.sousitemRepo.findOne({
       where : {
         idSousItem : id
-      }
+      },
+      relations: ["description"]
     })
     if (sousitem == undefined) {
       return {
@@ -97,24 +124,19 @@ export class SousitemService {
       }
     } 
 
-    if (updateSousitemDto.codeSousItem != sousitem.codeSousItem) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change Code Sous Item'
-      }
-    }
+    let tabDescriptionAfter = [];
 
-    if (updateSousitemDto.idItem != sousitem.idItem) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change Item'
-      }
-    }
-
-    if (updateSousitemDto.securite != sousitem.securite) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible to change Securite'
+    if( updateSousitemDto.description !== null ) {
+     
+      for (const desc of updateSousitemDto.description){
+        let newDescDTO:CreateDescriptionDto = {
+          lien: desc.lien
+        }
+        const newDesc = await this.descriptionService.create(newDescDTO);
+        let index = tabDescriptionAfter.findIndex((element) => element.idDescription === newDesc.idDescription)
+        if (index === -1) {
+          tabDescriptionAfter.push(newDesc)
+        }
       }
     }
 
@@ -134,11 +156,21 @@ export class SousitemService {
       posteModification : updateSousitemDto.posteModification
 
     }
-    
+       
     await this.sousitemSaveService.create(sousitemsaveDTO);
-    updateSousitemDto.dateModification = new Date();
-    await this.sousitemRepo.update(id, updateSousitemDto);
-    return await this.sousitemRepo.findOne(id);
+    sousitem.libelleSousItem = updateSousitemDto.libelleSousItem
+    sousitem.actif  = updateSousitemDto.actif
+    sousitem.description  = tabDescriptionAfter;
+    sousitem.profilModification  = updateSousitemDto.profilModification;
+    sousitem.posteModification  = updateSousitemDto.posteModification;
+    sousitem.dateModification = new Date();
+    await this.sousitemRepo.save(sousitem);
+    return await this.sousitemRepo.findOne({
+      where : {
+        idSousItem : id
+      },
+      relations: ["description"]
+    });
   }
 
   async remove(id: string, user : string) {

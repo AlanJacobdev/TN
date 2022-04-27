@@ -52,7 +52,8 @@ export class ItemsaveService {
       where : {
         idItem : id,
         date : date
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -108,9 +109,11 @@ export class ItemsaveService {
         order : {
           date : "ASC"
         },
-        take: 1,
+        take: existingBackUp.length - this.configservice.get('maxSave'),
       })
-      this.remove(DeletedBackUp[0].idItem, DeletedBackUp[0].date );
+      for (const item of DeletedBackUp){
+        this.remove(item.idItem, item.date );
+      }
     }
 
   }

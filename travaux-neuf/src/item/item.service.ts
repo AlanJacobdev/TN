@@ -139,7 +139,7 @@ export class ItemService {
       }
     }
  
-    let tabDescriptionBefore = [];
+    let tabDescriptionAfter = [];
 
     if( updateItemDto.description !== null ) {
      
@@ -148,9 +148,9 @@ export class ItemService {
           lien: desc.lien
         }
         const newDesc = await this.descriptionService.create(newDescDTO);
-        let index = tabDescriptionBefore.findIndex((element) => element.idDescription === newDesc.idDescription)
+        let index = tabDescriptionAfter.findIndex((element) => element.idDescription === newDesc.idDescription)
         if (index === -1) {
-          tabDescriptionBefore.push(newDesc)
+          tabDescriptionAfter.push(newDesc)
         }
       }
     }
@@ -177,7 +177,7 @@ export class ItemService {
     item.dateModification = new Date;
     item.libelleItem = updateItemDto.libelleItem;
     item.actif = updateItemDto.actif;
-    item.description = tabDescriptionBefore;
+    item.description = tabDescriptionAfter;
     item.profilModification = updateItemDto.profilModification;
     item.posteModification = updateItemDto.posteModification;
     await this.itemRepo.save(item);

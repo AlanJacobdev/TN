@@ -6,14 +6,6 @@ export class UpdateSousitemDto {
     @IsNotEmpty()
     libelleSousItem : string;
 
-    @IsNotEmpty()
-    idItem : string;
-
-    @IsNotEmpty()
-    codeSousItem : string;
-
-    @IsNotEmpty()
-    securite : boolean;
 
     @IsNotEmpty()
     estPrefixe : boolean;

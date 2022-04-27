@@ -55,7 +55,8 @@ export class SousitemsaveService {
       where : {
         idSousItem : id,
         date : date
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -66,7 +67,8 @@ export class SousitemsaveService {
       },
       order : {
         date : 'DESC'
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -117,9 +119,11 @@ export class SousitemsaveService {
         order : {
           date : "ASC"
         },
-        take: 1,
+        take: existingBackUp.length - this.configservice.get('maxSave') ,
       })
-      this.remove(DeletedBackUp[0].idSousItem, DeletedBackUp[0].date );
+      for (const sousItem of DeletedBackUp){
+        this.remove(sousItem.idSousItem, sousItem.date );
+      }
     }
 
   }
