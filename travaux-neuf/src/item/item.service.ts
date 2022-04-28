@@ -104,7 +104,8 @@ export class ItemService {
     return this.itemRepo.find({
       where : {
         idOR : id
-      }
+      },
+      relations: ["description"]
     })
   }
 
@@ -112,7 +113,8 @@ export class ItemService {
     return this.itemRepo.find({
       where : {
          idOR : id
-      }
+      },
+      relations: ["description"]
     })
   }
 

@@ -115,7 +115,8 @@ export class ObjetrepereService {
     return this.OrRepo.find({
       where : {
         numeroUnique : ILike(id+"%")
-      }
+      },
+      relations: ["description"]
     })
   }
 
