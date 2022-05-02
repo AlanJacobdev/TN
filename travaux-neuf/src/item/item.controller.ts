@@ -33,6 +33,12 @@ export class ItemController {
     return this.itemService.getItemFromOrAndDispo(id, type);
   }
 
+  @Get('getItemForExport/:atelier/:typeObjet/:objetRepere/:dateDebut/:dateFin/:estActif/:estSecurite')
+  getItemForExport(@Param('atelier') atelier: string, @Param('typeObjet') typeObjet: string, @Param('objetRepere') objetRepere: string, @Param('dateDebut') dateDebut: string,
+  @Param('dateFin') dateFin : string, @Param('estActif') estActif : string, @Param('estSecurite') estSecurite : string){
+    return this.itemService.getItemForExport(atelier, typeObjet, objetRepere, dateDebut, dateFin, estActif, estSecurite);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.itemService.findOne(id);
