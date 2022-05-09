@@ -7,7 +7,7 @@ import { ItemsaveService } from 'src/itemsave/itemsave.service';
 import { UpdateObjetrepereDto } from 'src/objetrepere/dto/update-objetrepere.dto';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { TypeobjetService } from 'src/typeobjet/typeobjet.service';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, QueryBuilder, Repository } from 'typeorm';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { Item } from './entities/item.entity';
@@ -281,6 +281,11 @@ export class ItemService {
 
 
   async getItemForExport(atelier : string, typeObjet : string, objetRepere : string, dateDebut : string, dateFin : string, estActif : string, estSecurite : string){
+    let date: Date;
+   
+    date = new Date(dateFin)
+    date.setDate(date.getDate()+1)
+    
 
     const result = this.itemRepo.createQueryBuilder("Item")
     .select(["Item.idItem, Item.libelleItem"])
@@ -297,31 +302,31 @@ export class ItemService {
     }
     if( dateDebut != '-1' && dateFin !='-1'){
       if(dateDebut == dateFin){
-        let date = new Date(dateFin)
-        date.setDate(date.getDate()+1)
         result.andWhere(new Brackets(qb=>{
-          qb.where("Item.dateCreation BETWEEN :start AND :end", {start : dateDebut, end: date})
-          qb.orWhere("Item.dateModification BETWEEN :start AND :end", {start : dateDebut, end: date})
+          qb.where("Item.dateCreation BETWEEN :start AND :end AND Item.dateModification is null", {start : dateDebut, end: date})
+          qb.orWhere("Item.dateModification BETWEEN :start AND :end AND Item.dateModification is not null ", {start : dateDebut, end: date})
         }));
       
       }else{
         result.andWhere(new Brackets(qb=>{
-          qb.where("Item.dateCreation BETWEEN :start AND :end", {start : dateDebut, end: dateFin})
-          qb.orWhere("Item.dateModification BETWEEN :start AND :end", {start : dateDebut, end: dateFin})
+          qb.where("Item.dateCreation BETWEEN :start AND :end AND Item.dateModification is null", {start : dateDebut, end: date})
+          qb.orWhere("Item.dateModification BETWEEN :start AND :end AND Item.dateModification is not null", {start : dateDebut, end: date})
         }));
         
       }
     } else if(dateDebut != '-1'){
       result.andWhere(new Brackets(qb=>{
-        qb.where("Item.dateCreation >= :startCrea", {startCrea : dateDebut})
-        qb.orWhere("Item.dateModification >= :startModif", {startModif : dateDebut})
+        qb.where("Item.dateCreation >= :startCrea AND Item.dateModification is null", {startCrea : dateDebut})
+        qb.orWhere("Item.dateModification >= :startModif AND Item.dateModification is not null", {startModif : dateDebut})
       }));
       
     } else if(dateFin !='-1'){
       result.andWhere(new Brackets(qb=>{
-        qb.where("Item.dateCreation <= :end", { end: dateFin})
-        qb.orWhere("Item.dateModification <= :end", {end: dateFin})
+        qb.where("Item.dateCreation <= :end AND Item.dateModification is null", { end: date})
+        qb.orWhere("Item.dateModification <= :end AND Item.dateModification is not null", {end: date})
+        
       })); 
+
     }
     if(estActif != '-1'){
       result.andWhere("Item.actif = :actif", {actif : estActif});
@@ -330,10 +335,14 @@ export class ItemService {
     if(estSecurite != '-1'){
       result.andWhere("Item.securite = :securite", {securite : estSecurite});
     }
-
-    return result.getRawMany();
-
-
+    try {
+      return await result.getRawMany();
+    } catch (e){
+      return {
+        status : HttpStatus.CONFLICT,
+        error :'Format de date invalide',
+      }
+    }
   }
 
 

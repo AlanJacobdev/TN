@@ -124,31 +124,24 @@ export class ServiceRecopieService {
             if (orTargetExist != undefined) {
                 const item = await this.itemService.findOne(IdItem);
                 if(item != undefined){ 
-                        const idTargetItem = (item.securite ? item.codeObjet + nu + item.digit + 'Z' : item.codeObjet + nu + item.digit);
-                        const itemExist = await this.itemService.findOne(idTargetItem);
-                        if (itemExist == undefined){
-                            const idTargetItem = (item.securite ? item.codeObjet + nu + item.digit + 'Z' : item.codeObjet + nu + item.digit)
-                            let createitem = new CreateItemDto();
-                            createitem = {
-                                idItem : idTargetItem ,
-                                libelleItem :  `Item issue de la recopie de ${item.idItem}`,
-                                idOR : orSourceExist.codeType + nu,
-                                numeroUnique : nu,
-                                digit : item.digit,
-                                codeObjet : item.codeObjet,
-                                securite : item.securite,
-                                actif : item.actif,
-                                description : item.description,
-                                profilCreation : this.configservice.get('profil') ,
-                                dateCreation : new Date(),
-                                posteCreation : ""
-                            }
-                            return await this.itemService.create(createitem);
+                    const idTargetItem = (item.securite ? item.codeObjet + nu + item.digit + 'Z' : item.codeObjet + nu + item.digit)
+                    let createitem = new CreateItemDto();
+                    createitem = {
+                        idItem : idTargetItem ,
+                        libelleItem :  `Item issue de la recopie de ${item.idItem}`,
+                        idOR : orSourceExist.codeType + nu,
+                        numeroUnique : nu,
+                        digit : item.digit,
+                        codeObjet : item.codeObjet,
+                        securite : item.securite,
+                        actif : item.actif,
+                        description : item.description,
+                        profilCreation : this.configservice.get('profil') ,
+                        dateCreation : new Date(),
+                        posteCreation : ""
                     }
-                    return  {
-                        status : HttpStatus.NOT_FOUND,
-                        error :'L\'item '+ idTargetItem +' existe déjà'
-                    }
+                    return await this.itemService.create(createitem);
+                    
                 } else {
                     return  {
                         status : HttpStatus.NOT_FOUND,
@@ -223,6 +216,20 @@ export class ServiceRecopieService {
         let error = 0;
         let listIdError = [];
         let stringError : string = "";
+
+        for ( const item of itemsRecopie){
+
+            const idTargetItemSec = item.codeObjet + NU + item.idItem.charAt(6) + 'Z' ;
+            const idTargetItem =  item.codeObjet + NU + item.idItem.charAt(6);
+            const itemExist = await this.itemService.findOne(idTargetItem);
+            const itemExistSec = await this.itemService.findOne(idTargetItemSec);
+            if (itemExist != undefined || itemExistSec != undefined){
+                return {
+                    status : HttpStatus.NOT_FOUND,
+                    error :'Impossible de recopier un item déjà existant' 
+                }
+            } 
+        }
 
         for(const item of itemsRecopie){
             const recopieItem = await this.recopyOneItemFromOR(idOr, item.idItem,NU);
