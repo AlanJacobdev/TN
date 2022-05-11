@@ -207,6 +207,13 @@ export class ItemService {
       }, HttpStatus.NOT_FOUND);
     }
 
+    if (item.profilCreation !== user){
+      throw new HttpException({
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible de supprimer un objet dont vous n\'êtes pas le créateur',
+      }, HttpStatus.NOT_FOUND);
+    }
+
     let itemSaveDTO = new CreateItemsaveDto();
     itemSaveDTO = {
       idItem : item.idItem,

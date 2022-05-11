@@ -185,6 +185,13 @@ export class SousitemService {
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
+    
+    if (sousitem.profilCreation !== user){
+      throw new HttpException({
+        status : HttpStatus.NOT_FOUND,
+        error : 'Impossible de supprimer un objet dont vous n\'êtes pas le créateur',
+      }, HttpStatus.NOT_FOUND);
+    }
 
     let sousitemsaveDTO = new CreateSousitemsaveDto();
     sousitemsaveDTO = {

@@ -21,6 +21,8 @@ import { DroitparutilisateurModule } from './droitparutilisateur/droitparutilisa
 import { ConfigModule } from '@nestjs/config';
 import { ServiceRecopieModule } from './service-recopie/service-recopie.module';
 import { DescriptionModule } from './description/description.module';
+import { DemandeAdminModule } from './demande-admin/demande-admin.module';
+import { ServiceSuppressionModule } from './service-suppression/service-suppression.module';
 import configuration from './config';
 @Module({
   imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule,
@@ -29,7 +31,9 @@ import configuration from './config';
     load:[configuration]
   }),
   ServiceRecopieModule,
-  DescriptionModule
+  DescriptionModule,
+  DemandeAdminModule,
+  ServiceSuppressionModule
   ],
   controllers: [AppController],
   providers: [AppService],
