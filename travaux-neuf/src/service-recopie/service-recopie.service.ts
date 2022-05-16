@@ -1,5 +1,4 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CreateItemDto } from 'src/item/dto/create-item.dto';
 import { ItemService } from 'src/item/item.service';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
@@ -7,7 +6,6 @@ import { SousitemService } from 'src/sousitem/sousitem.service';
 import { ConfigService } from '@nestjs/config';
 import { CreateSousitemDto } from 'src/sousitem/dto/create-sousitem.dto';
 import { recopieItem } from './interface/RecopieInterface';
-
 
 @Injectable()
 export class ServiceRecopieService {
@@ -118,6 +116,7 @@ export class ServiceRecopieService {
     }
 
     async recopyOneItemFromOR(IdOR: string, IdItem: string, nu:string){
+        
         const orSourceExist = await this.OrService.findOne(IdOR);
         if (orSourceExist != undefined) {
             const orTargetExist = await this.OrService.findOne(orSourceExist.codeType + nu);
@@ -136,7 +135,7 @@ export class ServiceRecopieService {
                         securite : item.securite,
                         actif : item.actif,
                         description : item.description,
-                        profilCreation : this.configservice.get('profil') ,
+                        profilCreation : /* TODO */,
                         dateCreation : new Date(),
                         posteCreation : ""
                     }

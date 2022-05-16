@@ -35,7 +35,11 @@ export class ServiceSuppressionService {
 
 
   async deleteObject (profil:string, objectToDelete : deleteObject) {
-    let retour = [];
+    let retour : deleteObject = {
+      listeOR: [],
+      listeItem: [],
+      listeSI: []
+    };
     this.retourSI = [];
     this.retourItem = [];
     this.retourOR = [];
@@ -48,11 +52,11 @@ export class ServiceSuppressionService {
     await this.deleteItem(listeItem);
     await this.deleteOR(listeOR);
 
-    retour.push({
+    retour = {
       listeOR : this.retourOR,
       listeItem : this.retourItem,
-      listeSousItem : this.retourSI
-    });
+      listeSI : this.retourSI
+    };
     return retour;
   }
 
@@ -61,69 +65,113 @@ export class ServiceSuppressionService {
     for (const SI of listeSousItem){
       const res = await this.SIService.remove(SI, this.profil, this.admin);
       if (res.hasOwnProperty('message')){
-        this.retourSI.push(SI);
+        this.retourSI.push({
+          "objet" : SI,
+          "value" : true
+        });
+      } else {
+        this.retourSI.push({
+          "objet" : SI,
+          "value" : false
+        });
       }
     }
   }
 
   async deleteItem(listeItem : string []){
-    let flagErrorSI : boolean = false;
-    for(const Item of listeItem){
-      flagErrorSI= false;
-      const listeSiOfItem = await this.SIService.getSousItemByItem(Item);
-      if(listeSiOfItem.length != 0){
-        for (const SI of listeSiOfItem){
-          const res = await this.SIService.remove(SI.idSousItem, this.profil, this.admin);
-          if (!res.hasOwnProperty('message')){
-            flagErrorSI = true;
-          }
-        }
-      }
-      if(!flagErrorSI){
-        const res = await this.ItemService.remove(Item, this.profil, this.admin);
-        if (res.hasOwnProperty('message')){
-          this.retourItem.push(Item);
-        }
-      }
-    }
-  }
-
-  async deleteOR(listeOR : string []){
-    let flagErrorSI : boolean = false;
-    let flagErrorItem : boolean = false;
-
-    for(const OR of listeOR){
-      flagErrorItem = false;
-      const listeItemOfOR = await this.ItemService.getItemByOR(OR);
-      if (listeItemOfOR.length != 0){
-        for (const Item of listeItemOfOR){
-          flagErrorSI = false;
-          const listeSiOfItem = await this.SIService.getSousItemByItem(Item.idItem);
-          if(listeSiOfItem.length != 0){
+    
+      let flagErrorSI : boolean = false;
+      for(const Item of listeItem){
+        flagErrorSI= false;
+        const listeSiOfItem = await this.SIService.getSousItemByItem(Item);
+        if(listeSiOfItem.length != 0){
+          if(this.admin){
             for (const SI of listeSiOfItem){
               const res = await this.SIService.remove(SI.idSousItem, this.profil, this.admin);
               if (!res.hasOwnProperty('message')){
                 flagErrorSI = true;
               }
             }
-          } 
-          if(!flagErrorSI){
-            const res = await this.ItemService.remove(Item.idItem, this.profil, this.admin);
-            if (!res.hasOwnProperty('message')){
-              flagErrorItem = true;
-            } 
+          } else {
+            flagErrorSI = true;
           }
-
         }
-        if (!flagErrorItem){
-          const res = await this.ORService.remove(OR, this.profil, this.admin);
+        
+        if(!flagErrorSI){
+          const res = await this.ItemService.remove(Item, this.profil, this.admin);
           if (res.hasOwnProperty('message')){
-            this.retourOR.push(OR);
-          } 
+            this.retourItem.push({
+              "objet" : Item,
+              "value" : true
+            });
+          } else {
+            this.retourItem.push({
+              "objet" : Item,
+              "value" : false
+            });
+          }
+        } else {
+          this.retourItem.push({
+            "objet" : Item,
+            "value" : false
+          });
+        }
+      }
+  }
+
+  async deleteOR(listeOR : string []){
+    if (!this.admin){
+      let flagErrorSI : boolean = false;
+      let flagErrorItem : boolean = false;
+
+      for(const OR of listeOR){
+        const listeItemOfOR = await this.ItemService.getItemByOR(OR);
+        if (listeItemOfOR.length != 0){
+          if(this.admin){
+            for (const Item of listeItemOfOR){
+              flagErrorSI = false;
+              const listeSiOfItem = await this.SIService.getSousItemByItem(Item.idItem);
+              if(listeSiOfItem.length != 0){
+                for (const SI of listeSiOfItem){
+                  const res = await this.SIService.remove(SI.idSousItem, this.profil, this.admin);
+                  if (!res.hasOwnProperty('message')){
+                    flagErrorSI = true;
+                  }
+                }
+              } 
+              if(!flagErrorSI){
+                const res = await this.ItemService.remove(Item.idItem, this.profil, this.admin);
+                if (!res.hasOwnProperty('message')){
+                  flagErrorItem = true;
+                } 
+              }
+              
+            }
+          } else {
+              flagErrorItem = true
+          }
+          if (!flagErrorItem){
+            const res = await this.ORService.remove(OR, this.profil, this.admin);
+            if (res.hasOwnProperty('message')){
+              this.retourOR.push({
+                "objet" : OR,
+                "value" : true
+              });
+            } else {
+              this.retourOR.push({
+                "objet" : OR,
+                "value" : false
+              });
+            }
+          } else {
+            this.retourOR.push({
+              "objet" : OR,
+              "value" : false
+            });
+          }
         }
       }
     }
-    
   }
 
 

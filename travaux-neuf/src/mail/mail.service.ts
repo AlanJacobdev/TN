@@ -11,7 +11,7 @@ export class MailService {
     try {
       
         await this.mailerService.sendMail({
-        to: 'lappere@laita.fr',
+        to: 'alan.jacob@laita.fr',
         from: '"Logiciel Itemisation" <itemisationlaita@gmail.com>', // override default from
         subject: 'Ceci est un test d\'envoi par logiciel',
         template: 'confirmation', // `.hbs` extension is appended automatically
