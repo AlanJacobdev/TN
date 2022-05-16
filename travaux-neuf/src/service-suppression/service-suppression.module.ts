@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ServiceSuppressionService } from './service-suppression.service';
 import { ServiceSuppressionController } from './service-suppression.controller';
+import { SousitemModule } from 'src/sousitem/sousitem.module';
+import { ItemModule } from 'src/item/item.module';
+import { ObjetrepereModule } from 'src/objetrepere/objetrepere.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
+  imports : [SousitemModule, ItemModule, ObjetrepereModule,MailModule],
   controllers: [ServiceSuppressionController],
-  providers: [ServiceSuppressionService]
+  providers: [ServiceSuppressionService],
+  exports : [ServiceSuppressionService]
 })
 export class ServiceSuppressionModule {}

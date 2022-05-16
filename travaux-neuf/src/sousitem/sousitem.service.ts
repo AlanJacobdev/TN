@@ -173,7 +173,7 @@ export class SousitemService {
     });
   }
 
-  async remove(id: string, user : string) {
+  async remove(id: string, user : string, admin? : boolean) {
     const sousitem = await this.sousitemRepo.findOne({
       where : {
         idSousItem : id
@@ -185,13 +185,16 @@ export class SousitemService {
         error : 'Not Found',
       }, HttpStatus.NOT_FOUND)
     }
+      if (!admin){
+        if (sousitem.profilCreation !== user){
+          return {
+            status : HttpStatus.NOT_FOUND,
+            error : 'Impossible de supprimer un objet dont vous n\'êtes pas le créateur',
+          };
+        }
+      }
     
-    if (sousitem.profilCreation !== user){
-      throw new HttpException({
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible de supprimer un objet dont vous n\'êtes pas le créateur',
-      }, HttpStatus.NOT_FOUND);
-    }
+
 
     let sousitemsaveDTO = new CreateSousitemsaveDto();
     sousitemsaveDTO = {
@@ -223,7 +226,7 @@ export class SousitemService {
     
     return {
       status : HttpStatus.OK,
-      error :'Deleted',
+      message :'Deleted',
     }
   }
 

@@ -181,7 +181,7 @@ export class ObjetrepereService {
     });
   }
 
-  async remove(id: string, user : string) {
+  async remove(id: string, user : string, admin? : boolean) {
     const OR = await this.OrRepo.findOne({
       where : {
         idObjetRepere : id,
@@ -194,15 +194,16 @@ export class ObjetrepereService {
         error : 'Identifiant d\'objet inconnu',
       }, HttpStatus.NOT_FOUND);
     }
-
-    if (OR.profilCreation !== user){
-      throw new HttpException({
-        status : HttpStatus.NOT_FOUND,
-        error : 'Impossible de supprimer un objet dont vous n\'êtes pas le créateur',
-      }, HttpStatus.NOT_FOUND);
-    }
-
-
+    
+      if (!admin){
+        if (OR.profilCreation !== user){
+          return {
+            status : HttpStatus.NOT_FOUND,
+            error : 'Impossible de supprimer un objet dont vous n\'êtes pas le créateur',
+          };
+        }
+      }
+    
     let orsaveDto = new CreateOrsaveDto;
     orsaveDto = {
       idObjetRepere : OR.idObjetRepere,

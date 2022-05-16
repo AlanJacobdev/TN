@@ -1,34 +1,25 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { deleteObject } from './interface/SuppressionInterface';
 import { ServiceSuppressionService } from './service-suppression.service';
-import { CreateServiceSuppressionDto } from './dto/create-service-suppression.dto';
-import { UpdateServiceSuppressionDto } from './dto/update-service-suppression.dto';
 
 @Controller('service-suppression')
 export class ServiceSuppressionController {
   constructor(private readonly serviceSuppressionService: ServiceSuppressionService) {}
 
-  @Post()
-  create(@Body() createServiceSuppressionDto: CreateServiceSuppressionDto) {
-    return this.serviceSuppressionService.create(createServiceSuppressionDto);
+  
+  @Get('/sendmail')
+  sendMail(){
+    return this.serviceSuppressionService.sendMail();
   }
 
-  @Get()
-  findAll() {
-    return this.serviceSuppressionService.findAll();
+  @Delete('/deleteObjectAsAdmin/:profil')
+  deleteObjectsAsAdmin(@Param('profil') profil :string, @Body() itemsRecopie: deleteObject){
+    return this.serviceSuppressionService.deleteObjectsAsAdmin(profil, itemsRecopie);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.serviceSuppressionService.findOne(+id);
+  @Delete('/deleteObject/:profil')
+  deleteObjects(@Param('profil') profil :string, @Body() itemsRecopie: deleteObject){
+    return this.serviceSuppressionService.deleteObjects(profil, itemsRecopie);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceSuppressionDto: UpdateServiceSuppressionDto) {
-    return this.serviceSuppressionService.update(+id, updateServiceSuppressionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.serviceSuppressionService.remove(+id);
-  }
 }
