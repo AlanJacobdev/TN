@@ -48,10 +48,15 @@ export class ServiceSuppressionService {
     const listeItem : string[] = objectToDelete.listeItem;
     const listeSousItem : string[] = objectToDelete.listeSI;
 
-    await this.deleteSI(listeSousItem);
-    await this.deleteItem(listeItem);
-    await this.deleteOR(listeOR);
-
+    if(listeOR.length != 0) {
+      await this.deleteSI(listeSousItem);
+    }
+    if(listeItem.length != 0) {
+      await this.deleteItem(listeItem);
+    } 
+    if(listeItem.length != 0) {
+      await this.deleteOR(listeOR);
+    }
     retour = {
       listeOR : this.retourOR,
       listeItem : this.retourItem,
@@ -120,7 +125,7 @@ export class ServiceSuppressionService {
   }
 
   async deleteOR(listeOR : string []){
-    if (!this.admin){
+
       let flagErrorSI : boolean = false;
       let flagErrorItem : boolean = false;
 
@@ -171,7 +176,7 @@ export class ServiceSuppressionService {
           }
         }
       }
-    }
+    
   }
 
 

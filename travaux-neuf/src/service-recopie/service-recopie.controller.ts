@@ -17,9 +17,9 @@ export class ServiceRecopieController {
     return this.serviceRecopieService.recopySousItemFromItem(id,nu);
   }
 
-  @Get('/recopyOneItemFromOR/:idOr/:idItem/:nu')
-  recopyOneItemFromOR(@Param('idOr') idOr :string, @Param('idItem') idItem :string, @Param('nu') nu : string ){
-    return this.serviceRecopieService.recopyOneItemFromOR(idOr, idItem, nu);
+  @Get('/recopyOneItemFromOR/:idOr/:idItem/:nu/:profil')
+  recopyOneItemFromOR(@Param('idOr') idOr :string, @Param('idItem') idItem :string, @Param('nu') nu : string, @Param('profil') profil :string){
+    return this.serviceRecopieService.recopyOneItemFromOR(idOr, idItem, nu, profil);
   }
 
   @Get('/recopyOneSousItemFromItem/:idItem/:idSousItem/:nu')
@@ -27,9 +27,9 @@ export class ServiceRecopieController {
     return this.serviceRecopieService.recopyOneSousItemFromItem(idItem, idSousItem, nu);
   }
 
-  @Post('/recopySpecificItemFromOR/:idOr/:NU')
-  recopySpecificItemFromOR(@Param('idOr') idOr :string, @Param('NU') NU :string, @Body() itemsRecopie: recopieItem[]){
-    return this.serviceRecopieService.recopySpecificItemFromOR(idOr, NU,itemsRecopie);
+  @Post('/recopySpecificItemFromOR/:idOr/:NU/:profil')
+  recopySpecificItemFromOR(@Param('idOr') idOr :string, @Param('NU') NU :string, @Body() itemsRecopie: recopieItem[], @Param('profil') profil :string){
+    return this.serviceRecopieService.recopySpecificItemFromOR(idOr, NU,itemsRecopie, profil);
   }
 
 

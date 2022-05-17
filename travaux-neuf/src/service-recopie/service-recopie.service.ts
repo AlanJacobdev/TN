@@ -115,7 +115,7 @@ export class ServiceRecopieService {
         }
     }
 
-    async recopyOneItemFromOR(IdOR: string, IdItem: string, nu:string){
+    async recopyOneItemFromOR(IdOR: string, IdItem: string, nu:string, profil : string){
         
         const orSourceExist = await this.OrService.findOne(IdOR);
         if (orSourceExist != undefined) {
@@ -135,7 +135,7 @@ export class ServiceRecopieService {
                         securite : item.securite,
                         actif : item.actif,
                         description : item.description,
-                        profilCreation : /* TODO */,
+                        profilCreation : profil,
                         dateCreation : new Date(),
                         posteCreation : ""
                     }
@@ -210,7 +210,7 @@ export class ServiceRecopieService {
         }
     }
 
-    async recopySpecificItemFromOR(idOr:string, NU:string, itemsRecopie: recopieItem[]) {
+    async recopySpecificItemFromOR(idOr:string, NU:string, itemsRecopie: recopieItem[], profil : string) {
         let retour : string = "";
         let error = 0;
         let listIdError = [];
@@ -231,7 +231,7 @@ export class ServiceRecopieService {
         }
 
         for(const item of itemsRecopie){
-            const recopieItem = await this.recopyOneItemFromOR(idOr, item.idItem,NU);
+            const recopieItem = await this.recopyOneItemFromOR(idOr, item.idItem, NU, profil);
             if(recopieItem.hasOwnProperty('error')){
                 error =+ 1 ;
                 listIdError.push(item.idItem)
