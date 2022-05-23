@@ -26,27 +26,39 @@ export class SousitemService {
     if (item != undefined) {
       const typeObjet = await this.typeObjetService.findOne(createSousitemDto.codeSousItem);
       if (typeObjet != undefined){
-        const idwithoutSec = (createSousitemDto.estPrefixe) ? createSousitemDto.codeSousItem + createSousitemDto.idItem : createSousitemDto.idItem + createSousitemDto.codeSousItem  ;
-        const SousItemwithoutSec = await this.findOne(idwithoutSec);
-        const idwithSec = (createSousitemDto.estPrefixe) ?  createSousitemDto.codeSousItem + createSousitemDto.idItem + "Z" : createSousitemDto.idItem + createSousitemDto.codeSousItem + "Z" ;
-        const SousItemwithSec = await this.findOne(idwithSec);
-        if (SousItemwithoutSec != undefined || SousItemwithSec != undefined ){
+        const idPreWithoutSec = createSousitemDto.codeSousItem + createSousitemDto.idItem;
+        const SousItemPreWithoutSec = await this.findOne(idPreWithoutSec);
+
+        const idNotPreWithoutSec = createSousitemDto.idItem + createSousitemDto.codeSousItem;
+        const SousItemNotPreWithoutSec = await this.findOne(idNotPreWithoutSec);
+
+        const idNotPreWithSec = createSousitemDto.idItem + createSousitemDto.codeSousItem + "Z";
+        const SousItemNotPreWithSec = await this.findOne(idNotPreWithSec);
+        
+        const idPreWithSec = createSousitemDto.codeSousItem + createSousitemDto.idItem + "Z";
+        const SousItemPreWithSec = await this.findOne(idPreWithSec);
+
+        if (SousItemPreWithoutSec != undefined || SousItemNotPreWithoutSec != undefined || SousItemNotPreWithSec != undefined || SousItemPreWithSec != undefined){
           return {
             status : HttpStatus.CONFLICT,
-            error :'Already exist',
+            error :'Le sous-item existe déjà ',
           }
         }
         if (createSousitemDto.securite) {
-          createSousitemDto.idSousItem = idwithSec;
+          if(createSousitemDto.estPrefixe){
+            createSousitemDto.idSousItem = idPreWithSec;
+          } else {
+            createSousitemDto.idSousItem = idNotPreWithSec;
+          }
         }else{
-          createSousitemDto.idSousItem = idwithoutSec;
+          if(createSousitemDto.estPrefixe){
+            createSousitemDto.idSousItem = idPreWithoutSec;
+          } else {
+            createSousitemDto.idSousItem = idNotPreWithoutSec;
+          }
         }
-
         let tabDescription = [];
-        
-        
-        if( createSousitemDto.description !== null ) {
-        
+        if( createSousitemDto.description.length != 0 ) {
           for (const desc of createSousitemDto.description){
             let newDescDTO:CreateDescriptionDto = {
               lien: desc.lien
@@ -66,13 +78,13 @@ export class SousitemService {
       } else {
         return {
           status : HttpStatus.NOT_FOUND,
-          error :'Type Objet doesn\'t exist',
+          error :'Le type d\'objet n\'existe pas',
         }
       }
     } else {
       return {
         status : HttpStatus.NOT_FOUND,
-        error :'Item doesn\'t exist',
+        error :'L\'item parent n\'existe pas',
       }
     }
   }
