@@ -11,7 +11,7 @@ export class UpdateSousitemDto {
     estPrefixe : boolean;
 
     @IsNotEmpty()
-    actif : boolean;
+    etat : string;
 
     @Allow()
     description : Description[];

@@ -1,4 +1,3 @@
-import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 
 @Entity('typeobjetrepere')

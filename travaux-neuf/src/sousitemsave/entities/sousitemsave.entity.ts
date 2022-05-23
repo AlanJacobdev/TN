@@ -25,7 +25,7 @@ export class Sousitemsave {
     estPrefixe: boolean;
     
     @Column()
-    actif: boolean;
+    etat: string;
     
     @PrimaryColumn({type : "datetime"})
     date : Date
@@ -41,6 +41,6 @@ export class Sousitemsave {
     description : Description[];
 
     @Column({length : 50})
-    etat: string;
+    status: string;
 
 }

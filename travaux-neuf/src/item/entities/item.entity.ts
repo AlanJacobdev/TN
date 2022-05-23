@@ -35,8 +35,8 @@ export class Item {
     @Column()
     securite : boolean;
 
-    @Column()
-    actif : boolean;
+    @Column({nullable:false})
+    etat : string;
 
     @Column({length : 50})
     profilCreation : string;

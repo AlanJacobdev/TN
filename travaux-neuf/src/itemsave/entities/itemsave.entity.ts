@@ -27,8 +27,8 @@ export class Itemsave {
     @Column()
     securite : boolean;
     
-    @Column()
-    actif : boolean
+    @Column({nullable:false})
+    etat : string
     
     @PrimaryColumn({type : "datetime"})
     date : Date
@@ -44,5 +44,5 @@ export class Itemsave {
     description : Description[];
 
     @Column({length : 1})
-    etat : string;
+    status : string;
 }

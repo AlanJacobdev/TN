@@ -23,7 +23,7 @@ export class CreateSousitemsaveDto {
     estPrefixe: boolean;
     
     @IsNotEmpty()
-    actif: boolean;
+    etat: string;
     
     @IsNotEmpty()
     date : Date
@@ -32,7 +32,7 @@ export class CreateSousitemsaveDto {
     description: Description[];
 
     @IsNotEmpty()
-    etat: string;
+    status: string;
 
     @Allow()
     profilModification : string;

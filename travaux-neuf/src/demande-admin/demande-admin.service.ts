@@ -23,7 +23,6 @@ export class DemandeAdminService {
     let tabDmdSi = [];
     if(createDemandeAdminDto.orDelete.length != 0){
       for (const or of createDemandeAdminDto.orDelete){
-        console.log(or)
         const orExist = await this.objetRepereService.findOne(or.idObjetRepere);
         if (orExist != undefined){
           tabDmdOr.push(orExist)

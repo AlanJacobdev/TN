@@ -6,7 +6,7 @@ export class Typeobjet {
     @PrimaryColumn({length : 2})
     idType : string;
 
-    @Column({length : 50})
+    @Column({length : 100})
     libelleType : string;
     
     @Column({length : 50})

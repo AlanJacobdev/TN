@@ -7,7 +7,7 @@ export class UpdateItemDto {
     libelleItem : string
 
     @IsNotEmpty()
-    actif : boolean;
+    etat : string;
 
     @Allow()
     description : Description[];

@@ -21,7 +21,7 @@ export class CreateSousitemDto {
     estPrefixe : boolean;
 
     @IsNotEmpty()
-    actif : boolean;
+    etat : string;
 
     @Allow()
     description : Description[];

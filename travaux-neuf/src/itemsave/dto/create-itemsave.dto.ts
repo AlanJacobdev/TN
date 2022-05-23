@@ -25,7 +25,7 @@ export class CreateItemsaveDto {
     securite : boolean;
    
     @IsNotEmpty()
-    actif : boolean
+    etat : string
   
     @IsNotEmpty()
     date : Date
@@ -34,7 +34,7 @@ export class CreateItemsaveDto {
     description : Description[];
 
     @IsNotEmpty()
-    etat : string;
+    status : string;
 
     @IsNotEmpty()
     profilModification : string;

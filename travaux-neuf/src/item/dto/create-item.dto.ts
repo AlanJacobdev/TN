@@ -28,7 +28,7 @@ export class CreateItemDto {
     securite : boolean;
 
     @IsNotEmpty()
-    actif : boolean;
+    etat : string;
 
     @Allow()
     description : Description[];

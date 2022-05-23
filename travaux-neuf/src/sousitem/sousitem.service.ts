@@ -148,9 +148,9 @@ export class SousitemService {
       idItem : sousitem.idItem,
       securite : sousitem.securite,
       estPrefixe : sousitem.estPrefixe,
-      actif : sousitem.actif,
+      etat : sousitem.etat,
       date : new Date(),
-      etat : 'M',
+      status : 'M',
       description : sousitem.description,
       profilModification : updateSousitemDto.profilModification,
       posteModification : updateSousitemDto.posteModification
@@ -159,7 +159,7 @@ export class SousitemService {
        
     await this.sousitemSaveService.create(sousitemsaveDTO);
     sousitem.libelleSousItem = updateSousitemDto.libelleSousItem
-    sousitem.actif  = updateSousitemDto.actif
+    sousitem.etat  = updateSousitemDto.etat
     sousitem.description  = tabDescriptionAfter;
     sousitem.profilModification  = updateSousitemDto.profilModification;
     sousitem.posteModification  = updateSousitemDto.posteModification;
@@ -204,9 +204,9 @@ export class SousitemService {
       idItem : sousitem.idItem,
       securite : sousitem.securite,
       estPrefixe : sousitem.estPrefixe,
-      actif : sousitem.actif,
+      etat : sousitem.etat,
       date : new Date(),
-      etat : 'D',
+      status : 'D',
       description : sousitem.description,
       profilModification : user,
       posteModification : ""

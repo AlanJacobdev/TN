@@ -26,7 +26,7 @@ export class ItemsaveService {
         } catch (e:any) {
           throw new HttpException({
             status : HttpStatus.CONFLICT,
-            error : "Two insertions at same time",
+            error : "Problème d'insertion",
           }, HttpStatus.CONFLICT)
         }
       } else {
@@ -38,7 +38,7 @@ export class ItemsaveService {
     } else {
       return {
         status : HttpStatus.CONFLICT,
-        error :'Item doesn\'t exist',
+        error :'L\'item source n\'existe pas',
       }
     }
   }

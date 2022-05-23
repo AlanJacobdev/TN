@@ -4,10 +4,9 @@ import { DescriptionService } from 'src/description/description.service';
 import { CreateDescriptionDto } from 'src/description/dto/create-description.dto';
 import { CreateItemsaveDto } from 'src/itemsave/dto/create-itemsave.dto';
 import { ItemsaveService } from 'src/itemsave/itemsave.service';
-import { UpdateObjetrepereDto } from 'src/objetrepere/dto/update-objetrepere.dto';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { TypeobjetService } from 'src/typeobjet/typeobjet.service';
-import { Brackets, QueryBuilder, Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { Item } from './entities/item.entity';
@@ -167,8 +166,8 @@ export class ItemService {
       numeroUnique : item.numeroUnique,
       digit : item.digit,
       securite : item.securite,
-      actif : item.actif,
-      etat : "M",
+      etat : item.etat,
+      status : "M",
       description : item.description,
       date : new Date(),
       profilModification : updateItemDto.profilModification,
@@ -178,7 +177,7 @@ export class ItemService {
     await this.itemSaveService.create(itemSaveDTO);
     item.dateModification = new Date;
     item.libelleItem = updateItemDto.libelleItem;
-    item.actif = updateItemDto.actif;
+    item.etat = updateItemDto.etat;
     item.description = tabDescriptionAfter;
     item.profilModification = updateItemDto.profilModification;
     item.posteModification = updateItemDto.posteModification;
@@ -226,8 +225,8 @@ export class ItemService {
       numeroUnique : item.numeroUnique,
       digit : item.digit,
       securite : item.securite,
-      actif : item.actif,
-      etat : "D",
+      etat : item.etat,
+      status : "D",
       description : item.description,
       date : new Date(),
       profilModification : user,

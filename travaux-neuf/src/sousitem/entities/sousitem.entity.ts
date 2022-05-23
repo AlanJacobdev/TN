@@ -28,8 +28,8 @@ export class Sousitem {
     @Column()
     estPrefixe : boolean;
 
-    @Column()
-    actif : boolean;
+    @Column({nullable:false})
+    etat : string;
 
     @Column({length : 50})
     profilCreation : string;

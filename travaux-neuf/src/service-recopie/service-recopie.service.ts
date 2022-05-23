@@ -35,7 +35,7 @@ export class ServiceRecopieService {
                                 digit : item.digit,
                                 codeObjet : item.codeObjet,
                                 securite : item.securite,
-                                actif : item.actif,
+                                etat : item.etat,
                                 description : item.description,
                                 profilCreation : this.configservice.get('profil') ,
                                 dateCreation : new Date(),
@@ -65,7 +65,7 @@ export class ServiceRecopieService {
         }
     }
 
-    async recopySousItemFromItem(item: string, nu : string ) {
+    async recopySousItemFromItem(item: string, nu : string, profil : string ) {
         const itemSourceExist = await this.itemService.findOne(item);
         if (itemSourceExist != undefined) {
             const idTargetItem = (itemSourceExist.securite ? itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit)
@@ -80,14 +80,14 @@ export class ServiceRecopieService {
                             let createsousitem = new CreateSousitemDto();
                             createsousitem = {
                                 idSousItem : idSousItem,
-                                libelleSousItem : `SousItem issue de la recopie de ${sousItem.idSousItem}`,
+                                libelleSousItem : sousItem.libelleSousItem.replace(sousItem.idItem, sousItem.idItem.substring(0,2)+ nu),
                                 idItem : idTargetItem,
                                 codeSousItem : sousItem.codeSousItem,
                                 securite : sousItem.securite,
                                 estPrefixe : sousItem.estPrefixe,
-                                actif : sousItem.actif,
+                                etat : sousItem.etat,
                                 description : sousItem.description,
-                                profilCreation : this.configservice.get('profil'),
+                                profilCreation : profil,
                                 posteCreation : "",
                                 dateCreation : new Date(),
                             }
@@ -98,7 +98,7 @@ export class ServiceRecopieService {
                 } else {
                     return  {
                         status : HttpStatus.NOT_FOUND,
-                        error :'Source Item hasn\'t sousItems'
+                        message :'Source Item hasn\'t sousItems'
                     }
                 }
             } else {
@@ -127,13 +127,13 @@ export class ServiceRecopieService {
                     let createitem = new CreateItemDto();
                     createitem = {
                         idItem : idTargetItem ,
-                        libelleItem :  `Item issue de la recopie de ${item.idItem}`,
+                        libelleItem :  item.libelleItem.replace(item.idOR, item.idOR.substring(0,2)+ nu),
                         idOR : orSourceExist.codeType + nu,
                         numeroUnique : nu,
                         digit : item.digit,
                         codeObjet : item.codeObjet,
                         securite : item.securite,
-                        actif : item.actif,
+                        etat : item.etat,
                         description : item.description,
                         profilCreation : profil,
                         dateCreation : new Date(),
@@ -161,106 +161,115 @@ export class ServiceRecopieService {
         }
     }
 
-    async recopyOneSousItemFromItem(IdItem: string, IdSousItem: string, nu:string){
-        const itemSourceExist = await this.itemService.findOne(IdItem);
-        if (itemSourceExist != undefined) {
-            const idTargetItem = (itemSourceExist.securite ? itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit)
-            const itemTargetExist = await this.itemService.findOne(idTargetItem);
-            if (itemTargetExist != undefined) {
-                const sousItem = await this.SiService.findOne(IdSousItem);
-                if(sousItem != undefined){ 
-                    const idSousItem = (itemSourceExist.securite ? (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem + 'Z' ): (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem ));
-                    const sousItemExist = await this.SiService.findOne(idSousItem)
-                    if (sousItemExist == undefined){
-                        let createsousitem = new CreateSousitemDto();
-                        createsousitem = {
-                            idSousItem : idSousItem,
-                            libelleSousItem : `SousItem issue de la recopie de ${sousItem.idSousItem}`,
-                            idItem : idTargetItem,
-                            codeSousItem : sousItem.codeSousItem,
-                            securite : sousItem.securite,
-                            estPrefixe : sousItem.estPrefixe,
-                            actif : sousItem.actif,
-                            description : sousItem.description,
-                            profilCreation : this.configservice.get('profil'),
-                            posteCreation : "",
-                            dateCreation : new Date(),
-                        }
-                        await this.SiService.create(createsousitem);
-                    }
+    // async recopyOneSousItemFromItem(IdItem: string, IdSousItem: string, nu:string){
+    //     const itemSourceExist = await this.itemService.findOne(IdItem);
+    //     if (itemSourceExist != undefined) {
+    //         const idTargetItem = (itemSourceExist.securite ? itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit)
+    //         const itemTargetExist = await this.itemService.findOne(idTargetItem);
+    //         if (itemTargetExist != undefined) {
+    //             const sousItem = await this.SiService.findOne(IdSousItem);
+    //             if(sousItem != undefined){ 
+    //                 const idSousItem = (itemSourceExist.securite ? (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem + 'Z' ): (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem ));
+    //                 const sousItemExist = await this.SiService.findOne(idSousItem)
+    //                 if (sousItemExist == undefined){
+    //                     let createsousitem = new CreateSousitemDto();
+    //                     createsousitem = {
+    //                         idSousItem : idSousItem,
+    //                         libelleSousItem : `SousItem issue de la recopie de ${sousItem.idSousItem}`,
+    //                         idItem : idTargetItem,
+    //                         codeSousItem : sousItem.codeSousItem,
+    //                         securite : sousItem.securite,
+    //                         estPrefixe : sousItem.estPrefixe,
+    //                         actif : sousItem.actif,
+    //                         description : sousItem.description,
+    //                         profilCreation : this.configservice.get('profil'),
+    //                         posteCreation : "",
+    //                         dateCreation : new Date(),
+    //                     }
+    //                     await this.SiService.create(createsousitem);
+    //                 }
                     
-                    return await this.SiService.findAllSousItemOfItem(idTargetItem);
-                } else {
-                    return  {
-                        status : HttpStatus.NOT_FOUND,
-                        error :'Source Item doesn\'t exist'
-                    }
-                }
-            } else {
-                return  {
-                    status : HttpStatus.NOT_FOUND,
-                    error :'Item doesn\'t exist'
-                }
-            }
-        } else {
-            return  {
-                status : HttpStatus.NOT_FOUND,
-                error :'Origin Item doesn\'t exist'
-            }
-        }
-    }
+    //                 return await this.SiService.findAllSousItemOfItem(idTargetItem);
+    //             } else {
+    //                 return  {
+    //                     status : HttpStatus.NOT_FOUND,
+    //                     error :'Source Item doesn\'t exist'
+    //                 }
+    //             }
+    //         } else {
+    //             return  {
+    //                 status : HttpStatus.NOT_FOUND,
+    //                 error :'Item doesn\'t exist'
+    //             }
+    //         }
+    //     } else {
+    //         return  {
+    //             status : HttpStatus.NOT_FOUND,
+    //             error :'Origin Item doesn\'t exist'
+    //         }
+    //     }
+    // }
 
     async recopySpecificItemFromOR(idOr:string, NU:string, itemsRecopie: recopieItem[], profil : string) {
         let retour : string = "";
-        let error = 0;
-        let listIdError = [];
-        let stringError : string = "";
+        // let error = 0;
+        // let listIdError = [];
+        // let stringError : string = "";
 
         for ( const item of itemsRecopie){
-
-            const idTargetItemSec = item.codeObjet + NU + item.idItem.charAt(6) + 'Z' ;
-            const idTargetItem =  item.codeObjet + NU + item.idItem.charAt(6);
-            const itemExist = await this.itemService.findOne(idTargetItem);
-            const itemExistSec = await this.itemService.findOne(idTargetItemSec);
-            if (itemExist != undefined || itemExistSec != undefined){
+            const existItem = await this.itemService.findOne(item.idItem);
+            if (existItem != undefined){ 
+                const idTargetItemSec = item.codeObjet + NU + item.idItem.charAt(6) + 'Z' ;
+                const idTargetItem =  item.codeObjet + NU + item.idItem.charAt(6);
+                const itemExist = await this.itemService.findOne(idTargetItem);
+                const itemExistSec = await this.itemService.findOne(idTargetItemSec);
+                if (itemExist != undefined || itemExistSec != undefined){
+                    return {
+                        status : HttpStatus.NOT_FOUND,
+                        error :'Impossible de recopier un item déjà existant' 
+                    }
+                } 
+            } else {
                 return {
                     status : HttpStatus.NOT_FOUND,
-                    error :'Impossible de recopier un item déjà existant' 
+                    error :'Item inconnu' 
                 }
-            } 
+            }
         }
 
         for(const item of itemsRecopie){
             const recopieItem = await this.recopyOneItemFromOR(idOr, item.idItem, NU, profil);
-            if(recopieItem.hasOwnProperty('error')){
-                error =+ 1 ;
-                listIdError.push(item.idItem)
-            }
+            // if(recopieItem.hasOwnProperty('error')){
+            //     error =+ 1 ;
+            //     listIdError.push(item.idItem);
+            // } else {
+            const SI = await this.recopySousItemFromItem(item.idItem, NU, profil);
+            // }
         }
     
-        if( error > 0 ){
-            listIdError.forEach(function(item, index, array) {
-                if(index == 0) {
-                    stringError += item
-                } else {
-                    stringError += ", " + item
-                }
-              });
+        // if( error > 0 ){
+        //     listIdError.forEach(function(item, index, array) {
+        //         if(index == 0) {
+        //             stringError += item
+        //         } else {
+        //             stringError += ", " + item
+        //         }
+        //       });
 
-            retour = JSON.stringify(
-                { 
-                    status : HttpStatus.NOT_FOUND, 
-                    error :'Les items '+ stringError + ' n\'ont pas pu être créé'
-                }
-                    )
-        } else {
+        //     retour = JSON.stringify(
+        //         { 
+        //             status : HttpStatus.NOT_FOUND, 
+        //             error :'Les items '+ stringError + ' n\'ont pas pu être créé'
+        //         }
+        //             )
+        // } else {
             retour = JSON.stringify(
                 { 
                     status : HttpStatus.NOT_FOUND, 
                     message :'Les items ont été recopiés' 
                 }
             )
-        }
+        // }
         
         return retour;
     }
