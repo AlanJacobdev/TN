@@ -39,4 +39,9 @@ export class UtilisateurController {
   findUserOnCimaint(@Param('id') id: string, @Param('pwd') pwd: string){
     return this.utilisateurService.findUserOnCimaint(id,pwd);
   }
+
+  @Get('/existUser/:id/:pwd')
+  userExistOrNot(@Param('id') id: string, @Param('pwd') pwd: string){
+    return this.utilisateurService.userExistOrNot(id,pwd);
+  }
 }

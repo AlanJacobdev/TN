@@ -6,6 +6,7 @@ import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 
+
 @Injectable()
 export class UtilisateurService {
 
@@ -106,6 +107,33 @@ export class UtilisateurService {
     }
     
   }
+
+
+   async userExistOrNot(id : string, pwd : string) {
+    const ActiveDirectory = require('activedirectory');
+    var config = new ActiveDirectory({
+      url: 'ldap://GREDC01.even.fr:389',
+      baseDN: 'DC=even,DC=fr',
+      username: 'env.NAME',
+      password: 'env.PWD'
+    })
+    
+    const ad = config;
+    ad.authenticate(id, pwd, function(err, auth) {
+      if (err) {
+        console.log('Authentication failed!');
+        return;
+      }
+      if (auth) {
+        console.log(id + ' Authenticated!');
+      }
+      else {
+        console.log('Authentication failed!');
+      }
+    });
+   }
+
+
 
 
 }

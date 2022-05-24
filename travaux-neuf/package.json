@@ -35,6 +35,8 @@
     "nestjs-common": "^0.0.5",
     "nodemailer": "^6.7.5",
     "odbc": "^2.4.1",
+    "passport": "^0.6.0",
+    "passport-activedirectory": "^1.0.4",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
