@@ -1,10 +1,8 @@
-import { Numerounique } from "src/numerounique/entities/numerounique.entity";
-import { Column, Entity, OneToMany, PrimaryColumn, Timestamp } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity('atelier')
 export class Atelier {
 
-    
     @PrimaryColumn({length : 1})
     idAtelier : string;
 
@@ -13,6 +11,9 @@ export class Atelier {
 
     @Column({length : 10 })
     codeGMAO : string;
+
+    @Column()
+    actif : boolean;
 
     @Column({length : 50})
     profilCreation : string;

@@ -12,6 +12,9 @@ export class CreateAtelierDto {
     codeGMAO : string;
    
     @IsNotEmpty()
+    actif : boolean;
+
+    @IsNotEmpty()
     profilCreation : string;
 
     @Allow()

@@ -75,6 +75,12 @@ export class TypeobjetService {
     })
   }
 
+  findAllType(){
+    return this.typeObjetRepo.find({
+      select:['idType','libelleType']
+    })
+  }
+
   async update(id: string, updateTypeobjetDto: UpdateTypeobjetDto) {
     const typeObjet = await this.typeObjetRepo.findOne({
       where : {

@@ -27,6 +27,11 @@ export class SousitemController {
     return this.sousitemService.getHistory(id);
   }
 
+  @Get('getAllTypeAvailable/:idItem')
+  getAllTypeAvailable(@Param('idItem') idItem: string){
+    return this.sousitemService.getAllTypeAvailable(idItem);
+  }
+
   @Get('getSousItemByItem/:id')
   getSousItemByItem(@Param('id') id: string){
     return this.sousitemService.getSousItemByItem(id);

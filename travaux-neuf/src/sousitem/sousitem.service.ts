@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { stringify } from 'querystring';
 import { CreateAtelierDto } from 'src/atelier/dto/create-atelier.dto';
 import { DescriptionService } from 'src/description/description.service';
 import { CreateDescriptionDto } from 'src/description/dto/create-description.dto';
@@ -244,6 +245,28 @@ export class SousitemService {
 
   async getHistory(idItem : string) {
     return this.sousitemSaveService.findById(idItem);
+  }
+
+
+  async getAllTypeAvailable(idItem : string){
+    let res = [];
+
+    const allTypeUsed = await this.sousitemRepo.createQueryBuilder("SousItem")
+    .select(['SousItem.codeSousItem as idTypeObjet'])
+    .where("SousItem.idItem = :id", { id : idItem})
+    .distinct()
+    .getRawMany()
+    
+    let alltype = await this.typeObjetService.findAllType();
+    
+    for (const typeUse of allTypeUsed){
+      let index = alltype.findIndex((element) => element.idType === typeUse.idTypeObjet)
+      if (index != -1) {
+        alltype.splice(index,1);
+      }
+    }
+
+    return alltype;
   }
 
 }
