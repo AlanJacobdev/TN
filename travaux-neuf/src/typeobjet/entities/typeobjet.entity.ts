@@ -9,6 +9,9 @@ export class Typeobjet {
     @Column({length : 100})
     libelleType : string;
     
+    @Column()
+    actif : boolean;
+
     @Column({length : 50})
     profilCreation : string;
 

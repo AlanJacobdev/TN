@@ -17,6 +17,11 @@ export class AtelierController {
     return this.atelierService.findAll();
   }
 
+  @Get('/getAll/isActif')
+  findfindAllAteliersActifAll() {
+    return this.atelierService.findAllAteliersActif();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.atelierService.findOne(id);

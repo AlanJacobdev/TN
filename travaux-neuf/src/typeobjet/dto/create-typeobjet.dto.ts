@@ -9,6 +9,9 @@ export class CreateTypeobjetDto {
     libelleType : string;
    
     @IsNotEmpty()
+    actif : boolean;
+    
+    @IsNotEmpty()
     profilCreation : string;
 
     @Allow()

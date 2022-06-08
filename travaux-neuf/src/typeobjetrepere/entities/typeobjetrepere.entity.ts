@@ -12,6 +12,9 @@ export class Typeobjetrepere {
     @Column({length : 50})
     profilCreation : string;
 
+    @Column()
+    actif: boolean
+
     @Column({length : 50, nullable:true})
     posteCreation : string;
 

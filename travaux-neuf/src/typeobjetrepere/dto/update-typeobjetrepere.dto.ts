@@ -8,6 +8,9 @@ export class UpdateTypeobjetrepereDto {
     @IsNotEmpty()
     profilModification : string;
 
+    @IsNotEmpty()
+    actif : boolean;
+    
     @Allow()
     posteModification : string;
 

@@ -31,6 +31,14 @@ export class AtelierService {
     return this.AtelierRepo.find();
   }
 
+  findAllAteliersActif(){
+    return this.AtelierRepo.find({
+      where : {
+        actif : true
+      }
+    })
+  }
+
   findOne(id: string) {
     return this.AtelierRepo.findOne({
       where : {

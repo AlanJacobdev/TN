@@ -11,6 +11,9 @@ export class CreateTypeobjetrepereDto {
     @IsNotEmpty()
     profilCreation : string;
 
+    @IsNotEmpty()
+    actif : boolean;
+
     @Allow()
     posteCreation : string;
 

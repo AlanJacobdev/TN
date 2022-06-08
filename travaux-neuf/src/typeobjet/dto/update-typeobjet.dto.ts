@@ -9,6 +9,9 @@ export class UpdateTypeobjetDto  {
     @IsNotEmpty()
     profilModification : string;
     
+    @IsNotEmpty()
+    actif : boolean;
+    
     @Allow()
     posteModification : string;
 

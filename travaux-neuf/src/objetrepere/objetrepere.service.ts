@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validate } from 'class-validator';
+import { start } from 'repl';
 import { DescriptionService } from 'src/description/description.service';
 import { CreateDescriptionDto } from 'src/description/dto/create-description.dto';
 import { NumerouniqueService } from 'src/numerounique/numerounique.service';
@@ -259,6 +260,98 @@ export class ObjetrepereService {
       }
     }
     return res;
+  }
+
+   async reservationIsPossible(Atelier : string, startNU : string , additionalNU : number) {
+    let allNU: string[]= []
+    let res = true;
+    let NU : number = +startNU.substring(1,4);
+    let endingNU : number = NU + +additionalNU;
+    let allORByAtelier =  await this.getORByAtelier(Atelier);
+    const AllNU = new Promise(function(resolve, reject){
+        for ( let i : number = NU ; i <= endingNU ; i++ ){
+          allNU.push(Atelier + (i<10 ? '00' + i : (i<100 ?'0'+i : i)) );
+        }
+        resolve(allNU);
+      })
+     return await AllNU.then( function(data) {
+      for (const or of allORByAtelier) {
+        let index = allNU.findIndex((element) => element === or.numeroUnique)
+        if (index != -1){
+          res = false;
+        }
+      }
+      if (!res) {
+        return {
+        status : HttpStatus.CONFLICT,
+        error :'Il n\'y a pas l\'espace nécessaire',
+      }
+      } else {
+        return {
+          status : HttpStatus.OK,
+          message :'L\'espace est disponible',
+        }
+      }
+      
+    })
+  }
+
+
+
+  async getRangeToCreateOR(Atelier : string, startIteration : number, bookOR : number, isForward : boolean){
+    let startIter = +startIteration;
+    let allORByAtelier =  await this.getORByAtelier(Atelier);
+    let flag = false;
+    let indexExist = false;
+    let indexBloquant = 0;
+    let res = [];
+    const AllNU = new Promise(function(resolve, reject){
+      while(!flag) {
+        
+        let endingNU = startIter + +bookOR;
+        for ( let i : number = startIter ; i <= endingNU && !indexExist; i++ ){
+          let index = allORByAtelier.findIndex((element) => element.numeroUnique === Atelier + (i<10 ? '00' + i : (i<100 ?'0'+i : i)) )
+          if(index != -1){
+            indexExist = true;
+            indexBloquant = i;
+          }
+        }
+
+        if (endingNU >= 1000 || endingNU < 0){
+          flag = true;
+          reject("error")
+        }
+        if(indexExist) {
+          if (isForward) {
+            startIter = +indexBloquant+1;
+          } else {
+            startIter = +indexBloquant-1;
+          }
+          indexExist = false;
+        } else {
+          flag = true;
+          for ( let i : number = startIter ; i <= endingNU ; i++ ){
+            res.push(Atelier + (i<10 ? '00' + i : (i<100 ?'0'+i : i)) );
+          }
+          let data = {
+            range : res,
+            endIndex : startIter
+          }
+          resolve(data);
+        }
+      }
+    })
+
+
+   return await AllNU.then( function(data) {
+    return data
+  }).catch( function(){
+    return {
+      status : HttpStatus.CONFLICT,
+      error :'Impossible d\'effectuer cela',
+    }
+  })
+
   }
 
 }
