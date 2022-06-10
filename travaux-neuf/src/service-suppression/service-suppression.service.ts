@@ -10,16 +10,13 @@ import { deleteObject } from './interface/SuppressionInterface';
 @Injectable()
 export class ServiceSuppressionService {
  
-  constructor(private ORService : ObjetrepereService ,private ItemService : ItemService,private SIService : SousitemService, private mailService : MailService){}
+  constructor(private ORService : ObjetrepereService ,private ItemService : ItemService,private SIService : SousitemService){}
  
   private profil : string = "";
   private retourSI = [];
   private retourItem = [];
   private retourOR = [];
 
-  async sendMail(){
-    await this.mailService.sendUserConfirmation("test","test");
-  }
 
 
   async deleteObjectsAsAdmin(profil:string, objectToDelete : deleteObject) {

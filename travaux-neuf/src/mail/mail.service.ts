@@ -5,19 +5,18 @@ import { Injectable } from '@nestjs/common';
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendUserConfirmation(profil: string, token: string) {
-    const url = `test/test.fr`;
+  async sendUserConfirmation(profil: string, motif : string) {
 
     try {
       
         await this.mailerService.sendMail({
         to: 'alan.jacob@laita.fr',
-        from: '"Logiciel Itemisation" <itemisationlaita@gmail.com>', // override default from
-        subject: 'Ceci est un test d\'envoi par logiciel',
+        from: '"Logiciel Itemisation" <itemisationlaita@laita.fr>', // override default from
+        subject: '[Itemisation] Demande de suppression',
         template: 'confirmation', // `.hbs` extension is appended automatically
         context: { // ✏️ filling curly brackets with content
             name: profil,
-            url,
+            motif: motif,
         },
         });
       } catch (e :any){

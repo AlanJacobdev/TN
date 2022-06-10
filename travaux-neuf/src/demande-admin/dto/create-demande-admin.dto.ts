@@ -22,7 +22,7 @@ export class CreateDemandeAdminDto {
     sousItemDelete : Sousitem[];
 
     @IsNotEmpty()
-    profilCréation : string;
+    profilCreation : string;
 
     dateCreation : Date;
 }

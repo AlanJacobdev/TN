@@ -1,12 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { validate } from 'class-validator';
-import { start } from 'repl';
 import { DescriptionService } from 'src/description/description.service';
 import { CreateDescriptionDto } from 'src/description/dto/create-description.dto';
 import { NumerouniqueService } from 'src/numerounique/numerounique.service';
 import { CreateOrsaveDto } from 'src/orsave/dto/create-orsave.dto';
-import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { OrsaveService } from 'src/orsave/orsave.service';
 import { TypeobjetrepereService } from 'src/typeobjetrepere/typeobjetrepere.service';
 import { ILike, Repository } from 'typeorm';
@@ -17,7 +14,6 @@ import { Objetrepere } from './entities/objetrepere.entity';
 @Injectable()
 export class ObjetrepereService {
   
-
   constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, private nuservice : NumerouniqueService, private typeorservice : TypeobjetrepereService,  private orsaveservice : OrsaveService,
               private descriptionService: DescriptionService ){}
 
@@ -75,6 +71,56 @@ export class ObjetrepereService {
       }
     }  
   }
+
+
+  async createMultipleObject(createObjetrepereDto: CreateObjetrepereDto) {
+    let range = createObjetrepereDto.rangeNu;
+    let error = false;
+
+    for(const nu of range){
+      let createDto : any;
+      if( nu == createObjetrepereDto.numeroUnique){
+        createDto = {
+          libelleObjetRepere: createObjetrepereDto.libelleObjetRepere,
+          codeType: createObjetrepereDto.codeType,
+          numeroUnique: createObjetrepereDto.numeroUnique,
+          valide: true,
+          description: createObjetrepereDto.description,
+          profilCreation: createObjetrepereDto.profilCreation,
+          posteCreation: createObjetrepereDto.posteCreation,
+        };
+      } else {
+        createDto = {
+          libelleObjetRepere: nu,
+          codeType: createObjetrepereDto.codeType,
+          numeroUnique: nu,
+          valide: false,
+          description: [],
+          profilCreation: createObjetrepereDto.profilCreation,
+          posteCreation: createObjetrepereDto.posteCreation,
+        };
+      }
+
+      const res = await this.create(createDto);
+
+      if (res.hasOwnProperty('error')){
+        error = true;
+      }
+    }
+
+    if (error == true) {
+      return  {
+        status : HttpStatus.NOT_FOUND,
+        error :'Problème lors de la création des objets repères'
+      }
+    } else {
+      return  {
+        status : HttpStatus.NOT_FOUND,
+        message :'Création des objets repères effectuée'
+      }
+    }
+  }
+
 
   findAll() {
     return this.OrRepo.find({
@@ -296,42 +342,73 @@ export class ObjetrepereService {
     })
   }
 
-
-
-  async getRangeToCreateOR(Atelier : string, startIteration : number, bookOR : number, isForward : boolean){
+  async getRangeToCreateOR(Atelier : string, startIteration : number, bookOR : number, isForward? : boolean){
     let startIter = +startIteration;
-    let allORByAtelier =  await this.getORByAtelier(Atelier);
+    let allORByAtelier = await this.getORByAtelier(Atelier);
     let flag = false;
     let indexExist = false;
     let indexBloquant = 0;
     let res = [];
+    let endingNU = 0;
+
     const AllNU = new Promise(function(resolve, reject){
+      let moveForward: boolean | undefined;
+      if (isForward == undefined) {
+        moveForward = undefined
+      } else if (isForward.toString() === "true") {
+        moveForward = true;
+      } else if (isForward.toString() === "false"){
+        moveForward = false;
+      } 
+      
+      if (moveForward === true ) {
+        startIter = startIter+1;
+      } else if (moveForward === false){
+        startIter = startIter-1;
+      } 
+      
+      
       while(!flag) {
-        
-        let endingNU = startIter + +bookOR;
-        for ( let i : number = startIter ; i <= endingNU && !indexExist; i++ ){
-          let index = allORByAtelier.findIndex((element) => element.numeroUnique === Atelier + (i<10 ? '00' + i : (i<100 ?'0'+i : i)) )
-          if(index != -1){
-            indexExist = true;
-            indexBloquant = i;
+        if(moveForward === true || moveForward == undefined){
+          endingNU = startIter + +bookOR;
+          for ( let i : number = startIter ; i <= endingNU && !indexExist; i++ ){
+            let index = allORByAtelier.findIndex((element) => element.numeroUnique === Atelier + (i<10 ? '00' + i : (i<100 ?'0'+i : i)) )
+            if(index != -1){
+              indexExist = true;
+              indexBloquant = i;
+            }
+          }
+        } else {
+          endingNU = startIter + +bookOR;
+          for ( let i : number = endingNU ; i >= startIter && !indexExist; i-- ){
+            let index = allORByAtelier.findIndex((element) => element.numeroUnique === Atelier + (i<10 ? '00' + i : (i<100 ?'0'+i : i)) )
+            if(index != -1){
+              indexExist = true;
+              indexBloquant = i;
+            }
           }
         }
-
         if (endingNU >= 1000 || endingNU < 0){
           flag = true;
           reject("error")
         }
         if(indexExist) {
-          if (isForward) {
-            startIter = +indexBloquant+1;
-          } else {
-            startIter = +indexBloquant-1;
+          if (moveForward == true) {
+            startIter = indexBloquant+1;
+          } else if (moveForward == false){
+            startIter = startIter -1;
           }
           indexExist = false;
         } else {
           flag = true;
-          for ( let i : number = startIter ; i <= endingNU ; i++ ){
-            res.push(Atelier + (i<10 ? '00' + i : (i<100 ?'0'+i : i)) );
+          if (moveForward == true || moveForward == undefined){
+            for ( let i : number = startIter ; i <= endingNU ; i++ ){
+              res.push(Atelier + (i<10 ? '00' + i : (i<100 ?'0'+i : i)) );
+            }
+          } else if (moveForward == false) {
+            for ( let i : number = startIter ; i <= endingNU ; i++ ){
+              res.push(Atelier + (i<10 ? '00' + i : (i<100 ?'0'+i : i)) );
+            }
           }
           let data = {
             range : res,
@@ -341,11 +418,13 @@ export class ObjetrepereService {
         }
       }
     })
-
-
    return await AllNU.then( function(data) {
+    
+    
     return data
+
   }).catch( function(){
+     
     return {
       status : HttpStatus.CONFLICT,
       error :'Impossible d\'effectuer cela',

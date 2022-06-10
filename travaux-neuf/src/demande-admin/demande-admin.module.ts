@@ -6,9 +6,10 @@ import { DemandeAdmin } from './entities/demande-admin.entity';
 import { ObjetrepereModule } from 'src/objetrepere/objetrepere.module';
 import { ItemModule } from 'src/item/item.module';
 import { SousitemModule } from 'src/sousitem/sousitem.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DemandeAdmin]), ObjetrepereModule, ItemModule, SousitemModule],
+  imports: [TypeOrmModule.forFeature([DemandeAdmin]), ObjetrepereModule, ItemModule, SousitemModule, MailModule],
   controllers: [DemandeAdminController],
   providers: [DemandeAdminService],
   exports : [DemandeAdminService]

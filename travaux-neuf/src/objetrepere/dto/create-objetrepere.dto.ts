@@ -38,5 +38,7 @@ export class CreateObjetrepereDto {
     
     dateCreation : Date;
 
+    @Allow()
+    rangeNu : string[]
 
 }

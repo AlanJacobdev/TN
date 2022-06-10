@@ -29,7 +29,7 @@ export class DemandeAdmin {
     sousItemDelete : Sousitem[];
     
     @Column({length : 50})
-    profilCréation : string;
+    profilCreation : string;
 
     @Column({type : "datetime"})
     dateCreation : Date;

@@ -4,10 +4,9 @@ import { ServiceSuppressionController } from './service-suppression.controller';
 import { SousitemModule } from 'src/sousitem/sousitem.module';
 import { ItemModule } from 'src/item/item.module';
 import { ObjetrepereModule } from 'src/objetrepere/objetrepere.module';
-import { MailModule } from 'src/mail/mail.module';
 
 @Module({
-  imports : [SousitemModule, ItemModule, ObjetrepereModule,MailModule],
+  imports : [SousitemModule, ItemModule, ObjetrepereModule],
   controllers: [ServiceSuppressionController],
   providers: [ServiceSuppressionService],
   exports : [ServiceSuppressionService]

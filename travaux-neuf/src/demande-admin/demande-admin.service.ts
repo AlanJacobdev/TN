@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ItemService } from 'src/item/item.service';
+import { MailService } from 'src/mail/mail.service';
 import { Objetrepere } from 'src/objetrepere/entities/objetrepere.entity';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { SousitemService } from 'src/sousitem/sousitem.service';
@@ -12,7 +13,7 @@ import { DemandeAdmin } from './entities/demande-admin.entity';
 @Injectable()
 export class DemandeAdminService {
 
-  constructor(@InjectRepository(DemandeAdmin) private demandeAminRepo : Repository<DemandeAdmin>, private objetRepereService : ObjetrepereService, private itemService : ItemService, private sousItemService : SousitemService){}
+  constructor(@InjectRepository(DemandeAdmin) private demandeAdminRepo : Repository<DemandeAdmin>, private objetRepereService : ObjetrepereService, private itemService : ItemService, private sousItemService : SousitemService,  private mailService : MailService){}
 
   async create(createDemandeAdminDto: CreateDemandeAdminDto) {
     createDemandeAdminDto.dateCreation = new Date();
@@ -46,15 +47,20 @@ export class DemandeAdminService {
       }
     }
 
-    const newDemande = this.demandeAminRepo.create(createDemandeAdminDto);
-    await this.demandeAminRepo.save(newDemande);
+    const newDemande = this.demandeAdminRepo.create(createDemandeAdminDto);
+    await this.demandeAdminRepo.save(newDemande);
+    await this.sendMail(createDemandeAdminDto.profilCreation, createDemandeAdminDto.motif)
     return newDemande;
 
 
   }
 
+  async sendMail(user : string, motif: string ){
+    await this.mailService.sendUserConfirmation(user, motif);
+  }
+
   findAll() {
-    return `This action returns all demandeAdmin`;
+   return this.demandeAdminRepo.find();
   }
 
   findOne(id: number) {

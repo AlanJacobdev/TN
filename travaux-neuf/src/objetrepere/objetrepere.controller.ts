@@ -13,6 +13,11 @@ export class ObjetrepereController {
     return this.objetrepereService.create(createObjetrepereDto);
   }
 
+  @Post('create/createMultipleObject')
+  createMultipleObject(@Body() createObjetrepereDto: CreateObjetrepereDto) {
+    return this.objetrepereService.createMultipleObject(createObjetrepereDto);
+  }
+
   @Get()
   findAll() {
     return this.objetrepereService.findAll();
@@ -43,6 +48,12 @@ export class ObjetrepereController {
   getRangeToCreateOR(@Param('idAtelier') idAtelier: string, @Param('startIteration') startIteration: number, @Param('bookOR') bookOR: number, @Param('isForward') isForward: boolean){
     return this.objetrepereService.getRangeToCreateOR(idAtelier, startIteration, bookOR, isForward);
   }
+
+  @Get('getRangeToCreateOR/:idAtelier/:startIteration/:bookOR')
+  getRangeToCreateORWithoutWay(@Param('idAtelier') idAtelier: string, @Param('startIteration') startIteration: number, @Param('bookOR') bookOR: number){
+    return this.objetrepereService.getRangeToCreateOR(idAtelier, startIteration, bookOR);
+  }
+
   @Get('getAllNUAndORByAtelier/:atelier')
   getAllNUAndORByAtelier(@Param('atelier') id: string){
     return this.objetrepereService.getAllNUAndORByAtelier(id);
