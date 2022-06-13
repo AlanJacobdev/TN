@@ -67,6 +67,14 @@ export class TypeobjetService {
     return this.typeObjetRepo.find();
   }
 
+  findAllTypeOActif(){
+    return this.typeObjetRepo.find({
+      where : {
+        actif : true
+      }
+    })
+  }
+
   findOne(id: string) {
     return this.typeObjetRepo.findOne({
       where : {
@@ -93,11 +101,13 @@ export class TypeobjetService {
         error : 'Identifiant du type d\'objet inconnu'
       }
     }
-    const checkLibelle = await this.checkLibelle(id, updateTypeobjetDto.libelleType);
-    if(checkLibelle != undefined) {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error : checkLibelle
+    if(updateTypeobjetDto.libelleType != undefined) {
+      const checkLibelle = await this.checkLibelle(id, updateTypeobjetDto.libelleType);
+      if(checkLibelle != undefined) {
+        return {
+          status : HttpStatus.NOT_FOUND,
+          error : checkLibelle
+        }
       }
     }
     updateTypeobjetDto.dateModification = new Date();

@@ -30,4 +30,5 @@ export class Typeobjet {
     @Column({type : "datetime", nullable:true})
     dateModification : Date;
     
+    
 }

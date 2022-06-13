@@ -25,7 +25,7 @@ export class CreateObjetrepereDto {
     numeroUnique : string;
 
     @IsNotEmpty()
-    valide : boolean;
+    valide : string;
 
     @Allow()
     description : Description[];

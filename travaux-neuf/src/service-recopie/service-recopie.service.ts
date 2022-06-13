@@ -140,7 +140,6 @@ export class ServiceRecopieService {
                         posteCreation : ""
                     }
                     return await this.itemService.create(createitem);
-                    
                 } else {
                     return  {
                         status : HttpStatus.NOT_FOUND,
@@ -212,9 +211,6 @@ export class ServiceRecopieService {
 
     async recopySpecificItemFromOR(idOr:string, NU:string, itemsRecopie: recopieItem[], profil : string) {
         let retour : string = "";
-        // let error = 0;
-        // let listIdError = [];
-        // let stringError : string = "";
 
         for ( const item of itemsRecopie){
             const existItem = await this.itemService.findOne(item.idItem);
@@ -239,11 +235,14 @@ export class ServiceRecopieService {
 
         for(const item of itemsRecopie){
             const recopieItem = await this.recopyOneItemFromOR(idOr, item.idItem, NU, profil);
+            
             // if(recopieItem.hasOwnProperty('error')){
             //     error =+ 1 ;
             //     listIdError.push(item.idItem);
             // } else {
             const SI = await this.recopySousItemFromItem(item.idItem, NU, profil);
+            // console.log(SI);
+            
             // }
         }
     

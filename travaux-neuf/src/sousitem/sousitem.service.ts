@@ -1,16 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { stringify } from 'querystring';
-import { CreateAtelierDto } from 'src/atelier/dto/create-atelier.dto';
 import { DescriptionService } from 'src/description/description.service';
 import { CreateDescriptionDto } from 'src/description/dto/create-description.dto';
-import { Item } from 'src/item/entities/item.entity';
 import { ItemService } from 'src/item/item.service';
 import { CreateSousitemsaveDto } from 'src/sousitemsave/dto/create-sousitemsave.dto';
 import { SousitemsaveService } from 'src/sousitemsave/sousitemsave.service';
-import { Typeobjet } from 'src/typeobjet/entities/typeobjet.entity';
 import { TypeobjetService } from 'src/typeobjet/typeobjet.service';
-import { Repository, UpdateDateColumn } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateSousitemDto } from './dto/create-sousitem.dto';
 import { UpdateSousitemDto } from './dto/update-sousitem.dto';
 import { Sousitem } from './entities/sousitem.entity';
@@ -33,10 +29,10 @@ export class SousitemService {
         const idNotPreWithoutSec = createSousitemDto.idItem + createSousitemDto.codeSousItem;
         const SousItemNotPreWithoutSec = await this.findOne(idNotPreWithoutSec);
 
-        const idNotPreWithSec = createSousitemDto.idItem + createSousitemDto.codeSousItem + "Z";
+        const idNotPreWithSec = (createSousitemDto.securite ? createSousitemDto.idItem.substring(0, createSousitemDto.idItem.length-1) : createSousitemDto.idItem)  + createSousitemDto.codeSousItem + "Z";
         const SousItemNotPreWithSec = await this.findOne(idNotPreWithSec);
         
-        const idPreWithSec = createSousitemDto.codeSousItem + createSousitemDto.idItem + "Z";
+        const idPreWithSec = createSousitemDto.codeSousItem + (createSousitemDto.securite ? createSousitemDto.idItem.substring(0, createSousitemDto.idItem.length-1) + "Z": createSousitemDto.idItem + "Z") ; 
         const SousItemPreWithSec = await this.findOne(idPreWithSec);
 
         if (SousItemPreWithoutSec != undefined || SousItemNotPreWithoutSec != undefined || SousItemNotPreWithSec != undefined || SousItemPreWithSec != undefined){

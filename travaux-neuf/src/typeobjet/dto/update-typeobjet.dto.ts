@@ -3,7 +3,7 @@ import { Allow, IsNotEmpty } from 'class-validator';
 export class UpdateTypeobjetDto  {
 
 
-    @IsNotEmpty()
+    @Allow()
     libelleType : string;
 
     @IsNotEmpty()

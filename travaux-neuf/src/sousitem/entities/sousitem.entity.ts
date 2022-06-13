@@ -53,4 +53,6 @@ export class Sousitem {
     @JoinTable({name : "descriptionParSousItem"})
     description : Description[];
 
+ 
+
 }

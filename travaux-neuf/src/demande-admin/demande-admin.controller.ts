@@ -31,4 +31,10 @@ export class DemandeAdminController {
   remove(@Param('id') id: string) {
     return this.demandeAdminService.remove(+id);
   }
+
+  @Get('/sendmail/:user/:motif')
+  sendMail(@Param('user') user: string, @Param('motif') motif: string) {
+    return this.demandeAdminService.sendMail(user,motif);
+  }
+
 }

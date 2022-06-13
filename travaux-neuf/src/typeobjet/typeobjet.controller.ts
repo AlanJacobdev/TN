@@ -17,6 +17,11 @@ export class TypeobjetController {
     return this.typeobjetService.findAll();
   }
 
+  @Get('getAll/isActif')
+  findAllTypeOActif(){
+    return this.typeobjetService.findAllTypeOActif();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.typeobjetService.findOne(id);

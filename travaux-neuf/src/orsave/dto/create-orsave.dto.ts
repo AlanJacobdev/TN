@@ -17,7 +17,7 @@ export class CreateOrsaveDto {
     numeroUnique : string;
 
     @IsNotEmpty()
-    valide : boolean;
+    valide : string;
 
     @IsNotEmpty()
     description: Description[];

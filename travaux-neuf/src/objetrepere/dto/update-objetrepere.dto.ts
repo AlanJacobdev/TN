@@ -9,7 +9,7 @@ export class UpdateObjetrepereDto {
     libelleObjetRepere : string;
 
     @IsNotEmpty()
-    valide : boolean;
+    valide : string;
 
     @Allow()
     description : Description[];

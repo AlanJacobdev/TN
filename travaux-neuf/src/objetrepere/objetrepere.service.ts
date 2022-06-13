@@ -84,17 +84,17 @@ export class ObjetrepereService {
           libelleObjetRepere: createObjetrepereDto.libelleObjetRepere,
           codeType: createObjetrepereDto.codeType,
           numeroUnique: createObjetrepereDto.numeroUnique,
-          valide: true,
+          valide: 'A',
           description: createObjetrepereDto.description,
           profilCreation: createObjetrepereDto.profilCreation,
           posteCreation: createObjetrepereDto.posteCreation,
         };
       } else {
         createDto = {
-          libelleObjetRepere: nu,
+          libelleObjetRepere: "Numéro secondaire de " + nu,
           codeType: createObjetrepereDto.codeType,
           numeroUnique: nu,
-          valide: false,
+          valide: 'R',
           description: [],
           profilCreation: createObjetrepereDto.profilCreation,
           posteCreation: createObjetrepereDto.posteCreation,
@@ -432,6 +432,20 @@ export class ObjetrepereService {
   })
 
   }
+
+
+  async getTypeOfItemsForOR(Atelier : string) {
+
+    const res = await this.OrRepo.createQueryBuilder("Objetrepere")
+    .select(['Objetrepere.codeType as idTypeObjet'])
+    .where("Objetrepere.numeroUnique like :id", { id : '%' + Atelier.charAt(0) +'%'})
+    .distinct()
+    .getRawMany()
+      
+    return res;
+
+  }
+
 
 }
 

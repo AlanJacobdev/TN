@@ -64,6 +64,11 @@ export class ObjetrepereController {
     return this.objetrepereService.getHistory(id);
   }
 
+  @Get('getTypeOfItemsForOR/:Atelier')
+  getTypeOfItemsForOR(@Param('Atelier') atelier: string){
+    return this.objetrepereService.getTypeOfItemsForOR(atelier);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateObjetrepereDto: UpdateObjetrepereDto) {
     return this.objetrepereService.update(id, updateObjetrepereDto);

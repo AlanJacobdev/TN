@@ -16,6 +16,8 @@ export class DemandeAdminService {
   constructor(@InjectRepository(DemandeAdmin) private demandeAdminRepo : Repository<DemandeAdmin>, private objetRepereService : ObjetrepereService, private itemService : ItemService, private sousItemService : SousitemService,  private mailService : MailService){}
 
   async create(createDemandeAdminDto: CreateDemandeAdminDto) {
+
+    
     createDemandeAdminDto.dateCreation = new Date();
     createDemandeAdminDto.etat = false;
 
@@ -48,11 +50,9 @@ export class DemandeAdminService {
     }
 
     const newDemande = this.demandeAdminRepo.create(createDemandeAdminDto);
-    await this.demandeAdminRepo.save(newDemande);
     await this.sendMail(createDemandeAdminDto.profilCreation, createDemandeAdminDto.motif)
+    await this.demandeAdminRepo.save(newDemande);
     return newDemande;
-
-
   }
 
   async sendMail(user : string, motif: string ){

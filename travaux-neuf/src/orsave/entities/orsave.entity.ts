@@ -17,7 +17,7 @@ export class Orsave {
     numeroUnique : string;
 
     @Column()
-    valide : boolean;
+    valide : string;
 
     @ManyToMany(() => Description)
     @JoinTable({name : "descriptionParObjetRepereSave"})

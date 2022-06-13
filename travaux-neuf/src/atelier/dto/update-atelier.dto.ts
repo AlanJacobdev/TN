@@ -5,9 +5,12 @@ export class UpdateAtelierDto {
     @Allow()
     codeGMAO : string;
 
-    @IsNotEmpty()
+    @Allow()
     actif : boolean;
     
+    @Allow()
+    libelleAtelier : string;
+
     @IsNotEmpty()
     profilModification : string;
 
