@@ -60,8 +60,43 @@ export class DemandeAdminService {
   }
 
   findAll() {
-   return this.demandeAdminRepo.find();
+   return this.demandeAdminRepo.find({
+    where : {
+      etat : false
+    }
+    ,order: {
+      dateCreation : "ASC"
+    }
+   });
   }
+
+  findAllTraitee() {
+    return this.demandeAdminRepo.find({
+     where : {
+       etat : true
+     }
+     ,order: {
+       dateCreation : "DESC"
+     }
+    });
+   }
+
+
+  getAllObjectsFromDmd(idDmd : number) {
+    return this.demandeAdminRepo.find({
+      where : {
+        "idDemande" : idDmd
+      },
+      join :  {
+        alias : "demandeAdmin",
+        leftJoinAndSelect : {
+          item : "demandeAdmin.itemDelete",
+          sousitem : "demandeAdmin.sousItemDelete",
+          objetrepere : "demandeAdmin.orDelete"
+        } 
+      }
+    })
+  } 
 
   findOne(id: number) {
     return `This action returns a #${id} demandeAdmin`;

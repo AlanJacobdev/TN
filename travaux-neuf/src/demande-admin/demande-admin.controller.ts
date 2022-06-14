@@ -17,6 +17,17 @@ export class DemandeAdminController {
     return this.demandeAdminService.findAll();
   }
 
+  @Get('/get/findAllTraitee')
+  findAllTraitee() {
+    return this.demandeAdminService.findAllTraitee();
+  }
+
+  @Get('/getAllObjectsFromDmd/:idDmd')
+  getAllObjectsFromDmd(@Param('idDmd') idDmd: number) {
+    return this.demandeAdminService.getAllObjectsFromDmd(idDmd);
+  }
+
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.demandeAdminService.findOne(+id);

@@ -85,7 +85,16 @@ export class TypeobjetService {
 
   findAllType(){
     return this.typeObjetRepo.find({
-      select:['idType','libelleType']
+      select:['idType','libelleType','actif']
+    })
+  }
+
+  findAllTypeActif(){
+    return this.typeObjetRepo.find({
+      select:['idType','libelleType','actif'],
+      where : {
+        actif : true
+      }
     })
   }
 

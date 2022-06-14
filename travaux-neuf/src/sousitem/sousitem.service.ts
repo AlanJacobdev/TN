@@ -245,7 +245,6 @@ export class SousitemService {
 
 
   async getAllTypeAvailable(idItem : string){
-    let res = [];
 
     const allTypeUsed = await this.sousitemRepo.createQueryBuilder("SousItem")
     .select(['SousItem.codeSousItem as idTypeObjet'])
@@ -264,5 +263,26 @@ export class SousitemService {
 
     return alltype;
   }
+
+  async getAllTypeAvailableAndActif(idItem : string){
+
+    const allTypeUsed = await this.sousitemRepo.createQueryBuilder("SousItem")
+    .select(['SousItem.codeSousItem as idTypeObjet'])
+    .where("SousItem.idItem = :id", { id : idItem})
+    .distinct()
+    .getRawMany()
+    
+    let alltype = await this.typeObjetService.findAllTypeActif();
+    
+    for (const typeUse of allTypeUsed){
+      let index = alltype.findIndex((element) => element.idType === typeUse.idTypeObjet)
+      if (index != -1) {
+        alltype.splice(index,1);
+      }
+    }
+
+    return alltype;
+  }
+  
 
 }
