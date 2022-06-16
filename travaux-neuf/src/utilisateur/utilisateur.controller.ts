@@ -1,16 +1,22 @@
-import { Controller, Get, Post, Body, Param, Delete, Put} from '@nestjs/common';
+import { Request, Controller, Get, Post, Body, Param, Delete, Put, UseGuards} from '@nestjs/common';
 import { UtilisateurService } from './utilisateur.service';
 import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
+import { AADAuthGuard } from 'src/auth/strategy/aad-auth.guard';
 
 @Controller('utilisateur')
 export class UtilisateurController {
   constructor(private readonly utilisateurService: UtilisateurService ) {}
 
+  @UseGuards(AADAuthGuard)
+  @Post('/existUser')
+  test(@Request() req){
+    return true
+    return this.utilisateurService.test();
+  }
   
   @Post()
   create(@Body() createUtilisateurDto: CreateUtilisateurDto) {
-
     return this.utilisateurService.create(createUtilisateurDto);
   }
 
@@ -40,8 +46,12 @@ export class UtilisateurController {
     return this.utilisateurService.findUserOnCimaint(id,pwd);
   }
 
+  @UseGuards(AADAuthGuard)
   @Get('/existUser/:id/:pwd')
   userExistOrNot(@Param('id') id: string, @Param('pwd') pwd: string){
     return this.utilisateurService.userExistOrNot(id,pwd);
   }
+
+ 
+
 }

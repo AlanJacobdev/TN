@@ -13,8 +13,8 @@ export class MailService {
         to: 'alan.jacob@laita.fr',
         from: '"Logiciel Itemisation" <itemisationlaita@laita.fr>', // override default from
         subject: '[Itemisation] Demande de suppression',
-        template: 'confirmation', // `.hbs` extension is appended automatically
-        context: { // ✏️ filling curly brackets with content
+        template: 'confirmation',
+        context: { 
             name: profil,
             motif: motif,
         },
@@ -24,4 +24,24 @@ export class MailService {
         
       } 
   }
+
+  async sendUserConfirmationDelete(motif : string) {
+
+    try {
+      
+        await this.mailerService.sendMail({
+        to: 'alan.jacob@laita.fr',
+        from: '"Logiciel Itemisation" <itemisationlaita@laita.fr>', // override default from
+        subject: '[Itemisation] Suppression acceptée',
+        template: 'confirmDelete',  
+        context: {
+          motif: motif  
+        },
+        });
+      } catch (e :any){
+        console.log(e);
+        
+      } 
+  }
+
 }

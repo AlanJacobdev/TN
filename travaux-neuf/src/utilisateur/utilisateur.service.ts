@@ -9,10 +9,14 @@ import { Utilisateur } from './entities/utilisateur.entity';
 
 @Injectable()
 export class UtilisateurService {
+  test() {
+    throw new Error('Method not implemented.');
+  }
 
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private serviceService: ServiceService){}
   
   async create(createUtilisateurDto: CreateUtilisateurDto) {
+    
     const service = await this.serviceService.findOne(createUtilisateurDto.idService);
     if (service != undefined) {
       const uti = await this.findOne(createUtilisateurDto.idUtilisateur);
@@ -110,27 +114,32 @@ export class UtilisateurService {
 
 
    async userExistOrNot(id : string, pwd : string) {
-    const ActiveDirectory = require('activedirectory');
-    var config = new ActiveDirectory({
-      url: 'ldap://GREDC01.even.fr:389',
-      baseDN: 'DC=even,DC=fr',
-      username: 'env.NAME',
-      password: 'env.PWD'
-    })
+
+    console.log("test");
     
-    const ad = config;
-    ad.authenticate(id, pwd, function(err, auth) {
-      if (err) {
-        console.log('Authentication failed!');
-        return;
-      }
-      if (auth) {
-        console.log(id + ' Authenticated!');
-      }
-      else {
-        console.log('Authentication failed!');
-      }
-    });
+    // const ActiveDirectory = require('activedirectory');
+    // var config = new ActiveDirectory({
+    //   url: 'ldap://GREDC01.even.fr:389',
+    //   baseDN: 'DC=even,DC=fr',
+    //   username: 'env.NAME',
+    //   password: 'env.PWD'
+    // })
+    
+    // const ad = config;
+    // ad.authenticate(id, pwd, function(err, auth) {
+    //   if (err) {
+    //     console.log('Authentication failed!');
+    //     return;
+    //   }
+    //   if (auth) {
+    //     console.log(id + ' Authenticated!');
+    //   }
+    //   else {
+    //     console.log('Authentication failed!');
+    //   }
+    // });
+
+    
    }
 
 

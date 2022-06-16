@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ItemService } from 'src/item/item.service';
 import { MailService } from 'src/mail/mail.service';
-import { Objetrepere } from 'src/objetrepere/entities/objetrepere.entity';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { SousitemService } from 'src/sousitem/sousitem.service';
 import { Repository } from 'typeorm';
@@ -102,8 +101,43 @@ export class DemandeAdminService {
     return `This action returns a #${id} demandeAdmin`;
   }
 
-  update(id: number, updateDemandeAdminDto: UpdateDemandeAdminDto) {
-    return `This action updates a #${id} demandeAdmin`;
+  async update(id: number, updateDemandeAdminDto: UpdateDemandeAdminDto) {
+    
+      const demande = await this.demandeAdminRepo.findOne({
+        where : {
+          idDemande : id
+        }
+      })
+      if (demande == undefined) {
+        return {
+          status : HttpStatus.NOT_FOUND,
+          error : 'Identifiant non trouvé'
+        }
+      }
+      if (demande.etat == true){
+        return {
+          status : HttpStatus.CONFLICT,
+          error : 'Demande déja traitée'
+        }
+      }
+
+      if(updateDemandeAdminDto.isDelete){
+
+       
+        
+        await this.mailService.sendUserConfirmationDelete(demande.motif)
+      } else {
+
+
+      }
+
+      updateDemandeAdminDto.etat = true;
+      updateDemandeAdminDto.dateModification = new Date();
+      await this.demandeAdminRepo.update(id, updateDemandeAdminDto);
+      return await this.demandeAdminRepo.findOne(id);
+  
+  
+
   }
 
   remove(id: number) {

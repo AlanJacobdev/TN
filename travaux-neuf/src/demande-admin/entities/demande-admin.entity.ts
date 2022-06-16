@@ -16,6 +16,9 @@ export class DemandeAdmin {
     @Column()
     etat : boolean;
 
+    @Column({nullable:true})
+    isDelete : boolean
+
     @ManyToMany(() => Objetrepere)
     @JoinTable({name : "demandeOR"})
     orDelete : Objetrepere[];
