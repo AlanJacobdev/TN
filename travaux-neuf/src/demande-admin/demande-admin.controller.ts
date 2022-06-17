@@ -27,6 +27,16 @@ export class DemandeAdminController {
     return this.demandeAdminService.getAllObjectsFromDmd(idDmd);
   }
 
+  @Get('getArborescenceOfOR/:idOr')
+  getArborescenceOfOR(@Param('idOr') idOr: string) {
+    return this.demandeAdminService.getArborescenceOfOR(idOr);
+  }
+
+  @Get('getArborescenceOfItem/:idItem')
+  getArborescenceOfItem(@Param('idItem') idItem: string) {
+    return this.demandeAdminService.getArborescenceOfItem(idItem);
+  }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

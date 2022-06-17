@@ -76,6 +76,7 @@ export class ObjetrepereService {
   async createMultipleObject(createObjetrepereDto: CreateObjetrepereDto) {
     let range = createObjetrepereDto.rangeNu;
     let error = false;
+    const NUOrigine = createObjetrepereDto.rangeNu[0];
 
     for(const nu of range){
       let createDto : any;
@@ -91,7 +92,7 @@ export class ObjetrepereService {
         };
       } else {
         createDto = {
-          libelleObjetRepere: "Numéro secondaire de " + nu,
+          libelleObjetRepere: "Numéro secondaire de " + NUOrigine,
           codeType: createObjetrepereDto.codeType,
           numeroUnique: nu,
           valide: 'R',

@@ -75,7 +75,7 @@ export class DemandeAdminService {
        etat : true
      }
      ,order: {
-       dateCreation : "DESC"
+       dateModification : "DESC"
      }
     });
    }
@@ -135,12 +135,71 @@ export class DemandeAdminService {
       updateDemandeAdminDto.dateModification = new Date();
       await this.demandeAdminRepo.update(id, updateDemandeAdminDto);
       return await this.demandeAdminRepo.findOne(id);
-  
-  
-
   }
 
   remove(id: number) {
     return `This action removes a #${id} demandeAdmin`;
   }
+
+  async getArborescenceOfOR(idObjetRepere : string) {
+    const orExist = await this.objetRepereService.findOne(idObjetRepere);
+    let allItemAndSIOfOR = [];
+    if (orExist != undefined) {
+      const allItemOfOR = await this.itemService.findAllItemOfOR(idObjetRepere);
+      if(allItemOfOR.length != 0){
+        for( const item of allItemOfOR) {
+          const allSiOfItem = await this.sousItemService.findAllSousItemOfItemUseful(item.idItem);
+          allItemAndSIOfOR.push({
+            Item: {
+              idItem: item.idItem,
+              libelle: item.libelleItem
+            },
+            SI: allSiOfItem
+          })
+        }
+        const ORArborescence = {
+          OR: {
+            idObjetRepere : orExist.idObjetRepere,
+            libelleObjetRepere  : orExist.libelleObjetRepere
+          },
+          Item: allItemAndSIOfOR
+        }
+        return ORArborescence;
+      }
+    } else {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Objet repère inconnu'
+      }
+    }
+  }
+
+
+  async getArborescenceOfItem(idItem : string) {
+    const itemExist = await this.itemService.findOne(idItem);
+    let allSiOfItem = [];
+    if (itemExist != undefined) {
+      const SiofItem= await this.sousItemService.findAllSousItemOfItemUseful(idItem);
+      allSiOfItem.push(
+        {
+          Item: {
+            idItem: itemExist.idItem,
+            libelle: itemExist.libelleItem
+          },
+          SI: SiofItem
+        }
+      );
+        return allSiOfItem;
+    } else {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Item inconnu'
+      }
+    }
+  }
+
+
+
+
+
 }

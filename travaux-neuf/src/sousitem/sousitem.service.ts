@@ -101,6 +101,15 @@ export class SousitemService {
     })
   }
 
+  findAllSousItemOfItemUseful(id : string){
+    return this.sousitemRepo.find({
+      select : ['idSousItem', 'libelleSousItem'],
+      where : {
+        idItem : id
+      }
+    })
+  }
+
   async findOne(id: string) {
     return this.sousitemRepo.findOne({
       where: {
