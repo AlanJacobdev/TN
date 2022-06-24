@@ -113,8 +113,9 @@ export class UtilisateurService {
   }
 
 
-   async userExistOrNot(id : string, pwd : string) {
-
+   async userExistOrNot(req : any, id : string, pwd : string) {
+    console.log("req" + req);
+    
     console.log("test");
     
     // const ActiveDirectory = require('activedirectory');

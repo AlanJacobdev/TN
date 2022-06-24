@@ -11,7 +11,9 @@ export class UtilisateurController {
   @UseGuards(AADAuthGuard)
   @Post('/existUser')
   test(@Request() req){
-    return true
+    console.log(req.user.displayName);
+    // console.log(req);
+    
     return this.utilisateurService.test();
   }
   
@@ -48,8 +50,8 @@ export class UtilisateurController {
 
   @UseGuards(AADAuthGuard)
   @Get('/existUser/:id/:pwd')
-  userExistOrNot(@Param('id') id: string, @Param('pwd') pwd: string){
-    return this.utilisateurService.userExistOrNot(id,pwd);
+  userExistOrNot(@Request() req, @Param('id') id: string, @Param('pwd') pwd: string){
+    return this.utilisateurService.userExistOrNot(req,id,pwd);
   }
 
  

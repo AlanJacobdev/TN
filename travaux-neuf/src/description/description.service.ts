@@ -27,6 +27,7 @@ export class DescriptionService {
 
   }
 
+
   findOneByLien(lien: string) {
     return this.descriptionRepo.findOne({
       where : {
@@ -50,11 +51,6 @@ export class DescriptionService {
         idDescription : id
       }
     })
-      ///////////////////
-     //     TODO      //
-    ///////////////////
-    //Verifier lexistence d'un lien si déja existant
-
     if (description == undefined) {
       return {
         status : HttpStatus.NOT_FOUND,
@@ -65,6 +61,7 @@ export class DescriptionService {
     return await this.descriptionRepo.findOne(id);
     
   }
+
 
   async remove(id: number) {
     const item = await this.descriptionRepo.findOne({

@@ -166,6 +166,14 @@ export class DemandeAdminService {
         }
         return ORArborescence;
       }
+      const ORArborescence = {
+        OR: {
+          idObjetRepere : orExist.idObjetRepere,
+          libelleObjetRepere  : orExist.libelleObjetRepere
+        },
+        Item: []
+      }
+      return ORArborescence;
     } else {
       return {
         status : HttpStatus.NOT_FOUND,
@@ -180,16 +188,28 @@ export class DemandeAdminService {
     let allSiOfItem = [];
     if (itemExist != undefined) {
       const SiofItem= await this.sousItemService.findAllSousItemOfItemUseful(idItem);
-      allSiOfItem.push(
-        {
-          Item: {
-            idItem: itemExist.idItem,
-            libelle: itemExist.libelleItem
-          },
-          SI: SiofItem
-        }
-      );
+      if (SiofItem.length != 0) {
+        const allSiOfItem =
+          {
+            Item: {
+              idItem: itemExist.idItem,
+              libelle: itemExist.libelleItem
+            },
+            SI: SiofItem
+          }
         return allSiOfItem;
+      } else {
+        const allSiOfItem = 
+          {
+            Item: {
+              idItem: itemExist.idItem,
+              libelle: itemExist.libelleItem
+            },
+            SI: []
+          }
+        
+        return allSiOfItem;
+      }
     } else {
       return {
         status : HttpStatus.NOT_FOUND,

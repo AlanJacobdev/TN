@@ -1,10 +1,10 @@
 import { OIDCStrategy } from 'passport-azure-ad';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import passport, { authenticate } from 'passport';
 
 @Injectable() 
 export class AADStrategy extends PassportStrategy(OIDCStrategy, 'aad') {
+    
     constructor () {
         super({
             identityMetadata: "https://login.microsoftonline.com/934f7349-18aa-4596-9ce2-a951b6794888/v2.0/.well-known/openid-configuration",
@@ -15,26 +15,50 @@ export class AADStrategy extends PassportStrategy(OIDCStrategy, 'aad') {
             allowHttpForRedirectUrl : true,
             redirectUrl : 'http://localhost:3000/utilisateur/existUser',
             clientSecret : "2.~8Q~9Fwphfbcxf5jp1S4iKmmbEQkaQ5wImxb6w",
-            scope : ['profile', 'email'],
-        },
-        (req, iss, sub, profile, jwtClaims, access_token, refresh_token, params, done) => {
-            if (!profile.oid) {
-                return done(new Error("No oid found"), null);
-              }
-              // asynchronous verification, for effect...
-              process.nextTick(function () {
-                return done(null, profile);
-              });
+            scope : ['openid','profile'],
+            // useCookieInsteadOfSession: true,
+            // cookieEncryptionKeys: [ 
+            //   { 'key': '12345678901234567890123456789012', 'iv': '123456789012' },
+            //   { 'key': 'abcdefghijklmnopqrstuvwxyzabcdef', 'iv': 'abcdefghijkl' }
+            // ],
+            // nonceLifetime: null,
+            // cookieSameSite: false,    
+            // nonceMaxAmount: 5,
+            // clockSkew: null,
+            validateIssuer: true,
+            issuer: "https://login.microsoftonline.com/934f7349-18aa-4596-9ce2-a951b6794888/v2.0",
+            loggingLevel: 'info',
             
-        })
+        },
+        function(req, iss, sub, profile, accessToken, refreshToken, done) {
+         
+          
+          console.log("===========ISS===============");
+          console.log(iss);
+          console.log("===========PROFILE==============="); 
+          console.log(profile);
+          console.log("===========SUB===============");
+          console.log(sub);
+          console.log("===========ACCESSTOKEN===============");
+          console.log(accessToken);
+          console.log("===========REFRESHTOKEN===============");
+          console.log(refreshToken);
+          console.log("===========DONE===============");
+          if (!profile.oid) {
+            return done(new Error("No oid found"), null);
+          }
+          return done(null,profile);
         
-        
-        
+      });
+      
     }
 
-    async validate(payload: any){
-        
-      console.log("test");
-          
-    }
+  async validate(response: any, profile : string){      
+      
+    return profile;          
+  }
+
+    
 }
+
+

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { GatewayTimeoutException, Module } from '@nestjs/common';
 import { DemandeAdminService } from './demande-admin.service';
 import { DemandeAdminController } from './demande-admin.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';

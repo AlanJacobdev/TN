@@ -25,6 +25,8 @@ import { DemandeAdminModule } from './demande-admin/demande-admin.module';
 import { ServiceSuppressionModule } from './service-suppression/service-suppression.module';
 import { AuthModule } from './auth/auth.module';
 import configuration from './config';
+import { PassportModule } from '@nestjs/passport';
+import { NbDemandeGateway } from './demande-admin/gateway/nb-demande.gateway';
 @Module({
   imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule,
   ConfigModule.forRoot({
@@ -35,9 +37,10 @@ import configuration from './config';
   DescriptionModule,
   DemandeAdminModule,
   ServiceSuppressionModule,
-  AuthModule
+  AuthModule,
+  PassportModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, NbDemandeGateway],
 })
 export class AppModule {}
