@@ -27,6 +27,7 @@ import { AuthModule } from './auth/auth.module';
 import configuration from './config';
 import { PassportModule } from '@nestjs/passport';
 import { NbDemandeGateway } from './demande-admin/gateway/nb-demande.gateway';
+import { ServiceAccueilModule } from './service-accueil/service-accueil.module';
 @Module({
   imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule,
   ConfigModule.forRoot({
@@ -38,7 +39,8 @@ import { NbDemandeGateway } from './demande-admin/gateway/nb-demande.gateway';
   DemandeAdminModule,
   ServiceSuppressionModule,
   AuthModule,
-  PassportModule
+  PassportModule,
+  ServiceAccueilModule
   ],
   controllers: [AppController],
   providers: [AppService, NbDemandeGateway],
