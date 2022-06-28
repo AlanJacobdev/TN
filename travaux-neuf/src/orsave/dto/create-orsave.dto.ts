@@ -17,13 +17,13 @@ export class CreateOrsaveDto {
     numeroUnique : string;
 
     @IsNotEmpty()
-    valide : string;
+    etat : string;
 
     @IsNotEmpty()
     description: Description[];
 
     @IsNotEmpty()
-    etat : string;
+    status : string;
 
     @IsNotEmpty()
     date : Date

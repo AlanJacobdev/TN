@@ -85,7 +85,7 @@ export class ObjetrepereService {
           libelleObjetRepere: createObjetrepereDto.libelleObjetRepere,
           codeType: createObjetrepereDto.codeType,
           numeroUnique: createObjetrepereDto.numeroUnique,
-          valide: 'A',
+          etat: 'A',
           description: createObjetrepereDto.description,
           profilCreation: createObjetrepereDto.profilCreation,
           posteCreation: createObjetrepereDto.posteCreation,
@@ -95,7 +95,7 @@ export class ObjetrepereService {
           libelleObjetRepere: "Numéro secondaire de " + NUOrigine,
           codeType: createObjetrepereDto.codeType,
           numeroUnique: nu,
-          valide: 'R',
+          etat: 'R',
           description: [],
           profilCreation: createObjetrepereDto.profilCreation,
           posteCreation: createObjetrepereDto.posteCreation,
@@ -204,16 +204,16 @@ export class ObjetrepereService {
       libelleObjetRepere : OR.libelleObjetRepere,
       codeType : OR.codeType,
       numeroUnique : OR.numeroUnique,
-      valide : OR.valide,
+      etat : OR.etat,
       description : OR.description,
       date : new Date(),
-      etat : "M",
+      status : "M",
       profilModification : updateObjetrepereDto.profilModification,
       posteModification : updateObjetrepereDto.posteModification    
     }
 
     OR.libelleObjetRepere = updateObjetrepereDto.libelleObjetRepere;
-    OR.valide = updateObjetrepereDto.valide;
+    OR.etat = updateObjetrepereDto.etat;
     OR.description = tabDescription;
     OR.profilModification = updateObjetrepereDto.profilModification;
     OR.posteModification = updateObjetrepereDto.posteModification;
@@ -258,10 +258,10 @@ export class ObjetrepereService {
       libelleObjetRepere : OR.libelleObjetRepere,
       codeType : OR.codeType,
       numeroUnique : OR.numeroUnique,
-      valide : OR.valide,
+      etat : OR.etat,
       description : OR.description,
       date : new Date(),
-      etat : "D",
+      status : "D",
       profilModification : user,
       posteModification : ""    
     }

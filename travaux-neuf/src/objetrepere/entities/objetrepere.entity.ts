@@ -23,7 +23,7 @@ export class Objetrepere {
     numeroUnique : string;
 
     @Column()
-    valide : string
+    etat : string
 
     @Column({length : 50})
     profilCreation : string;

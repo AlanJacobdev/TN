@@ -8,3 +8,18 @@ export interface typeInfoPerMounth {
     objectModified : infoPerMonth[],
     objectDeleted : infoPerMonth[]
 }
+
+export interface typeInfoPerDay {
+    objectCreated : infoPerDay[],
+    objectModified : infoPerDay[],
+    objectDeleted : infoPerDay[]
+}
+
+export interface infoPerDay {
+    id : string,
+    libelle: string,
+    etat: string,
+    profilCreation : string
+    dateCreation : Date,
+    typeObjet : string
+}

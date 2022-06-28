@@ -17,14 +17,14 @@ export class Orsave {
     numeroUnique : string;
 
     @Column()
-    valide : string;
+    etat : string;
 
     @ManyToMany(() => Description)
     @JoinTable({name : "descriptionParObjetRepereSave"})
     description : Description[];
 
     @Column({ length : 1})
-    etat : String ;
+    status : String ;
 
     @PrimaryColumn({type : "datetime"})
     date : Date

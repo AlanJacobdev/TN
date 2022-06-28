@@ -19,7 +19,7 @@ export class OrsaveService {
         try{
         const newOrSave = this.orsaveRepo.create(createOrsaveDto);
         const save = await this.orsaveRepo.save(newOrSave);
-        if(createOrsaveDto.etat === 'M') {
+        if(createOrsaveDto.status === 'M') {
           await this.deleteSaveOlderThan(createOrsaveDto.idObjetRepere);
         }
         return save;

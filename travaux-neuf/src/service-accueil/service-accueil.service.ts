@@ -8,8 +8,8 @@ import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { SousitemModule } from 'src/sousitem/sousitem.module';
 import { Sousitemsave } from 'src/sousitemsave/entities/sousitemsave.entity';
-import { Brackets, Repository } from 'typeorm';
-import { infoPerMonth, typeInfoPerMounth } from './interface/structure';
+import { Between, Brackets, Repository } from 'typeorm';
+import { infoPerMonth, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
 
 @Injectable()
 export class ServiceAccueilService {
@@ -18,6 +18,8 @@ export class ServiceAccueilService {
 
   }
   async getNumberOfActivityForEachDay(start: string, end: string) {
+    
+    
     let dateDebut: Date;
     let dateFin: Date;
     let allInfoPerMonth: typeInfoPerMounth = {
@@ -110,7 +112,7 @@ export class ServiceAccueilService {
     const resultOrModify = this.OrSaveRepo.createQueryBuilder("Orsave")
     .select(["CONCAT(DAY(Orsave.date), '-', FORMAT(Orsave.date,'MM'), '-', YEAR(Orsave.date)) as date", 'COUNT(DAY(Orsave.date)) as count'])
     .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
-    .andWhere("Orsave.etat = 'M'")
+    .andWhere("Orsave.status = 'M'")
     .groupBy("DAY(Orsave.date)")
     .addGroupBy("FORMAT(Orsave.date,'MM')")
     .addGroupBy("YEAR(Orsave.date)")
@@ -126,7 +128,7 @@ export class ServiceAccueilService {
     const resultOrsaveDelete = this.OrSaveRepo.createQueryBuilder("Orsave")
       .select(["CONCAT(DAY(Orsave.date), '-', FORMAT(Orsave.date,'MM'), '-', YEAR(Orsave.date)) as date", 'COUNT(DAY(Orsave.date)) as count'])
       .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
-      .andWhere("Orsave.etat = 'D'")
+      .andWhere("Orsave.status = 'D'")
       .groupBy("DAY(Orsave.date)")
       .addGroupBy("FORMAT(Orsave.date,'MM')")
       .addGroupBy("YEAR(Orsave.date)")
@@ -248,12 +250,106 @@ export class ServiceAccueilService {
 
 
 
-  getHistoryOfOneDay(date : string){
+  async getHistoryOfOneDay(date : string){
     const dateDebut = new Date(date);
-    const dateFin = (dateDebut.getDate() + 1)
+    let dateFin = new Date(date);
+    dateFin.setDate(dateFin.getDate() + 1)
+    let InfoPerDay : typeInfoPerDay ={
+      objectCreated: [],
+      objectModified: [],
+      objectDeleted: []
+    }
 
-    console.log(dateDebut);
-    console.log(dateFin);
+    let OrCreate = await this.OrRepo.find({
+      select:['idObjetRepere', 'libelleObjetRepere','etat','profilCreation','dateCreation'],
+      where : {
+        dateCreation : Between(dateDebut,dateFin)
+      },
+      relations:["description"]
+    })
+
+    for(const or of OrCreate){
+      InfoPerDay.objectCreated.push( {
+        id : or.idObjetRepere,
+        libelle: or.libelleObjetRepere,
+        etat: or.etat,
+        profilCreation : or.profilCreation,
+        dateCreation : or.dateCreation,
+        typeObjet : 'OR'
+      })
+    }
+
+
+    let ItemCreate = await this.itemRepo.find({
+      select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
+      where : {
+        dateCreation : Between(dateDebut, dateFin)
+      },
+      relations:["description"]
+    })
+
+    for(const item of ItemCreate){
+      InfoPerDay.objectCreated.push( {
+        id : item.idItem,
+        libelle: item.libelleItem,
+        etat: item.etat,
+        profilCreation : item.profilCreation,
+        dateCreation : item.dateCreation,
+        typeObjet : 'Item'
+      })
+    }
+
+    let SiCreate = await this.SousItemRepo.find({
+      select:['idSousItem','libelleSousItem','etat','profilCreation','dateCreation'],
+      where : {
+        dateCreation : Between(dateDebut, dateFin)
+      },
+      relations:["description"]
+    })
+
+    for(const si of SiCreate){
+      InfoPerDay.objectCreated.push( {
+        id : si.idSousItem,
+        libelle: si.libelleSousItem,
+        etat: si.etat,
+        profilCreation : si.profilCreation,
+        dateCreation : si.dateCreation,
+        typeObjet : 'SI'
+      })
+    }
+
+    const sortedCreateDesc = InfoPerDay.objectCreated.sort(
+      (objA, objB) => objB.dateCreation.getTime() - objA.dateCreation.getTime(),
+    );
+    InfoPerDay.objectCreated = sortedCreateDesc;
+
+    // let OrModify = await this.OrSaveRepo.find({
+    //   select
+    //   where : {
+    //     date : Between(dateDebut,dateFin),
+    //     status : 'M'
+    //   }
+    // })
+
+    // let ItemModify = await this.itemSaveRepo.find({
+    //   where : {
+    //     dateCreation : Between(dateDebut, dateFin),
+    //     status : 'M'
+    //   }
+    // })
+
+    // let SiModify = await this.SousItemSaveRepo.find({
+    //   where : {
+    //     dateCreation : Between(dateDebut, dateFin),
+    //     status : 'M'
+    //   }
+    // })
+
+
+
+
+
+    return InfoPerDay;
     
     
   }
