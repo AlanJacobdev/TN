@@ -275,6 +275,7 @@ export class ServiceAccueilService {
         etat: or.etat,
         profilCreation : or.profilCreation,
         dateCreation : or.dateCreation,
+        description : or.description,
         typeObjet : 'OR'
       })
     }
@@ -295,6 +296,7 @@ export class ServiceAccueilService {
         etat: item.etat,
         profilCreation : item.profilCreation,
         dateCreation : item.dateCreation,
+        description : item.description,
         typeObjet : 'Item'
       })
     }
@@ -314,6 +316,7 @@ export class ServiceAccueilService {
         etat: si.etat,
         profilCreation : si.profilCreation,
         dateCreation : si.dateCreation,
+        description : si.description,
         typeObjet : 'SI'
       })
     }
