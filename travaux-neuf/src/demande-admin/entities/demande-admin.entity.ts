@@ -34,13 +34,13 @@ export class DemandeAdmin {
     @Column({length : 50})
     profilCreation : string;
 
-    @Column({type : "datetime"})
+    @Column({type : "timestamp"})
     dateCreation : Date;
 
     @Column({length : 50, nullable:true})
     profilModification : string;
 
-    @Column({type : "datetime", nullable:true})
+    @Column({type : "timestamp", nullable:true})
     dateModification : Date;
 
 

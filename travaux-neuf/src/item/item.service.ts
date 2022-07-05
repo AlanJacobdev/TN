@@ -249,7 +249,7 @@ export class ItemService {
   }
 
   async getHistory(idItem : string) {
-    return this.itemSaveService.findById(idItem);
+    return await this.itemSaveService.findHistoryById(idItem);
   }
 
 

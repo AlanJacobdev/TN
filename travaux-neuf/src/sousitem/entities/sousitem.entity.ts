@@ -37,7 +37,7 @@ export class Sousitem {
     @Column({length : 50, nullable:true})
     posteCreation : string;
 
-    @Column({type : "datetime"})
+    @Column({type : "timestamp"})
     dateCreation : Date;
 
     @Column({length : 50, nullable:true})
@@ -46,7 +46,7 @@ export class Sousitem {
     @Column({length : 50, nullable:true})
     posteModification : string;
 
-    @Column({type : "datetime", nullable:true})
+    @Column({type : "timestamp", nullable:true})
     dateModification : Date;
 
     @ManyToMany(() => Description)

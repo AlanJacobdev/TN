@@ -19,9 +19,9 @@ export class ItemsaveService {
         try {
           const newitemsave = this.itemSaveRepo.create(createItemsaveDto);
           await this.itemSaveRepo.save(newitemsave); 
-          if(createItemsaveDto.etat === 'M') {
-            await this.deleteSaveOlderThan(createItemsaveDto.idItem);
-          }
+          // if(createItemsaveDto.etat === 'M') {
+          //   await this.deleteSaveOlderThan(createItemsaveDto.idItem);
+          // }
           return newitemsave;
         } catch (e:any) {
           throw new HttpException({
@@ -66,6 +66,37 @@ export class ItemsaveService {
     })
   }
 
+  async findHistoryById(id: string) {
+    let finalHistory = [];
+    const history = await this.itemSaveRepo.find({
+      where : {
+        idItem : id
+      },
+      order : {
+        date : 'DESC'
+      },
+      take : 5,
+      relations: ["description"]
+    })
+
+
+    const verifyIfDeleted = history.findIndex((element) => element.status == 'D')
+
+    if ( verifyIfDeleted != -1 ){
+      for (const or of history){
+        if (or.status == 'D'){
+          return finalHistory
+        } else {
+          finalHistory.push(or)
+        }
+      }
+    } else {
+      return history
+    }
+
+  }
+
+
 
   async remove(idItem: string, date: Date) {
     date = new Date(date);
@@ -91,30 +122,30 @@ export class ItemsaveService {
     }
   }
 
-  async deleteSaveOlderThan (id : string){
-    const existingBackUp = await this.itemSaveRepo.find({
-      where : {
-        idItem : id
-      },
-      order : {
-        date : "ASC"
-      }
-    })
+  // async deleteSaveOlderThan (id : string){
+  //   const existingBackUp = await this.itemSaveRepo.find({
+  //     where : {
+  //       idItem : id
+  //     },
+  //     order : {
+  //       date : "ASC"
+  //     }
+  //   })
 
-    if ( existingBackUp.length > this.configservice.get('maxSave') ){
-      const DeletedBackUp = await this.itemSaveRepo.find({
-        where : {
-          idItem : id
-        },
-        order : {
-          date : "ASC"
-        },
-        take: existingBackUp.length - this.configservice.get('maxSave'),
-      })
-      for (const item of DeletedBackUp){
-        this.remove(item.idItem, item.date );
-      }
-    }
+  //   if ( existingBackUp.length > this.configservice.get('maxSave') ){
+  //     const DeletedBackUp = await this.itemSaveRepo.find({
+  //       where : {
+  //         idItem : id
+  //       },
+  //       order : {
+  //         date : "ASC"
+  //       },
+  //       take: existingBackUp.length - this.configservice.get('maxSave'),
+  //     })
+  //     for (const item of DeletedBackUp){
+  //       this.remove(item.idItem, item.date );
+  //     }
+  //   }
 
-  }
+  // }
 }

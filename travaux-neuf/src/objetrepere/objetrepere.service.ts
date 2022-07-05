@@ -285,7 +285,7 @@ export class ObjetrepereService {
   }
 
   async getHistory(idItem : string) {
-    return this.orsaveservice.findById(idItem);
+    return await this.orsaveservice.findHistoryById(idItem);
   }
 
 

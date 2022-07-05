@@ -19,9 +19,9 @@ export class OrsaveService {
         try{
         const newOrSave = this.orsaveRepo.create(createOrsaveDto);
         const save = await this.orsaveRepo.save(newOrSave);
-        if(createOrsaveDto.status === 'M') {
-          await this.deleteSaveOlderThan(createOrsaveDto.idObjetRepere);
-        }
+        // if(createOrsaveDto.status === 'M') {
+        //   await this.deleteSaveOlderThan(createOrsaveDto.idObjetRepere);
+        // }
         return save;
         } catch (e : any){
           
@@ -58,6 +58,36 @@ export class OrsaveService {
       },
       relations: ["description"]
     })
+  }
+
+  async findHistoryById(id: string) {
+    let finalHistory = [];
+    const history = await this.orsaveRepo.find({
+      where : {
+        idObjetRepere : id
+      },
+      order : {
+        date : 'DESC'
+      },
+      take : 5,
+      relations: ["description"]
+    })
+
+
+    const verifyIfDeleted = history.findIndex((element) => element.status == 'D')
+
+    if ( verifyIfDeleted != -1 ){
+      for (const or of history){
+        if (or.status == 'D'){
+          return finalHistory
+        } else {
+          finalHistory.push(or)
+        }
+      }
+    } else {
+      return history
+    }
+
   }
 
   findOne(id: string, date: Date){
@@ -99,31 +129,31 @@ export class OrsaveService {
     }
   }
 
-  async deleteSaveOlderThan (id : string){
-    const existingBackUp = await this.orsaveRepo.find({
-      where : {
-        idObjetRepere : id
-      },
-      order : {
-        date : "ASC"
-      }
-    })
+  // async deleteSaveOlderThan (id : string){
+  //   const existingBackUp = await this.orsaveRepo.find({
+  //     where : {
+  //       idObjetRepere : id
+  //     },
+  //     order : {
+  //       date : "ASC"
+  //     }
+  //   })
 
-    if ( existingBackUp.length > this.configservice.get('maxSave') ){
-      const DeletedBackUp = await this.orsaveRepo.find({
-        where : {
-          idObjetRepere : id
-        },
-        order : {
-          date : "ASC"
-        },
-        take: existingBackUp.length - this.configservice.get('maxSave'),
-      })
-      for (const or of DeletedBackUp){
-        this.remove(or.idObjetRepere, or.date );
-      }
-    }
+  //   if ( existingBackUp.length > this.configservice.get('maxSave') ){
+  //     const DeletedBackUp = await this.orsaveRepo.find({
+  //       where : {
+  //         idObjetRepere : id
+  //       },
+  //       order : {
+  //         date : "ASC"
+  //       },
+  //       take: existingBackUp.length - this.configservice.get('maxSave'),
+  //     })
+  //     for (const or of DeletedBackUp){
+  //       this.remove(or.idObjetRepere, or.date );
+  //     }
+  //   }
    
-  }
+  // }
 
 }

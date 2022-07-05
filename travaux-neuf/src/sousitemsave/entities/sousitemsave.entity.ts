@@ -27,7 +27,7 @@ export class Sousitemsave {
     @Column()
     etat: string;
     
-    @PrimaryColumn({type : "datetime"})
+    @PrimaryColumn({type : "timestamp"})
     date : Date
 
     @Column({length : 50, nullable:true})

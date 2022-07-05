@@ -27,7 +27,11 @@ export class TypeobjetrepereService {
   }
 
   findAll() {
-    return this.TypeOrRepo.find();
+    return this.TypeOrRepo.find({
+      order : {
+        idTypeOR : 'ASC'
+      }
+    });
   }
 
   findOne(id: string) {

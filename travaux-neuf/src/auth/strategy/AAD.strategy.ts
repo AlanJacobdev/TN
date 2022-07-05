@@ -1,11 +1,12 @@
 import { OIDCStrategy } from 'passport-azure-ad';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { AuthService } from '../auth.service';
 
 @Injectable() 
 export class AADStrategy extends PassportStrategy(OIDCStrategy, 'aad') {
     
-    constructor () {
+    constructor (private authService: AuthService) {
         super({
             identityMetadata: "https://login.microsoftonline.com/934f7349-18aa-4596-9ce2-a951b6794888/v2.0/.well-known/openid-configuration",
             clientID: "7705cae2-12a0-475c-bcd5-2c873563a3f1",
@@ -53,9 +54,15 @@ export class AADStrategy extends PassportStrategy(OIDCStrategy, 'aad') {
       
     }
 
-  async validate(response: any, profile : string){      
-      
-    return profile;          
+  async validate(response: any){      
+    // const user = this.authService.selectUser(response.user)    
+    // if (!user) {
+    //   throw new UnauthorizedException();
+    // }
+    // return user;  
+    console.log("test");
+    
+    return response 
   }
 
     

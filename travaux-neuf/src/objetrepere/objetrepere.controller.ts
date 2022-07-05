@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Request } from 
 import { ObjetrepereService } from './objetrepere.service';
 import { CreateObjetrepereDto } from './dto/create-objetrepere.dto';
 import { UpdateObjetrepereDto } from './dto/update-objetrepere.dto';
-import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 
 @Controller('objetrepere')
 export class ObjetrepereController {

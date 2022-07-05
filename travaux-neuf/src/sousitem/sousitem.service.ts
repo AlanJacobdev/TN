@@ -88,7 +88,10 @@ export class SousitemService {
 
   findAll() {
     return this.sousitemRepo.find({
-      relations: ["description"]
+      relations: ["description"],
+      order : {
+        idSousItem : "ASC"
+      }
     });
   }
 
@@ -97,7 +100,10 @@ export class SousitemService {
       where : {
         idItem : id
       },
-      relations: ["description"]
+      relations: ["description"],
+      order : {
+        idSousItem : "ASC"
+      }
     })
   }
 
@@ -106,6 +112,9 @@ export class SousitemService {
       select : ['idSousItem', 'libelleSousItem'],
       where : {
         idItem : id
+      },
+      order : {
+        idSousItem : "ASC"
       }
     })
   }
@@ -124,7 +133,10 @@ export class SousitemService {
       where : {
         idItem : id
       },
-      relations: ["description"]
+      relations: ["description"],
+      order: {
+        idSousItem : "ASC"
+      }
     })
   }
 
@@ -249,7 +261,7 @@ export class SousitemService {
   }
 
   async getHistory(idItem : string) {
-    return this.sousitemSaveService.findById(idItem);
+    return this.sousitemSaveService.findHistoryById(idItem);
   }
 
 
@@ -258,9 +270,11 @@ export class SousitemService {
     const allTypeUsed = await this.sousitemRepo.createQueryBuilder("SousItem")
     .select(['SousItem.codeSousItem as idTypeObjet'])
     .where("SousItem.idItem = :id", { id : idItem})
+    .orderBy("SousItem.codeSousItem", "ASC")
     .distinct()
     .getRawMany()
     
+
     let alltype = await this.typeObjetService.findAllType();
     
     for (const typeUse of allTypeUsed){
@@ -278,6 +292,7 @@ export class SousitemService {
     const allTypeUsed = await this.sousitemRepo.createQueryBuilder("SousItem")
     .select(['SousItem.codeSousItem as idTypeObjet'])
     .where("SousItem.idItem = :id", { id : idItem})
+    .orderBy("SousItem.codeSousItem", "ASC")
     .distinct()
     .getRawMany()
     

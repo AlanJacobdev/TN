@@ -12,7 +12,6 @@ export class ServiceSuppressionService {
  
   constructor(private ORService : ObjetrepereService ,private ItemService : ItemService,private SIService : SousitemService){}
  
-  private profil : string = "";
   private retourSI = [];
   private retourItem = [];
   private retourOR = [];
@@ -133,14 +132,14 @@ export class ServiceSuppressionService {
               const listeSiOfItem = await this.SIService.getSousItemByItem(Item.idItem);
               if(listeSiOfItem.length != 0){
                 for (const SI of listeSiOfItem){
-                  const res = await this.SIService.remove(SI.idSousItem, this.profil, admin);
+                  const res = await this.SIService.remove(SI.idSousItem, profil, admin);
                   if (!res.hasOwnProperty('message')){
                     flagErrorSI = true;
                   }
                 }
               } 
               if(!flagErrorSI){
-                const res = await this.ItemService.remove(Item.idItem, this.profil, admin);
+                const res = await this.ItemService.remove(Item.idItem, profil, admin);
                 if (!res.hasOwnProperty('message')){
                   flagErrorItem = true;
                 } 
@@ -152,7 +151,7 @@ export class ServiceSuppressionService {
           }
         }
         if (!flagErrorItem){
-          const res = await this.ORService.remove(OR, this.profil, admin);
+          const res = await this.ORService.remove(OR, profil, admin);
           if (res.hasOwnProperty('message')){
             this.retourOR.push({
               "objet" : OR,

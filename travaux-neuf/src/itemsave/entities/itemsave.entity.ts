@@ -30,7 +30,7 @@ export class Itemsave {
     @Column({nullable:false})
     etat : string
     
-    @PrimaryColumn({type : "datetime"})
+    @PrimaryColumn({type : "timestamp"})
     date : Date
 
     @Column({length : 50})

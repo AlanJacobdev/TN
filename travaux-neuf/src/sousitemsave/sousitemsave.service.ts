@@ -72,6 +72,36 @@ export class SousitemsaveService {
     })
   }
 
+  async findHistoryById(id: string) {
+    let finalHistory = [];
+    const history = await this.sousItemSaveRepo.find({
+      where : {
+        idSousItem : id
+      },
+      order : {
+        date : 'DESC'
+      },
+      take : 5,
+      relations: ["description"]
+    })
+
+
+    const verifyIfDeleted = history.findIndex((element) => element.status == 'D')
+
+    if ( verifyIfDeleted != -1 ){
+      for (const or of history){
+        if (or.status == 'D'){
+          return finalHistory
+        } else {
+          finalHistory.push(or)
+        }
+      }
+    } else {
+      return history
+    }
+
+  }
+
   async remove(idSousItem: string, date: Date) {
     date = new Date(date);
  

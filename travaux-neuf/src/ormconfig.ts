@@ -11,15 +11,25 @@ import { ConnectionOptions } from 'typeorm';
 //       synchronize: true,
 // }
 
+// export const config: ConnectionOptions = {
+//       type: 'mssql',
+//       host: '172.16.208.186',
+//       username: 'TN',
+//       password: 'TN',
+//       database: 'TravauxNeufs',
+//       entities: ["dist/**/*.entity{.ts,.js}"],
+//       synchronize: true,
+//       options: {
+//             encrypt: false 
+//       }
+// }
+
 export const config: ConnectionOptions = {
-      type: 'mssql',
-      host: '172.16.208.186',
-      username: 'TN',
-      password: 'TN',
-      database: 'TravauxNeufs',
+      type: 'postgres',
+      host: '172.16.208.38',
+      username: 'tn',
+      password: 'G4_Vu2=B1',
+      database: 'travauxneufs',
       entities: ["dist/**/*.entity{.ts,.js}"],
       synchronize: true,
-      options: {
-            encrypt: false 
-      }
 }

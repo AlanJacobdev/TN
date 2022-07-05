@@ -26,7 +26,7 @@ export class Orsave {
     @Column({ length : 1})
     status : String ;
 
-    @PrimaryColumn({type : "datetime"})
+    @PrimaryColumn({type : "timestamp"})
     date : Date
     
     @Column({length : 50})

@@ -28,7 +28,11 @@ export class AtelierService {
   }
 
   findAll() {
-    return this.AtelierRepo.find();
+    return this.AtelierRepo.find({
+      order : {
+        idAtelier : "ASC"
+      }
+    });
   }
 
   findAllAteliersActif(){
