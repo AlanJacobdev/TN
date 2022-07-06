@@ -28,6 +28,7 @@ export const config: ConnectionOptions = {
       type: 'postgres',
       host: '172.16.208.38',
       username: 'tn',
+      port : 5432,
       password: 'G4_Vu2=B1',
       database: 'travauxneufs',
       entities: ["dist/**/*.entity{.ts,.js}"],
