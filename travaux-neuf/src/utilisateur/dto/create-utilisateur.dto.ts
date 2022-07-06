@@ -11,6 +11,12 @@ export class CreateUtilisateurDto {
     prenom : string;
 
     @IsNotEmpty()
+    password : string
+
+    @IsNotEmpty()
+    login : string;
+
+    @IsNotEmpty()
     idService : string;
 
     @IsNotEmpty()

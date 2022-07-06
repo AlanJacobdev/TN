@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
-
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UtilisateurService {
@@ -16,12 +16,15 @@ export class UtilisateurService {
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private serviceService: ServiceService){}
   
   async create(createUtilisateurDto: CreateUtilisateurDto) {
+    const saltOrRounds = await bcrypt.genSalt();
     
     const service = await this.serviceService.findOne(createUtilisateurDto.idService);
     if (service != undefined) {
       const uti = await this.findOne(createUtilisateurDto.idUtilisateur);
       if (uti == undefined){
         createUtilisateurDto.dateCreation = new Date();
+        createUtilisateurDto.password =  await bcrypt.hash(createUtilisateurDto.password, saltOrRounds)
+
         const newUti = this.utiRepo.create(createUtilisateurDto);
         const u = await this.utiRepo.save(newUti);
         return u;
@@ -49,6 +52,24 @@ export class UtilisateurService {
         idUtilisateur : id
       }
     })
+  }
+
+  async findOneConnexion(login: string, password : string) {
+    const user = await this.utiRepo.findOne({
+      where : {
+        login : login,
+      }
+    })
+    if (user != undefined) {    
+      const match = await bcrypt.compare(password, user.password)
+      if (match) {
+        return user;
+      } else {
+        return undefined
+      }
+    } else {
+      return undefined;
+    }
   }
 
   async update(id: number, updateUtilisateurDto: UpdateUtilisateurDto) {

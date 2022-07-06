@@ -1,30 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
+import { JwtService } from '@nestjs/jwt';
+import { NOMEM } from 'dns';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+
+  constructor(private utilisateurService : UtilisateurService, private jwtService: JwtService){}
+
+  async validateUser (login : string , password : string) {
+    const user = await this.utilisateurService.findOneConnexion(login,password);
+    if (user != undefined) {
+      const { password,profilCreation, posteCreation, dateCreation, profilModification, posteModification : string , dateModification, ...result}= user
+      return result
+    }
+    return null;
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async login(user: any) {
+    const payload = { idUtilisateur: user.idUtilisateur, nom: user.nom, prenom: user.prenom, login : user.login, idService : user.idService, estAdministrateur: user.estAdministrateur };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+  
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
-
-  selectUser(user : string){
-    return user;
-  }
 }

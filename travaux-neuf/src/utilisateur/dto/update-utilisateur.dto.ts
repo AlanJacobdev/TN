@@ -1,20 +1,20 @@
-import { Allow, IsNotEmpty } from "class-validator";
+import { Allow, isNotEmpty, IsNotEmpty } from "class-validator";
 
 export class UpdateUtilisateurDto {
 
-        
- 
-
-    @IsNotEmpty()
+    @Allow()
     nom : string;
 
-    @IsNotEmpty()
+    @Allow()
     prenom : string;
 
-    @IsNotEmpty()
+    @Allow()
+    password : string
+
+    @Allow()
     idService : string;
 
-    @IsNotEmpty()
+    @Allow()
     estAdministrateur : boolean;
     
     @IsNotEmpty()

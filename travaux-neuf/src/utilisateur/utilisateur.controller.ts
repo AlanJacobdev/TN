@@ -32,6 +32,12 @@ export class UtilisateurController {
     return this.utilisateurService.findOne(+id);
   }
 
+  @Get('findOneConnexion/:login/:password')
+  findOneConnexion(@Param('login') login: string, @Param('password') password: string ) {
+    return this.utilisateurService.findOneConnexion(login, password);
+  }
+ 
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUtilisateurDto: UpdateUtilisateurDto) {
     return this.utilisateurService.update(+id, updateUtilisateurDto);

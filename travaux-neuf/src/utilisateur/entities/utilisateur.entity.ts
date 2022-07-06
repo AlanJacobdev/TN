@@ -16,6 +16,12 @@ export class Utilisateur {
     @Column({length : 50})
     prenom : string;
 
+    @Column()
+    password : string
+
+    @Column({unique : true})
+    login : string;
+
     @ManyToOne(() => Service)
     @JoinColumn({name: 'idService'})
     @Column({length : 50})
