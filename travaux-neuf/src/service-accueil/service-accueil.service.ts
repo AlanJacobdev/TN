@@ -364,8 +364,6 @@ export class ServiceAccueilService {
           select : ['idObjetRepere','libelleObjetRepere','etat', 'date','profilModification'],
           where : {
             date : MoreThan(orM.date),
-            status : 'M',
-            profilModification : orM.profilModification,
             idObjetRepere : orM.idObjetRepere
           },
           relations:["description"]
@@ -377,7 +375,6 @@ export class ServiceAccueilService {
             select : ['idObjetRepere','libelleObjetRepere','etat', 'profilModification', 'dateModification'],
             where : {
               dateModification : Between(dateDebut,dateFin),
-              profilModification : orM.profilModification,
               idObjetRepere : orM.idObjetRepere
             },
             relations:["description"]
@@ -433,7 +430,6 @@ export class ServiceAccueilService {
           select : ['idItem','libelleItem','etat', 'date','profilModification'],
           where : {
             date : MoreThan(itemM.date),
-            profilModification : itemM.profilModification,
             idItem : itemM.idItem
           },
           relations:["description"]
@@ -445,7 +441,6 @@ export class ServiceAccueilService {
             select : ['idItem','libelleItem','etat', 'profilModification', 'dateModification'],
             where : {
               dateModification : Between(dateDebut,dateFin),
-              profilModification : itemM.profilModification,
               idItem : itemM.idItem
             },
             relations:["description"]
@@ -477,6 +472,7 @@ export class ServiceAccueilService {
       relations:["description"]
     })
 
+    
     if ( SiModify.length > 0 ) {
       for (const siM of SiModify){
         objetNow = {
@@ -500,7 +496,6 @@ export class ServiceAccueilService {
           select : ['idSousItem','libelleSousItem','etat', 'date','profilModification'],
           where : {
             date : MoreThan(siM.date),
-            profilModification : siM.profilModification,
             idSousItem : siM.idSousItem
           },
           relations:["description"]
@@ -512,11 +507,11 @@ export class ServiceAccueilService {
             select : ['idSousItem','libelleSousItem','etat', 'profilModification', 'dateModification'],
             where : {
               dateModification : Between(dateDebut,dateFin),
-              profilModification : siM.profilModification,
               idSousItem : siM.idSousItem
             },
             relations:["description"]
           })
+            
             objetNow.newlibelle = siReplaceSiModify.libelleSousItem;
             objetNow.newEtat = siReplaceSiModify.etat;
             objetNow.newDescription = siReplaceSiModify.description;
