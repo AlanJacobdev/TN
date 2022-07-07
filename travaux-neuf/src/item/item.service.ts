@@ -6,6 +6,7 @@ import { CreateItemsaveDto } from 'src/itemsave/dto/create-itemsave.dto';
 import { ItemsaveService } from 'src/itemsave/itemsave.service';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { TypeobjetService } from 'src/typeobjet/typeobjet.service';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Brackets, Repository } from 'typeorm';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
@@ -16,7 +17,7 @@ import { Item } from './entities/item.entity';
 export class ItemService {
   
   constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService, private OrService : ObjetrepereService, private itemSaveService : ItemsaveService,
-              private descriptionService: DescriptionService){}
+              private descriptionService: DescriptionService, private utilisateurService : UtilisateurService){}
   
   async create(createItemDto: CreateItemDto) {
  
@@ -86,7 +87,10 @@ export class ItemService {
 
   findAll() {
     return this.itemRepo.find({
-      relations: ["description"]
+      relations: ["description"],
+      order : {
+        idItem : "ASC"
+      }
     });
   }
 
@@ -104,17 +108,36 @@ export class ItemService {
       where : {
         idOR : id
       },
-      relations: ["description"]
+      relations: ["description"],
+      order : {
+        idItem : "ASC"
+      }
     })
   }
 
-  getItemByOR(id: string) {
-    return this.itemRepo.find({
+  async getItemByOR(id: string) {
+    const item = await this.itemRepo.find({
       where : {
          idOR : id
       },
-      relations: ["description"]
+      relations: ["description"],
+      order : {
+        idItem : "ASC"
+      }
     })
+
+    for (const i of item) {
+      const profilCreation = await this.utilisateurService.findOneByLogin(i.profilCreation)
+      if (profilCreation != undefined){
+        i.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+      }
+      const profilModification = await this.utilisateurService.findOneByLogin(i.profilModification)
+      if (profilModification != undefined){
+        i.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+      }
+    }
+
+    return item;
   }
 
   getItemByORAndType(id: string, type : string) {
@@ -122,6 +145,9 @@ export class ItemService {
       where : {
          idOR : id,
          codeObjet : type
+      },
+      order : {
+        idItem : "ASC"
       }
     })
   }
@@ -140,6 +166,16 @@ export class ItemService {
       }
     }
  
+    if(item.libelleItem == updateItemDto.libelleItem 
+      && item.etat == updateItemDto.etat 
+      && JSON.stringify(item.description) === JSON.stringify(updateItemDto.description)){
+        throw new HttpException({
+          status : HttpStatus.NOT_MODIFIED,
+          error :'Aucune modification effectuée',
+        }, HttpStatus.NOT_FOUND)
+
+      }
+
     let tabDescriptionAfter = [];
 
     if( updateItemDto.description !== null ) {

@@ -20,9 +20,9 @@ export class NbDemandeGateway implements OnGatewayInit, OnGatewayConnection, OnG
     private logger: Logger = new Logger('AppGateway');
    
   
-    @SubscribeMessage('testsend')
+    @SubscribeMessage('demande')
     async onChat(client: Socket, payload: string) {
-      this.server.emit('testreceive',  (await this.demandeAdminService.findAll()).length);
+      this.server.emit('demandeResponse',  (await this.demandeAdminService.findAll()).length);
     }
 
     afterInit(server: Server) {
@@ -30,10 +30,8 @@ export class NbDemandeGateway implements OnGatewayInit, OnGatewayConnection, OnG
     }
    
     handleDisconnect(client: Socket) {
-     this.logger.log(`Client disconnected: ${client.id}`);
     }
    
     handleConnection(client: Socket, ...args: any[]) {
-     this.logger.log(`Client connected: ${client.id}`);
     }
    }

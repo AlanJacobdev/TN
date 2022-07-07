@@ -6,16 +6,18 @@ import { Objetrepere } from 'src/objetrepere/entities/objetrepere.entity';
 import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { Sousitemsave } from 'src/sousitemsave/entities/sousitemsave.entity';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Between, MoreThan, Repository } from 'typeorm';
 import { infoPerDayModified, infoPerMonth, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
 
 @Injectable()
 export class ServiceAccueilService {
 
-  constructor(@InjectRepository(Objetrepere) private OrRepo: Repository<Objetrepere>, @InjectRepository(Orsave) private OrSaveRepo: Repository<Orsave>, @InjectRepository(Item) private itemRepo: Repository<Item>, @InjectRepository(Itemsave) private itemSaveRepo: Repository<Itemsave>, @InjectRepository(Sousitem) private SousItemRepo: Repository<Sousitem>, @InjectRepository(Sousitemsave) private SousItemSaveRepo: Repository<Sousitemsave>) {
+  constructor(@InjectRepository(Objetrepere) private OrRepo: Repository<Objetrepere>, @InjectRepository(Orsave) private OrSaveRepo: Repository<Orsave>, @InjectRepository(Item) private itemRepo: Repository<Item>, @InjectRepository(Itemsave) private itemSaveRepo: Repository<Itemsave>,
+   @InjectRepository(Sousitem) private SousItemRepo: Repository<Sousitem>, @InjectRepository(Sousitemsave) private SousItemSaveRepo: Repository<Sousitemsave>, private utilisateurService :UtilisateurService) {
 
   }
-  async getNumberOfActivityForEachDay(start: string, end: string) {
+  async getNumberOfActivityForEachDay(start: string, end: string, user? : string) {
     
     
     let dateDebut: Date;
@@ -44,7 +46,10 @@ export class ServiceAccueilService {
     const resultItemCreation = this.itemRepo.createQueryBuilder("Item")
       .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')) as count"])
       .where("Item.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
-      .groupBy("TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')")
+      if(user !=undefined){
+        resultItemCreation.andWhere("Item.profilCreation = :user", {user: user})
+      }
+      resultItemCreation.groupBy("TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')")
     try {
       itemCreate = await resultItemCreation.getRawMany();
     } catch (e) {
@@ -59,7 +64,10 @@ export class ServiceAccueilService {
     .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
     .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
     .andWhere("Itemsave.status = 'M'")
-    .groupBy("TO_CHAR(Itemsave.date, 'DD-MM-YYYY')")
+    if(user !=undefined){
+      resultItemModify.andWhere("Itemsave.profilModification = :user", {user: user})
+    }
+    resultItemModify.groupBy("TO_CHAR(Itemsave.date, 'DD-MM-YYYY')")
     try {
       itemModify = await resultItemModify.getRawMany();
     } catch (e) {
@@ -73,7 +81,10 @@ export class ServiceAccueilService {
       .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
       .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
       .andWhere("Itemsave.status = 'D'")
-      .groupBy("TO_CHAR(Itemsave.date, 'DD-MM-YYYY')")
+      if(user !=undefined){
+        resultItemsaveDelete.andWhere("Itemsave.profilModification = :user", {user: user})
+      }
+      resultItemsaveDelete.groupBy("TO_CHAR(Itemsave.date, 'DD-MM-YYYY')")
     try {
       itemDelete = await resultItemsaveDelete.getRawMany();
     } catch (e) {
@@ -90,7 +101,10 @@ export class ServiceAccueilService {
     const resultOrCreation = this.OrRepo.createQueryBuilder("Objetrepere")
       .select(["TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY')) as count"])
       .where("Objetrepere.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
-      .groupBy("TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY')")
+      if(user !=undefined){
+        resultOrCreation.andWhere("Objetrepere.profilCreation = :user", {user: user})
+      }
+      resultOrCreation.groupBy("TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY')")
     try {
       OrCreate = await resultOrCreation.getRawMany();
     } catch (e) {
@@ -104,7 +118,10 @@ export class ServiceAccueilService {
     .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
     .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
     .andWhere("Orsave.status = 'M'")
-    .groupBy("TO_CHAR(Orsave.date, 'DD-MM-YYYY')")
+    if(user !=undefined){
+      resultOrModify.andWhere("Orsave.profilModification = :user", {user: user})
+    }
+    resultOrModify.groupBy("TO_CHAR(Orsave.date, 'DD-MM-YYYY')")
     try {
       OrModify = await resultOrModify.getRawMany();
     } catch (e) {
@@ -118,7 +135,10 @@ export class ServiceAccueilService {
       .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
       .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
       .andWhere("Orsave.status = 'D'")
-      .groupBy("TO_CHAR(Orsave.date, 'DD-MM-YYYY')")
+      if(user !=undefined){
+        resultOrsaveDelete.andWhere("Orsave.profilModification = :user", {user: user})
+      }
+      resultOrsaveDelete.groupBy("TO_CHAR(Orsave.date, 'DD-MM-YYYY')")
     try {
       OrDelete = await resultOrsaveDelete.getRawMany();
     } catch (e) {
@@ -161,7 +181,10 @@ export class ServiceAccueilService {
     const resultSiCreation = this.SousItemRepo.createQueryBuilder("Sousitem")
       .select(["TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY')) as count"])
       .where("Sousitem.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
-      .groupBy("TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY')")
+      if(user !=undefined){
+        resultSiCreation.andWhere("Sousitem.profilCreation = :user", {user: user})
+      }
+      resultSiCreation.groupBy("TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY')")
     try {
       sousItemCreate = await resultSiCreation.getRawMany();
     } catch (e) {
@@ -175,7 +198,11 @@ export class ServiceAccueilService {
     .select(["TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')) as count"])
     .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
     .andWhere("Sousitemsave.status = 'M'")
-    .groupBy("TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')")
+    if(user !=undefined){
+      resultSiModify.andWhere("Sousitemsave.profilModification = :user", {user: user})
+    }
+    resultSiModify.groupBy("TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')")
+    
     try {
       sousItemModify = await resultSiModify.getRawMany();
     } catch (e) {
@@ -189,7 +216,10 @@ export class ServiceAccueilService {
       .select(["TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')) as count"])
       .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
       .andWhere("Sousitemsave.status = 'D'")
-      .groupBy("TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')")
+      if(user !=undefined){
+        resultSisaveDelete.andWhere("Sousitemsave.profilModification = :user", {user: user})
+      }
+      resultSisaveDelete.groupBy("TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')")
     try {
       sousItemDelete = await resultSisaveDelete.getRawMany();
     } catch (e) {
@@ -236,7 +266,7 @@ export class ServiceAccueilService {
 
 
 
-  async getHistoryOfOneDay(date : string){
+  async getHistoryOfOneDay(date : string, user? :string){
     const dateDebut = new Date(date);
     let dateFin = new Date(date);
     dateFin.setDate(dateFin.getDate() + 1)
@@ -247,14 +277,25 @@ export class ServiceAccueilService {
     }
 
     // Create
-
-    let OrCreate = await this.OrRepo.find({
-      select:['idObjetRepere', 'libelleObjetRepere','etat','profilCreation','dateCreation'],
-      where : {
-        dateCreation : Between(dateDebut,dateFin)
-      },
-      relations:["description"]
-    })
+    let OrCreate
+    if (user == undefined){
+      OrCreate = await this.OrRepo.find({
+        select:['idObjetRepere', 'libelleObjetRepere','etat','profilCreation','dateCreation'],
+        where : {
+          dateCreation : Between(dateDebut,dateFin)
+        },
+        relations:["description"]
+      })
+    } else {
+      OrCreate = await this.OrRepo.find({
+        select:['idObjetRepere', 'libelleObjetRepere','etat','profilCreation','dateCreation'],
+        where : {
+          dateCreation : Between(dateDebut,dateFin),
+          profilCreation : user
+        },
+        relations:["description"]
+      })
+    }
 
     for(const or of OrCreate){
       InfoPerDay.objectCreated.push( {
@@ -268,14 +309,26 @@ export class ServiceAccueilService {
       })
     }
 
+    let ItemCreate
+    if (user == undefined){
+      ItemCreate = await this.itemRepo.find({
+        select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
+        where : {
+          dateCreation : Between(dateDebut, dateFin)
+        },
+        relations:["description"]
+      })
+    } else {
+      ItemCreate = await this.itemRepo.find({
+        select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
+        where : {
+          dateCreation : Between(dateDebut, dateFin),
+          profilCreation : user
+        },
+        relations:["description"]
+      })
+    }
 
-    let ItemCreate = await this.itemRepo.find({
-      select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
-      where : {
-        dateCreation : Between(dateDebut, dateFin)
-      },
-      relations:["description"]
-    })
 
     for(const item of ItemCreate){
       InfoPerDay.objectCreated.push( {
@@ -289,13 +342,26 @@ export class ServiceAccueilService {
       })
     }
 
-    let SiCreate = await this.SousItemRepo.find({
-      select:['idSousItem','libelleSousItem','etat','profilCreation','dateCreation'],
-      where : {
-        dateCreation : Between(dateDebut, dateFin)
-      },
-      relations:["description"]
-    })
+    let SiCreate
+    if (user == undefined){
+      SiCreate = await this.SousItemRepo.find({
+        select:['idSousItem','libelleSousItem','etat','profilCreation','dateCreation'],
+        where : {
+          dateCreation : Between(dateDebut, dateFin)
+        },
+        relations:["description"]
+      })
+    } else {
+      SiCreate = await this.SousItemRepo.find({
+        select:['idSousItem','libelleSousItem','etat','profilCreation','dateCreation'],
+        where : {
+          dateCreation : Between(dateDebut, dateFin),
+          profilCreation : user
+        },
+        relations:["description"]
+      })
+
+    }
 
     for(const si of SiCreate){
       InfoPerDay.objectCreated.push( {
@@ -315,15 +381,27 @@ export class ServiceAccueilService {
     InfoPerDay.objectCreated = sortedCreateDesc;
 
     // Modify
-
-    let OrModify = await this.OrSaveRepo.find({
-      select : ['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
-      where : {
-        date : Between(dateDebut,dateFin),
-        status : 'M'
-      },
-      relations:["description"]
-    })
+    let OrModify
+    if (user == undefined){
+      OrModify = await this.OrSaveRepo.find({
+        select : ['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut,dateFin),
+          status : 'M'
+        },
+        relations:["description"]
+      })
+    } else {
+      OrModify = await this.OrSaveRepo.find({
+        select : ['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut,dateFin),
+          status : 'M',
+          profilModification : user
+        },
+        relations:["description"]
+      })
+    }
 
     let objetNow : infoPerDayModified= {
       id: '',
@@ -338,6 +416,8 @@ export class ServiceAccueilService {
       dateModification: undefined
     }
 
+   
+    
     if ( OrModify.length > 0 ) {
       
       for (const orM of OrModify){
@@ -397,15 +477,27 @@ export class ServiceAccueilService {
 
 
     // Item //
-
-    let ItemModify = await this.itemSaveRepo.find({
-      select : ['idItem','libelleItem','etat','profilModification','date'],
-      where : {
-        date : Between(dateDebut,dateFin),
-        status : 'M'
-      },
-      relations:["description"]
-    })
+    let ItemModify
+    if (user == undefined){
+      ItemModify = await this.itemSaveRepo.find({
+        select : ['idItem','libelleItem','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut,dateFin),
+          status : 'M'
+        },
+        relations:["description"]
+      })
+    } else {
+      ItemModify = await this.itemSaveRepo.find({
+        select : ['idItem','libelleItem','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut,dateFin),
+          status : 'M',
+          profilModification : user
+        },
+        relations:["description"]
+      })
+    }
 
     if ( ItemModify.length > 0 ) {
       for (const itemM of ItemModify){
@@ -462,15 +554,27 @@ export class ServiceAccueilService {
 
 
     // Sous-Item
-
-    let SiModify = await this.SousItemSaveRepo.find({
-      select : ['idSousItem','libelleSousItem','etat','profilModification','date'],
-      where : {
-        date : Between(dateDebut,dateFin),
-        status : 'M'
-      },
-      relations:["description"]
-    })
+    let SiModify
+    if (user == undefined){
+      SiModify = await this.SousItemSaveRepo.find({
+        select : ['idSousItem','libelleSousItem','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut,dateFin),
+          status : 'M'
+        },
+        relations:["description"]
+      })
+    } else {
+      SiModify = await this.SousItemSaveRepo.find({
+        select : ['idSousItem','libelleSousItem','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut,dateFin),
+          status : 'M',
+          profilModification : user
+        },
+        relations:["description"]
+      })
+    }
 
     
     if ( SiModify.length > 0 ) {
@@ -533,15 +637,27 @@ export class ServiceAccueilService {
 
 
       // Delete
-
-      let OrDelete = await this.OrSaveRepo.find({
-        select:['idObjetRepere', 'libelleObjetRepere','etat','profilModification','date'],
-        where : {
-          date : Between(dateDebut,dateFin),
-          status : 'D'
-        },
-        relations:["description"]
-      })
+      let OrDelete
+      if (user == undefined){
+        OrDelete = await this.OrSaveRepo.find({
+          select:['idObjetRepere', 'libelleObjetRepere','etat','profilModification','date'],
+          where : {
+            date : Between(dateDebut,dateFin),
+            status : 'D'
+          },
+          relations:["description"]
+        })
+      } else {
+        OrDelete = await this.OrSaveRepo.find({
+          select:['idObjetRepere', 'libelleObjetRepere','etat','profilModification','date'],
+          where : {
+            date : Between(dateDebut,dateFin),
+            status : 'D',
+            profilModification : user
+          },
+          relations:["description"]
+        })
+      }
   
       for(const or of OrDelete){
         InfoPerDay.objectDeleted.push( {
@@ -555,15 +671,27 @@ export class ServiceAccueilService {
         })
       }
   
-  
-      let ItemDelete = await this.itemSaveRepo.find({
-        select:['idItem', 'libelleItem', 'etat', 'profilModification', 'date'],
-        where : {
-          date: Between(dateDebut, dateFin),
-          status : 'D'
-        },
-        relations:["description"]
-      })
+      let ItemDelete
+      if (user == undefined){
+        ItemDelete = await this.itemSaveRepo.find({
+          select:['idItem', 'libelleItem', 'etat', 'profilModification', 'date'],
+          where : {
+            date: Between(dateDebut, dateFin),
+            status : 'D'
+          },
+          relations:["description"]
+        })
+      } else {
+        ItemDelete = await this.itemSaveRepo.find({
+          select:['idItem', 'libelleItem', 'etat', 'profilModification', 'date'],
+          where : {
+            date: Between(dateDebut, dateFin),
+            status : 'D',
+            profilModification : user
+          },
+          relations:["description"]
+        })
+      }
   
       for(const item of ItemDelete){
         InfoPerDay.objectDeleted.push( {
@@ -576,16 +704,28 @@ export class ServiceAccueilService {
           typeObjet : 'Item'
         })
       }
-  
-      let SiDelete = await this.SousItemSaveRepo.find({
-        select:['idSousItem','libelleSousItem','etat','profilModification','date'],
-        where : {
-          date : Between(dateDebut, dateFin),
-          status : 'D'
-        },
-        relations:["description"]
-      })
-  
+
+      let SiDelete
+      if (user == undefined){
+        SiDelete = await this.SousItemSaveRepo.find({
+          select:['idSousItem','libelleSousItem','etat','profilModification','date'],
+          where : {
+            date : Between(dateDebut, dateFin),
+            status : 'D'
+          },
+          relations:["description"]
+        })
+      } else {
+        SiDelete = await this.SousItemSaveRepo.find({
+          select:['idSousItem','libelleSousItem','etat','profilModification','date'],
+          where : {
+            date : Between(dateDebut, dateFin),
+            status : 'D',
+            profilModification: user
+          },
+          relations:["description"]
+        })
+      }
       for(const si of SiDelete){
         InfoPerDay.objectDeleted.push( {
           id : si.idSousItem,
@@ -603,19 +743,30 @@ export class ServiceAccueilService {
     );
     InfoPerDay.objectDeleted = sortedDeleteDesc;
 
+    for (const create of InfoPerDay.objectCreated){
+      const profil = await this.utilisateurService.findOneByLogin(create.profilCreation);
+      if (profil != undefined){
+        create.profilCreation = profil.nom.toUpperCase() + " " + profil.prenom
+      }
+    }
+
+    for (const edit of InfoPerDay.objectModified){
+      const profil = await this.utilisateurService.findOneByLogin(edit.profilModification);
+      if (profil != undefined){
+        edit.profilModification = profil.nom.toUpperCase() + " " + profil.prenom
+      }
+    }
+
+    for (const del of InfoPerDay.objectDeleted){
+      const profil = await this.utilisateurService.findOneByLogin(del.profilSuppression);
+      if (profil != undefined){
+        del.profilSuppression = profil.nom.toUpperCase() + " " + profil.prenom
+      }
+    }
     return InfoPerDay;
     
     
   }
 
-
-
-  findAll() {
-    return `This action returns all serviceAccueil`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} serviceAccueil`;
-  }
 
 }

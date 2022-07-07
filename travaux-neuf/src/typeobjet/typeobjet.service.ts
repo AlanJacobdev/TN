@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Repository } from 'typeorm';
 import { CreateTypeobjetDto } from './dto/create-typeobjet.dto';
 import { UpdateTypeobjetDto } from './dto/update-typeobjet.dto';
@@ -8,7 +9,7 @@ import { Typeobjet } from './entities/typeobjet.entity';
 @Injectable()
 export class TypeobjetService {
 
-  constructor(@InjectRepository(Typeobjet) private typeObjetRepo : Repository<Typeobjet> ){}
+  constructor(@InjectRepository(Typeobjet) private typeObjetRepo : Repository<Typeobjet>, private utilisateurService : UtilisateurService ){}
 
   async create(createTypeobjetDto: CreateTypeobjetDto) {
     const typeobjet= await this.findOne(createTypeobjetDto.idType)
@@ -63,12 +64,22 @@ export class TypeobjetService {
     return undefined;
   }
 
-  findAll() {
-    return this.typeObjetRepo.find({
+  async findAll() {
+    const type = await this.typeObjetRepo.find({
       order : {
         idType : 'ASC'
       }
     });
+
+    for (const t of type) {
+      const profil = await this.utilisateurService.findOneByLogin(t.profilCreation);
+      if (profil != undefined) {
+        t.profilCreation = (profil.nom).toUpperCase() +" "+profil.prenom
+      }
+
+    }
+
+    return type
   }
 
   findAllTypeOActif(){

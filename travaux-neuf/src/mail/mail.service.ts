@@ -1,12 +1,20 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService) {}
+  constructor(private mailerService: MailerService, private utilisateurService : UtilisateurService) {}
 
   async sendUserConfirmation(profil: string, motif : string) {
 
+    let infoUser = await this.utilisateurService.findOneByLogin(profil)
+    let user;
+    if(infoUser != undefined){
+      user = infoUser.nom.toUpperCase(); 
+    }else {
+      user = profil;
+    }
     try {
       
         await this.mailerService.sendMail({
@@ -15,7 +23,7 @@ export class MailService {
         subject: '[Itemisation] Demande de suppression',
         template: 'confirmation',
         context: { 
-            name: profil,
+            name: user,
             motif: motif,
         },
         });

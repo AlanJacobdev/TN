@@ -7,9 +7,10 @@ import { TypeobjetModule } from 'src/typeobjet/typeobjet.module';
 import { ObjetrepereModule } from 'src/objetrepere/objetrepere.module';
 import { ItemsaveModule } from 'src/itemsave/itemsave.module';
 import { DescriptionModule } from 'src/description/description.module';
+import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Item]), TypeobjetModule, ObjetrepereModule, forwardRef(() =>ItemsaveModule), DescriptionModule],
+  imports : [TypeOrmModule.forFeature([Item]), TypeobjetModule, ObjetrepereModule, forwardRef(() =>ItemsaveModule), DescriptionModule, UtilisateurModule],
   controllers: [ItemController],
   providers: [ItemService],
   exports : [ItemService]

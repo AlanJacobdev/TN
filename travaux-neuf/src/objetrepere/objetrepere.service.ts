@@ -6,6 +6,7 @@ import { NumerouniqueService } from 'src/numerounique/numerounique.service';
 import { CreateOrsaveDto } from 'src/orsave/dto/create-orsave.dto';
 import { OrsaveService } from 'src/orsave/orsave.service';
 import { TypeobjetrepereService } from 'src/typeobjetrepere/typeobjetrepere.service';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { ILike, Repository } from 'typeorm';
 import { CreateObjetrepereDto } from './dto/create-objetrepere.dto';
 import { UpdateObjetrepereDto } from './dto/update-objetrepere.dto';
@@ -15,7 +16,7 @@ import { Objetrepere } from './entities/objetrepere.entity';
 export class ObjetrepereService {
   
   constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, private nuservice : NumerouniqueService, private typeorservice : TypeobjetrepereService,  private orsaveservice : OrsaveService,
-              private descriptionService: DescriptionService ){}
+              private descriptionService: DescriptionService, private utilisateurService : UtilisateurService ){}
 
   async create(createObjetrepereDto: CreateObjetrepereDto) {
     const typeor = await this.typeorservice.findOne(createObjetrepereDto.codeType); 
@@ -125,7 +126,10 @@ export class ObjetrepereService {
 
   findAll() {
     return this.OrRepo.find({
-      relations: ["description"]
+      relations: ["description"],
+      order : {
+        idObjetRepere : "ASC"
+      }
     });
   }
 
@@ -134,8 +138,8 @@ export class ObjetrepereService {
       where : {
           idObjetRepere : id
         },
-      relations: ["description"]
-      }
+      relations: ["description"],
+      },
     )
   }
 
@@ -145,7 +149,7 @@ export class ObjetrepereService {
       where : {
         numeroUnique : nu
       },
-      relations: ["description"]
+      relations: ["description"],
     })
   }
 
@@ -155,17 +159,33 @@ export class ObjetrepereService {
       where : {
         numeroUnique : nu
       },
-      relations: ["description"]
+      relations: ["description"],
     })
   }
 
-  getORByAtelier(id: string) {
-    return this.OrRepo.find({
+  async getORByAtelier(id: string) {
+    const or = await this.OrRepo.find({
       where : {
         numeroUnique : ILike(id+"%")
       },
-      relations: ["description"]
+      relations: ["description"],
+      order : {
+        idObjetRepere : "ASC"
+      }
     })
+
+    for (const o of or){
+      const profilCreation = await this.utilisateurService.findOneByLogin(o.profilCreation)
+      if (profilCreation != undefined){
+        o.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+      }
+      const profilModification = await this.utilisateurService.findOneByLogin(o.profilModification)
+      if (profilModification != undefined){
+        o.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+      }
+    }
+
+    return or
   }
 
   async update(id: string, updateObjetrepereDto: UpdateObjetrepereDto) {
@@ -173,13 +193,21 @@ export class ObjetrepereService {
       where : {
         idObjetRepere : id
       },
-      relations: ["description"]
+      relations: ["description"],
     })
     if (OR == undefined){
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
         error :'Objet repère inconnu',
       }, HttpStatus.NOT_FOUND)
+    }
+    if(OR.libelleObjetRepere == updateObjetrepereDto.libelleObjetRepere 
+      && OR.etat == updateObjetrepereDto.etat 
+      && JSON.stringify(OR.description) === JSON.stringify(updateObjetrepereDto.description)){
+        throw new HttpException({
+          status : HttpStatus.NOT_MODIFIED,
+          error :'Aucune modification effectuée',
+        }, HttpStatus.NOT_FOUND)
     }
 
     let tabDescription = [];
@@ -439,7 +467,7 @@ export class ObjetrepereService {
 
     const res = await this.OrRepo.createQueryBuilder("Objetrepere")
     .select(['Objetrepere.codeType as idTypeObjet'])
-    .where("Objetrepere.numeroUnique like :id", { id : '%' + Atelier.charAt(0) +'%'})
+    .where("Objetrepere.numeroUnique like :id", { id : Atelier.charAt(0) +'%'})
     .distinct()
     .getRawMany()
       

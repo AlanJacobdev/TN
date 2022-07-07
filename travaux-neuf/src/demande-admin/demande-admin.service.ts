@@ -4,6 +4,7 @@ import { ItemService } from 'src/item/item.service';
 import { MailService } from 'src/mail/mail.service';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { SousitemService } from 'src/sousitem/sousitem.service';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Repository } from 'typeorm';
 import { CreateDemandeAdminDto } from './dto/create-demande-admin.dto';
 import { UpdateDemandeAdminDto } from './dto/update-demande-admin.dto';
@@ -12,7 +13,8 @@ import { DemandeAdmin } from './entities/demande-admin.entity';
 @Injectable()
 export class DemandeAdminService {
 
-  constructor(@InjectRepository(DemandeAdmin) private demandeAdminRepo : Repository<DemandeAdmin>, private objetRepereService : ObjetrepereService, private itemService : ItemService, private sousItemService : SousitemService,  private mailService : MailService){}
+  constructor(@InjectRepository(DemandeAdmin) private demandeAdminRepo : Repository<DemandeAdmin>, private objetRepereService : ObjetrepereService, 
+  private itemService : ItemService, private sousItemService : SousitemService,  private mailService : MailService, private utilisateurService : UtilisateurService){}
 
   async create(createDemandeAdminDto: CreateDemandeAdminDto) {
 
@@ -58,8 +60,8 @@ export class DemandeAdminService {
     await this.mailService.sendUserConfirmation(user, motif);
   }
 
-  findAll() {
-   return this.demandeAdminRepo.find({
+  async findAll() {
+   const demandes = await this.demandeAdminRepo.find({
     where : {
       etat : false
     }
@@ -67,10 +69,17 @@ export class DemandeAdminService {
       dateCreation : "ASC"
     }
    });
+
+   for (const d of demandes) {
+    const profil = await this.utilisateurService.findOneByLogin(d.profilCreation);
+    d.profilCreation = (profil.nom).toUpperCase() +" "+profil.prenom
+   }
+
+   return demandes
   }
 
-  findAllTraitee() {
-    return this.demandeAdminRepo.find({
+  async findAllTraitee() {
+    const demandes = await this.demandeAdminRepo.find({
      where : {
        etat : true
      }
@@ -78,6 +87,16 @@ export class DemandeAdminService {
        dateModification : "DESC"
      }
     });
+    
+    for (const d of demandes) {
+      const profilCreation = await this.utilisateurService.findOneByLogin(d.profilCreation);
+      d.profilCreation = (profilCreation.nom).toUpperCase() +" "+profilCreation.prenom
+
+      const profilAdmin = await this.utilisateurService.findOneByLogin(d.profilModification);
+      d.profilModification = (profilAdmin.nom).toUpperCase() +" "+profilAdmin.prenom
+
+    }
+    return demandes
    }
 
 

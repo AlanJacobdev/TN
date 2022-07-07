@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Item } from 'src/item/entities/item.entity';
 import { ItemService } from 'src/item/item.service';
-import { MailModule } from 'src/mail/mail.module';
-import { MailService } from 'src/mail/mail.service';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { SousitemService } from 'src/sousitem/sousitem.service';
 import { deleteObject } from './interface/SuppressionInterface';

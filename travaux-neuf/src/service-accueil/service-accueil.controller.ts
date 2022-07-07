@@ -11,21 +11,19 @@ export class ServiceAccueilController {
     return this.serviceAccueilService.getNumberOfActivityForEachDay(start, end);
   }
 
+  @Get('getNumberOfActivityForEachDay/:start/:end/:login')
+  getNumberOfMyActivityForEachDay(@Param('start') start: string, @Param('end') end: string, @Param('login') login: string) {
+    return this.serviceAccueilService.getNumberOfActivityForEachDay(start, end, login );
+  }
+
   @Get('getHistoryOfOneDay/:date')
   getHistoryOfOneDay(@Param('date') date: string) {
     return this.serviceAccueilService.getHistoryOfOneDay(date);
   }
-  
 
-  @Get()
-  findAll() {
-    return this.serviceAccueilService.findAll();
+  @Get('getHistoryOfOneDay/:date/:login')
+  getMyHistoryOfOneDay(@Param('date') date: string, @Param('login') login: string) {
+    return this.serviceAccueilService.getHistoryOfOneDay(date,login);
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.serviceAccueilService.findOne(+id);
-  }
-
   
 }

@@ -36,6 +36,11 @@ export class UtilisateurController {
   findOneConnexion(@Param('login') login: string, @Param('password') password: string ) {
     return this.utilisateurService.findOneConnexion(login, password);
   }
+
+  @Get('getIdentityFromLogin/:login')
+  findOneByLogin(@Param('login') login: string) {
+    return this.utilisateurService.findOneByLogin(login);
+  }
  
 
   @Put(':id')

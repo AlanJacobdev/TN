@@ -8,9 +8,10 @@ import { Objetrepere } from 'src/objetrepere/entities/objetrepere.entity';
 import { Itemsave } from 'src/itemsave/entities/itemsave.entity';
 import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { Sousitemsave } from 'src/sousitemsave/entities/sousitemsave.entity';
+import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Sousitem, Sousitemsave, Item, Itemsave, Objetrepere, Orsave])],
+  imports : [TypeOrmModule.forFeature([Sousitem, Sousitemsave, Item, Itemsave, Objetrepere, Orsave]), UtilisateurModule],
   controllers: [ServiceAccueilController],
   providers: [ServiceAccueilService]
 })

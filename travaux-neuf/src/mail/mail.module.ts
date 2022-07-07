@@ -3,9 +3,10 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { Module } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { join } from 'path';
+import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 @Module({
-  imports: [
+  imports: [UtilisateurModule,
     MailerModule.forRoot({
       //transport: 'smtps://itemisationlaita@gmail.com:item_laita29@Smtp.gmail.com:587',
       // or

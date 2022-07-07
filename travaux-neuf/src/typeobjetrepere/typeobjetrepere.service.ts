@@ -1,7 +1,6 @@
-import { HttpException, HttpStatus, Injectable, Type } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { type } from 'os';
-import { config } from 'rxjs';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Repository } from 'typeorm';
 import { CreateTypeobjetrepereDto } from './dto/create-typeobjetrepere.dto';
 import { UpdateTypeobjetrepereDto } from './dto/update-typeobjetrepere.dto';
@@ -9,7 +8,7 @@ import { Typeobjetrepere } from './entities/typeobjetrepere.entity';
 
 @Injectable()
 export class TypeobjetrepereService {
-  constructor(@InjectRepository(Typeobjetrepere) private TypeOrRepo : Repository<Typeobjetrepere> ){}
+  constructor(@InjectRepository(Typeobjetrepere) private TypeOrRepo : Repository<Typeobjetrepere>, private utilisateurService : UtilisateurService ){}
 
   async create(createTypeobjetrepereDto: CreateTypeobjetrepereDto) {
     const typeor = await this.findOne(createTypeobjetrepereDto.idTypeOR)
@@ -26,12 +25,21 @@ export class TypeobjetrepereService {
     }
   }
 
-  findAll() {
-    return this.TypeOrRepo.find({
+  async findAll() {
+    const type = await this.TypeOrRepo.find({
       order : {
         idTypeOR : 'ASC'
       }
     });
+
+    for ( const t of type) {
+      const profil = await this.utilisateurService.findOneByLogin(t.profilCreation);      
+      if (profil != undefined) {
+        t.profilCreation = (profil.nom).toUpperCase() +" "+profil.prenom
+      }
+    }
+
+    return type
   }
 
   findOne(id: string) {

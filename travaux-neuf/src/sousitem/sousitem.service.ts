@@ -6,6 +6,7 @@ import { ItemService } from 'src/item/item.service';
 import { CreateSousitemsaveDto } from 'src/sousitemsave/dto/create-sousitemsave.dto';
 import { SousitemsaveService } from 'src/sousitemsave/sousitemsave.service';
 import { TypeobjetService } from 'src/typeobjet/typeobjet.service';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Repository } from 'typeorm';
 import { CreateSousitemDto } from './dto/create-sousitem.dto';
 import { UpdateSousitemDto } from './dto/update-sousitem.dto';
@@ -16,7 +17,7 @@ export class SousitemService {
   
   
   constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService, private sousitemSaveService : SousitemsaveService,
-              private descriptionService: DescriptionService ){}
+              private descriptionService: DescriptionService, private utilisateurService : UtilisateurService){}
   
   async create(createSousitemDto: CreateSousitemDto) {
     const item = await this.itemservice.findOne(createSousitemDto.idItem);
@@ -128,8 +129,8 @@ export class SousitemService {
     })
   }
 
-  getSousItemByItem(id: string) {
-    return this.sousitemRepo.find({
+  async getSousItemByItem(id: string) {
+    const sousItem = await this.sousitemRepo.find({
       where : {
         idItem : id
       },
@@ -138,6 +139,20 @@ export class SousitemService {
         idSousItem : "ASC"
       }
     })
+
+    for (const si of sousItem){
+      const profilCreation = await this.utilisateurService.findOneByLogin(si.profilCreation)
+      if (profilCreation != undefined){
+        si.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+      }
+      const profilModification = await this.utilisateurService.findOneByLogin(si.profilModification)
+      if (profilModification != undefined){
+        si.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+      }
+    }
+
+
+    return sousItem
   }
 
   async update(id: string, updateSousitemDto: UpdateSousitemDto) {
@@ -153,6 +168,15 @@ export class SousitemService {
         error : 'Identifier not found'
       }
     } 
+    if(sousitem.libelleSousItem == updateSousitemDto.libelleSousItem 
+      && sousitem.etat == updateSousitemDto.etat 
+      && JSON.stringify(sousitem.description) === JSON.stringify(updateSousitemDto.description)){
+        throw new HttpException({
+          status : HttpStatus.NOT_MODIFIED,
+          error :'Aucune modification effectuée',
+        }, HttpStatus.NOT_FOUND)
+
+      }
 
     let tabDescriptionAfter = [];
 
