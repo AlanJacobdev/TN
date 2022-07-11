@@ -4,9 +4,11 @@ import { Module } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { join } from 'path';
 import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
+import { ParametreModule } from 'src/parametre/parametre.module';
 
 @Module({
-  imports: [UtilisateurModule,
+  imports: [ParametreModule,
+    UtilisateurModule,
     MailerModule.forRoot({
       //transport: 'smtps://itemisationlaita@gmail.com:item_laita29@Smtp.gmail.com:587',
       // or

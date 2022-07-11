@@ -44,7 +44,7 @@ export class ParametreService {
     if (email != undefined){
       let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
 
-      let isEmail = regex.test(email.valeur);
+      let isEmail = regex.test(updateParametreDto.valeur);
       if (isEmail) {
         email.valeur = updateParametreDto.valeur;
         email.dateModification = updateParametreDto.dateModification;

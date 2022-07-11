@@ -24,7 +24,7 @@ export class ItemController {
 
   @Get('getItemByOR/:id')
   getItemByOR(@Param('id') id: string){
-    return this.itemService.getItemByOR(id);
+    return this.itemService.getItemByORAffichage(id);
   }
 
 

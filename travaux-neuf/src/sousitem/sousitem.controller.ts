@@ -39,7 +39,7 @@ export class SousitemController {
 
   @Get('getSousItemByItem/:id')
   getSousItemByItem(@Param('id') id: string){
-    return this.sousitemService.getSousItemByItem(id);
+    return this.sousitemService.getSousItemByItemAffichage(id);
   }
 
   @Put(':id')

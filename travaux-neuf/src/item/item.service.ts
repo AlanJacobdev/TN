@@ -115,7 +115,7 @@ export class ItemService {
     })
   }
 
-  async getItemByOR(id: string) {
+  async getItemByORAffichage(id: string) {
     const item = await this.itemRepo.find({
       where : {
          idOR : id
@@ -137,6 +137,19 @@ export class ItemService {
       }
     }
 
+    return item;
+  }
+
+  async getItemByOR(id: string) {
+    const item = await this.itemRepo.find({
+      where : {
+         idOR : id
+      },
+      relations: ["description"],
+      order : {
+        idItem : "ASC"
+      }
+    })
     return item;
   }
 

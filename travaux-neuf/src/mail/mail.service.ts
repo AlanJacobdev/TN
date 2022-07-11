@@ -1,15 +1,17 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import { ParametreService } from 'src/parametre/parametre.service';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService, private utilisateurService : UtilisateurService) {}
+  constructor(private mailerService: MailerService, private utilisateurService : UtilisateurService, private parametreService : ParametreService) {}
 
   async sendUserConfirmation(profil: string, motif : string) {
 
+    let emailAdmin = (await this.parametreService.findOne("email")).valeur;
     let infoUser = await this.utilisateurService.findOneByLogin(profil)
-    let user;
+    let user: string;
     if(infoUser != undefined){
       user = infoUser.nom.toUpperCase(); 
     }else {
@@ -18,7 +20,7 @@ export class MailService {
     try {
       
         await this.mailerService.sendMail({
-        to: 'alan.jacob@laita.fr',
+        to: emailAdmin,
         from: '"Logiciel Itemisation" <itemisationlaita@laita.fr>', // override default from
         subject: '[Itemisation] Demande de suppression',
         template: 'confirmation',
@@ -33,23 +35,22 @@ export class MailService {
       } 
   }
 
-  async sendUserConfirmationDelete(motif : string) {
+  async sendUserConfirmationDelete(user : string, motif : string) {
+    let email = (await this.utilisateurService.findEmailByLogin(user)).email;
 
     try {
-      
-        await this.mailerService.sendMail({
-        to: 'alan.jacob@laita.fr',
-        from: '"Logiciel Itemisation" <itemisationlaita@laita.fr>', // override default from
-        subject: '[Itemisation] Suppression acceptée',
-        template: 'confirmDelete',  
-        context: {
-          motif: motif  
-        },
-        });
-      } catch (e :any){
-        console.log(e);
-        
-      } 
+      await this.mailerService.sendMail({
+      to: email,
+      from: '"Logiciel Itemisation" <itemisationlaita@laita.fr>',
+      subject: '[Itemisation] Suppression acceptée',
+      template: 'confirmDelete',  
+      context: {
+        motif: motif  
+      },
+      });
+    } catch (e :any){
+      console.log(e);
+    } 
   }
 
 }

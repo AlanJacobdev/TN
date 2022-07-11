@@ -6,7 +6,7 @@ import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 import * as bcrypt from 'bcrypt';
-import { userIdentity } from './dto/user';
+import { emailUser, userIdentity } from './dto/user';
 
 @Injectable()
 export class UtilisateurService {
@@ -58,6 +58,15 @@ export class UtilisateurService {
   async findOneByLogin(loginUser :string) : Promise<userIdentity>{
     return this.utiRepo.findOne({
       select : ['nom','prenom'],
+      where : {
+        login : loginUser
+      }
+    })
+  }
+
+  async findEmailByLogin(loginUser : string) : Promise<emailUser>{
+    return this.utiRepo.findOne({
+      select : ['email'],
       where : {
         login : loginUser
       }

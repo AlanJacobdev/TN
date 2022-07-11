@@ -129,7 +129,7 @@ export class SousitemService {
     })
   }
 
-  async getSousItemByItem(id: string) {
+  async getSousItemByItemAffichage(id: string) {
     const sousItem = await this.sousitemRepo.find({
       where : {
         idItem : id
@@ -154,6 +154,21 @@ export class SousitemService {
 
     return sousItem
   }
+
+  async getSousItemByItem(id: string) {
+    const sousItem = await this.sousitemRepo.find({
+      where : {
+        idItem : id
+      },
+      relations: ["description"],
+      order: {
+        idSousItem : "ASC"
+      }
+    })
+    return sousItem
+  }
+
+
 
   async update(id: string, updateSousitemDto: UpdateSousitemDto) {
     const sousitem = await this.sousitemRepo.findOne({

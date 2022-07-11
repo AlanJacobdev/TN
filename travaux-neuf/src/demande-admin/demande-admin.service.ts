@@ -144,7 +144,7 @@ export class DemandeAdminService {
 
        
         
-        await this.mailService.sendUserConfirmationDelete(demande.motif)
+        await this.mailService.sendUserConfirmationDelete(demande.profilCreation, demande.motif)
       } else {
 
 
