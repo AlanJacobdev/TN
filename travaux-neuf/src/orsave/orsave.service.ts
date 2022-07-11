@@ -60,6 +60,19 @@ export class OrsaveService {
     })
   }
 
+
+  findOnebyIDDesc(id: string) {
+    return this.orsaveRepo.findOne({
+      where : {
+        idObjetRepere : id
+      },
+      order : {
+        date : 'DESC'
+      },
+      relations: ["description"]
+    })
+  }
+
   async findHistoryById(id: string) {
     let finalHistory = [];
     const history = await this.orsaveRepo.find({

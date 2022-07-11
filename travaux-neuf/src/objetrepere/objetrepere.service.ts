@@ -226,6 +226,17 @@ export class ObjetrepereService {
       }
     }
  
+
+    let statusOr : string = "";
+    const oldOr = await this.orsaveservice.findOnebyIDDesc(id);
+
+    
+    if ( oldOr == undefined || oldOr.status == 'D' ) {
+      statusOr = 'C'
+    } else {
+      statusOr = 'M'
+    }
+
     let orsaveDto = new CreateOrsaveDto;
     orsaveDto = {
       idObjetRepere : OR.idObjetRepere,
@@ -235,7 +246,7 @@ export class ObjetrepereService {
       etat : OR.etat,
       description : OR.description,
       date : new Date(),
-      status : "M",
+      status : statusOr,
       profilModification : updateObjetrepereDto.profilModification,
       posteModification : updateObjetrepereDto.posteModification    
     }
@@ -280,6 +291,25 @@ export class ObjetrepereService {
         }
       }
     
+      const oldItem = await this.orsaveservice.findOnebyIDDesc(id);
+      if ( oldItem == undefined || oldItem.status == 'D' ) {
+        let OrCreateSaveDTO = new CreateOrsaveDto();
+        OrCreateSaveDTO = {
+          idObjetRepere : OR.idObjetRepere,
+          libelleObjetRepere : OR.libelleObjetRepere,
+          codeType : OR.codeType,
+          numeroUnique : OR.numeroUnique,
+          etat : OR.etat,
+          description : OR.description,
+          date : OR.dateCreation,
+          status : "C",
+          profilModification : user,
+          posteModification : ""    
+        }
+        
+        await this.orsaveservice.create(OrCreateSaveDTO);
+      } 
+
     let orsaveDto = new CreateOrsaveDto;
     orsaveDto = {
       idObjetRepere : OR.idObjetRepere,
@@ -300,6 +330,7 @@ export class ObjetrepereService {
       await this.OrRepo.delete(id);
     } catch ( e : any) {
       await this.orsaveservice.remove(orsaveDto.idObjetRepere, orsaveDto.date);
+      await this.orsaveservice.remove(orsaveDto.idObjetRepere, OR.dateCreation);
       return {
         status : HttpStatus.CONFLICT,
         error :'Impossible de supprimer l\'objet (item lié)',

@@ -5,6 +5,11 @@ export interface infoPerMonth {
     count : number
 }
 
+export interface infoPerMonthCreate {
+    date : string;
+    item : string
+}
+
 export interface typeInfoPerMounth {
     objectCreated : infoPerMonth[],
     objectModified : infoPerMonth[],

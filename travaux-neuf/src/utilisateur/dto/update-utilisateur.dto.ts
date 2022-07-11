@@ -12,6 +12,9 @@ export class UpdateUtilisateurDto {
     password : string
 
     @Allow()
+    email: string;
+
+    @Allow()
     idService : string;
 
     @Allow()

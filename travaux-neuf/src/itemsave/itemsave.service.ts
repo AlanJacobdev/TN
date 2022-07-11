@@ -22,6 +22,8 @@ export class ItemsaveService {
           // if(createItemsaveDto.etat === 'M') {
           //   await this.deleteSaveOlderThan(createItemsaveDto.idItem);
           // }
+         
+          
           return newitemsave;
         } catch (e:any) {
           throw new HttpException({
@@ -63,6 +65,18 @@ export class ItemsaveService {
         idItem : id
       },
       relations: ["description"]
+    })
+  }
+
+  findOnebyIDDesc(id: string){
+    return this.itemSaveRepo.findOne({
+      where : {
+        idItem : id
+      },
+      relations: ["description"],
+      order : {
+        date : "DESC"
+      }
     })
   }
 

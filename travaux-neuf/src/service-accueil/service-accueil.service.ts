@@ -8,7 +8,7 @@ import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { Sousitemsave } from 'src/sousitemsave/entities/sousitemsave.entity';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Between, MoreThan, Repository } from 'typeorm';
-import { infoPerDayModified, infoPerMonth, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
+import { infoPerDayModified, infoPerMonth, infoPerMonthCreate, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
 
 @Injectable()
 export class ServiceAccueilService {
@@ -27,7 +27,8 @@ export class ServiceAccueilService {
       objectModified: [],
       objectDeleted: []
     }
-    let itemCreate: infoPerMonth[] = [];
+    let itemCreate: infoPerMonthCreate[] = [];
+    let itemCreateSave : infoPerMonthCreate[] = [];
     let itemModify: infoPerMonth[] = [];
     let itemDelete: infoPerMonth[] = [];
 
@@ -44,19 +45,43 @@ export class ServiceAccueilService {
     dateFin.setDate(dateFin.getDate() + 1)
 
     const resultItemCreation = this.itemRepo.createQueryBuilder("Item")
-      .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')) as count"])
+      .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "Item.idItem as item"])
       .where("Item.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
       if(user !=undefined){
         resultItemCreation.andWhere("Item.profilCreation = :user", {user: user})
       }
-      resultItemCreation.groupBy("TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')")
+      //resultItemCreation.groupBy("TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')")
     try {
       itemCreate = await resultItemCreation.getRawMany();
     } catch (e) {
       return {
         status: HttpStatus.CONFLICT,
-        error: "Problème lié à la récupération des items créés",
+        error: e,
       }
+    }
+     
+
+    const resultItemCreateAndSave = this.itemSaveRepo.createQueryBuilder("Itemsave")
+    .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "Itemsave.idItem as item"])
+    .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .andWhere("Itemsave.status = 'C'")
+    if(user !=undefined){
+      resultItemCreateAndSave.andWhere("Itemsave.profilModification = :user", {user: user})
+    }
+    //resultItemCreateAndSave.groupBy("TO_CHAR(Itemsave.date, 'DD-MM-YYYY')")
+    try {
+      itemCreateSave = await resultItemCreateAndSave.getRawMany();
+    } catch (e) {
+      return {
+        status: HttpStatus.CONFLICT,
+        error: "Problème lié à la récupération des items modifiés",
+      }
+    }
+    return itemCreateSave;
+    
+
+    for (const item of itemCreate) {
+      let value = itemCreateSave.findIndex((element) => element.item)
     }
 
 
@@ -94,7 +119,7 @@ export class ServiceAccueilService {
       }
     }
 
-    allInfoPerMonth.objectCreated = itemCreate;
+    //allInfoPerMonth.objectCreated = itemCreate;
     allInfoPerMonth.objectModified = itemModify;
     allInfoPerMonth.objectDeleted = itemDelete;
 

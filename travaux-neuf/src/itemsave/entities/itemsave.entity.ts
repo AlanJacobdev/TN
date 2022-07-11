@@ -1,5 +1,4 @@
 import { Description } from "src/description/entities/description.entity";
-import { Item } from "src/item/entities/item.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
 
 @Entity('itemsauvegarde')

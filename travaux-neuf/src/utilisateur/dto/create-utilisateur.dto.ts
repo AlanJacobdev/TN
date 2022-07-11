@@ -1,4 +1,4 @@
-import { Allow, IsNotEmpty } from "class-validator";
+import { Allow, isNotEmpty, IsNotEmpty } from "class-validator";
 
 export class CreateUtilisateurDto {
     
@@ -15,6 +15,9 @@ export class CreateUtilisateurDto {
 
     @IsNotEmpty()
     login : string;
+
+    @IsNotEmpty()
+    email :string;
 
     @IsNotEmpty()
     idService : string;

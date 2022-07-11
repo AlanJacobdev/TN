@@ -72,6 +72,18 @@ export class SousitemsaveService {
     })
   }
 
+  findOnebyIDDesc(id : string){
+    return this.sousItemSaveRepo.findOne({
+      where : {
+        idSousItem : id
+      },
+      order : {
+        date : 'DESC'
+      },
+      relations: ["description"]
+    })
+  }
+
   async findHistoryById(id: string) {
     let finalHistory = [];
     const history = await this.sousItemSaveRepo.find({

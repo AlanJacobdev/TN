@@ -209,6 +209,16 @@ export class SousitemService {
       }
     }
 
+    let statusItem : string = "";
+    const oldItem = await this.sousitemSaveService.findOnebyIDDesc(id);
+    console.log(oldItem);
+    
+    if ( oldItem == undefined || oldItem.status == 'D' ) {
+      statusItem = 'C'
+    } else {
+      statusItem = 'M'
+    }
+  
     let sousitemsaveDTO = new CreateSousitemsaveDto();
     sousitemsaveDTO = {
       idSousItem : sousitem.idSousItem,
@@ -219,7 +229,7 @@ export class SousitemService {
       estPrefixe : sousitem.estPrefixe,
       etat : sousitem.etat,
       date : new Date(),
-      status : 'M',
+      status : statusItem,
       description : sousitem.description,
       profilModification : updateSousitemDto.profilModification,
       posteModification : updateSousitemDto.posteModification
@@ -263,6 +273,26 @@ export class SousitemService {
         }
       }
     
+      const oldSi = await this.sousitemSaveService.findOnebyIDDesc(id);
+      if ( oldSi == undefined || oldSi.status == 'D' ) {
+        let SiCreateSaveDTO = new CreateSousitemsaveDto();
+        SiCreateSaveDTO = {
+          idSousItem : sousitem.idSousItem,
+          libelleSousItem : sousitem.libelleSousItem,
+          codeSousItem : sousitem.codeSousItem,
+          idItem : sousitem.idItem,
+          securite : sousitem.securite,
+          estPrefixe : sousitem.estPrefixe,
+          etat : sousitem.etat,
+          date : sousitem.dateCreation,
+          status : 'C',
+          description : sousitem.description,
+          profilModification : user,
+          posteModification : ""   
+        }
+        
+        await this.sousitemSaveService.create(SiCreateSaveDTO);
+      } 
 
 
     let sousitemsaveDTO = new CreateSousitemsaveDto();
@@ -279,7 +309,6 @@ export class SousitemService {
       description : sousitem.description,
       profilModification : user,
       posteModification : ""
-
     }
     await this.sousitemSaveService.create(sousitemsaveDTO);
 

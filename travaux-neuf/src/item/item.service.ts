@@ -205,7 +205,15 @@ export class ItemService {
       }
     }
    
-
+    let statusItem : string = "";
+    const oldItem = await this.itemSaveService.findOnebyIDDesc(id);
+    console.log(oldItem);
+    
+    if ( oldItem == undefined || oldItem.status == 'D' ) {
+      statusItem = 'C'
+    } else {
+      statusItem = 'M'
+    }
     let itemSaveDTO = new CreateItemsaveDto();
     itemSaveDTO = {
       idItem : item.idItem,
@@ -216,13 +224,14 @@ export class ItemService {
       digit : item.digit,
       securite : item.securite,
       etat : item.etat,
-      status : "M",
+      status : statusItem,
       description : item.description,
       date : new Date(),
       profilModification : updateItemDto.profilModification,
       posteModification : updateItemDto.posteModification
     }
 
+    
     await this.itemSaveService.create(itemSaveDTO);
     item.dateModification = new Date;
     item.libelleItem = updateItemDto.libelleItem;
@@ -264,37 +273,60 @@ export class ItemService {
         }
       }
 
+      const oldItem = await this.itemSaveService.findOnebyIDDesc(id);
+      if ( oldItem == undefined || oldItem.status == 'D' ) {
+        let itemCreateSaveDTO = new CreateItemsaveDto();
+        itemCreateSaveDTO = {
+          idItem : item.idItem,
+          libelleItem : item.libelleItem,
+          idOR : item.idOR,
+          codeObjet : item.codeObjet,
+          numeroUnique : item.numeroUnique,
+          digit : item.digit,
+          securite : item.securite,
+          etat : item.etat,
+          status : "C",
+          description : item.description,
+          date : item.dateCreation,
+          profilModification : user,
+          posteModification : ""
+        }    
+        
+        await this.itemSaveService.create(itemCreateSaveDTO);
+      } 
+  
 
-    let itemSaveDTO = new CreateItemsaveDto();
-    itemSaveDTO = {
-      idItem : item.idItem,
-      libelleItem : item.libelleItem,
-      idOR : item.idOR,
-      codeObjet : item.codeObjet,
-      numeroUnique : item.numeroUnique,
-      digit : item.digit,
-      securite : item.securite,
-      etat : item.etat,
-      status : "D",
-      description : item.description,
-      date : new Date(),
-      profilModification : user,
-      posteModification : ""
-      }    
-    await this.itemSaveService.create(itemSaveDTO);
-    try {
-      await this.itemRepo.delete(id)
-    } catch ( e : any) {
-      await this.itemSaveService.remove(itemSaveDTO.idItem, itemSaveDTO.date);
-      return {
-        status : HttpStatus.CONFLICT,
-        error :'Impossible de supprimer l\'item (sous-item lié)',
+      let itemSaveDTO = new CreateItemsaveDto();
+      itemSaveDTO = {
+        idItem : item.idItem,
+        libelleItem : item.libelleItem,
+        idOR : item.idOR,
+        codeObjet : item.codeObjet,
+        numeroUnique : item.numeroUnique,
+        digit : item.digit,
+        securite : item.securite,
+        etat : item.etat,
+        status : "D",
+        description : item.description,
+        date : new Date(),
+        profilModification : user,
+        posteModification : ""
+        }    
+      await this.itemSaveService.create(itemSaveDTO);
+      try {
+        await this.itemRepo.delete(id)
+      } catch ( e : any) {
+        await this.itemSaveService.remove(itemSaveDTO.idItem, item.dateCreation);
+        await this.itemSaveService.remove(itemSaveDTO.idItem, itemSaveDTO.date);
+        return {
+          status : HttpStatus.CONFLICT,
+          error :'Impossible de supprimer l\'item (sous-item lié)',
+        }
       }
-    }
-    return {
-      status : HttpStatus.OK,
-      message :'Item supprimé',
-    }
+      return {
+        status : HttpStatus.OK,
+        message :'Item supprimé',
+      }
   }
 
   async getHistory(idItem : string) {
