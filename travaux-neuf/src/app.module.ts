@@ -29,6 +29,7 @@ import { PassportModule } from '@nestjs/passport';
 import { NbDemandeGateway } from './demande-admin/gateway/nb-demande.gateway';
 import { ServiceAccueilModule } from './service-accueil/service-accueil.module';
 import { ParametreModule } from './parametre/parametre.module';
+import { EditOrGateway } from './objetrepere/gateway/edit-or.gateway';
 @Module({
   imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule,
   ConfigModule.forRoot({
