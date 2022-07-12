@@ -8,7 +8,7 @@ import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { Sousitemsave } from 'src/sousitemsave/entities/sousitemsave.entity';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Between, MoreThan, Repository } from 'typeorm';
-import { infoPerDayModified, infoPerMonth, infoPerMonthCreate, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
+import { infoPerDayModified, infoPerMonth, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
 
 @Injectable()
 export class ServiceAccueilService {
@@ -27,16 +27,18 @@ export class ServiceAccueilService {
       objectModified: [],
       objectDeleted: []
     }
-    let itemCreate: infoPerMonthCreate[] = [];
-    let itemCreateSave : infoPerMonthCreate[] = [];
+    let itemCreate: infoPerMonth[] = [];
+    let itemCreateSave : infoPerMonth[] = [];
     let itemModify: infoPerMonth[] = [];
     let itemDelete: infoPerMonth[] = [];
 
     let OrCreate: infoPerMonth[] = [];
+    let OrCreateSave: infoPerMonth[] = [];
     let OrModify: infoPerMonth[] = [];
     let OrDelete: infoPerMonth[] = [];
 
     let sousItemCreate: infoPerMonth[] = [];
+    let sousItemCreateSave: infoPerMonth[] = [];
     let sousItemModify: infoPerMonth[] = [];
     let sousItemDelete: infoPerMonth[] = [];
 
@@ -45,12 +47,12 @@ export class ServiceAccueilService {
     dateFin.setDate(dateFin.getDate() + 1)
 
     const resultItemCreation = this.itemRepo.createQueryBuilder("Item")
-      .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "Item.idItem as item"])
+      .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')) as count"])
       .where("Item.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
       if(user !=undefined){
         resultItemCreation.andWhere("Item.profilCreation = :user", {user: user})
       }
-      //resultItemCreation.groupBy("TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')")
+      resultItemCreation.groupBy("TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')")
     try {
       itemCreate = await resultItemCreation.getRawMany();
     } catch (e) {
@@ -62,13 +64,13 @@ export class ServiceAccueilService {
      
 
     const resultItemCreateAndSave = this.itemSaveRepo.createQueryBuilder("Itemsave")
-    .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "Itemsave.idItem as item"])
+    .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
     .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
     .andWhere("Itemsave.status = 'C'")
     if(user !=undefined){
       resultItemCreateAndSave.andWhere("Itemsave.profilModification = :user", {user: user})
     }
-    //resultItemCreateAndSave.groupBy("TO_CHAR(Itemsave.date, 'DD-MM-YYYY')")
+    resultItemCreateAndSave.groupBy("TO_CHAR(Itemsave.date, 'DD-MM-YYYY')")
     try {
       itemCreateSave = await resultItemCreateAndSave.getRawMany();
     } catch (e) {
@@ -77,14 +79,17 @@ export class ServiceAccueilService {
         error: "Problème lié à la récupération des items modifiés",
       }
     }
-    return itemCreateSave;
     
+    for ( const item of itemCreateSave) {
+      let index = itemCreate.findIndex((element) => element.date == item.date)
+      if (index != -1) {   
 
-    for (const item of itemCreate) {
-      let value = itemCreateSave.findIndex((element) => element.item)
+        itemCreate[index].count = +itemCreate[index].count + +item.count   
+      } else {
+        itemCreate.push(item);
+      }
     }
-
-
+    
     const resultItemModify = this.itemSaveRepo.createQueryBuilder("Itemsave")
     .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
     .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
@@ -119,7 +124,7 @@ export class ServiceAccueilService {
       }
     }
 
-    //allInfoPerMonth.objectCreated = itemCreate;
+    allInfoPerMonth.objectCreated = itemCreate;
     allInfoPerMonth.objectModified = itemModify;
     allInfoPerMonth.objectDeleted = itemDelete;
 
@@ -138,6 +143,28 @@ export class ServiceAccueilService {
         error: "Problème lié à la récupération des objets repères créés",
       }
     }
+
+    const resultOrCreateSave = this.OrSaveRepo.createQueryBuilder("Orsave")
+    .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
+    .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .andWhere("Orsave.status = 'C'")
+    if(user !=undefined){
+      resultOrCreateSave.andWhere("Orsave.profilModification = :user", {user: user})
+    }
+    resultOrCreateSave.groupBy("TO_CHAR(Orsave.date, 'DD-MM-YYYY')")
+    try {
+      OrCreateSave = await resultOrCreateSave.getRawMany();
+    } catch (e) {
+      return {
+        status: HttpStatus.CONFLICT,
+        error: "Problème lié à la récupération des objets repères modifiés",
+      }
+    }
+
+    for ( const or of OrCreateSave) {
+      OrCreate.push(or)
+    }
+
 
     const resultOrModify = this.OrSaveRepo.createQueryBuilder("Orsave")
     .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
@@ -218,6 +245,29 @@ export class ServiceAccueilService {
         error: "Problème lié à la récupération des sous items créés",
       }
     }
+
+    const resultSiCreateSave = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
+    .select(["TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')) as count"])
+    .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .andWhere("Sousitemsave.status = 'C'")
+    if(user !=undefined){
+      resultSiCreateSave.andWhere("Sousitemsave.profilModification = :user", {user: user})
+    }
+    resultSiCreateSave.groupBy("TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')")
+    
+    try {
+      sousItemCreateSave = await resultSiCreateSave.getRawMany();
+    } catch (e) {
+      return {
+        status: HttpStatus.CONFLICT,
+        error:  "Problème lié à la récupération des sous items modifiés",
+      }
+    }
+
+    for (const si of sousItemCreateSave) {
+      sousItemCreate.push(si)
+    }
+
 
     const resultSiModify = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
     .select(["TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')) as count"])
@@ -303,6 +353,7 @@ export class ServiceAccueilService {
 
     // Create
     let OrCreate
+    let OrCreateSave
     if (user == undefined){
       OrCreate = await this.OrRepo.find({
         select:['idObjetRepere', 'libelleObjetRepere','etat','profilCreation','dateCreation'],
@@ -310,6 +361,14 @@ export class ServiceAccueilService {
           dateCreation : Between(dateDebut,dateFin)
         },
         relations:["description"]
+      })
+      OrCreateSave = await this.OrSaveRepo.find({
+        select:['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut,dateFin),
+          status : 'C'
+        },
+        relations : ["description"]
       })
     } else {
       OrCreate = await this.OrRepo.find({
@@ -319,6 +378,15 @@ export class ServiceAccueilService {
           profilCreation : user
         },
         relations:["description"]
+      })
+      OrCreateSave = await this.OrSaveRepo.find({
+        select:['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut,dateFin),
+          profilModification : user,
+          status : 'C'
+        },
+        relations : ["description"]
       })
     }
 
@@ -333,13 +401,33 @@ export class ServiceAccueilService {
         typeObjet : 'OR'
       })
     }
+    for(const or of OrCreateSave){
+      InfoPerDay.objectCreated.push( {
+        id : or.idObjetRepere,
+        libelle: or.libelleObjetRepere,
+        etat: or.etat,
+        profilCreation : or.profilModification,
+        dateCreation : or.date,
+        description : or.description,
+        typeObjet : 'OR'
+      })
+    }
 
     let ItemCreate
+    let ItemCreateSave
     if (user == undefined){
       ItemCreate = await this.itemRepo.find({
         select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
         where : {
           dateCreation : Between(dateDebut, dateFin)
+        },
+        relations:["description"]
+      })
+      ItemCreateSave  = await this.itemSaveRepo.find({
+        select:['idItem', 'libelleItem', 'etat', 'profilModification', 'date'],
+        where : {
+          date : Between(dateDebut, dateFin),
+          status : 'C'
         },
         relations:["description"]
       })
@@ -352,8 +440,16 @@ export class ServiceAccueilService {
         },
         relations:["description"]
       })
+      ItemCreateSave = await this.itemSaveRepo.find({
+        select:['idItem', 'libelleItem', 'etat', 'profilModification', 'date'],
+        where : {
+          date : Between(dateDebut, dateFin),
+          profilModification : user,
+          status : 'C'
+        },
+        relations:["description"]
+      })
     }
-
 
     for(const item of ItemCreate){
       InfoPerDay.objectCreated.push( {
@@ -366,13 +462,33 @@ export class ServiceAccueilService {
         typeObjet : 'Item'
       })
     }
+    for(const item of ItemCreateSave){
+      InfoPerDay.objectCreated.push( {
+        id : item.idItem,
+        libelle: item.libelleItem,
+        etat: item.etat,
+        profilCreation : item.profilModification,
+        dateCreation : item.date,
+        description : item.description,
+        typeObjet : 'Item'
+      })
+    }
 
     let SiCreate
+    let SiCreateSave
     if (user == undefined){
       SiCreate = await this.SousItemRepo.find({
         select:['idSousItem','libelleSousItem','etat','profilCreation','dateCreation'],
         where : {
           dateCreation : Between(dateDebut, dateFin)
+        },
+        relations:["description"]
+      })
+      SiCreateSave = await this.SousItemSaveRepo.find({
+        select:['idSousItem','libelleSousItem','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut, dateFin),
+          status : 'C'
         },
         relations:["description"]
       })
@@ -385,7 +501,15 @@ export class ServiceAccueilService {
         },
         relations:["description"]
       })
-
+      SiCreateSave = await this.SousItemSaveRepo.find({
+        select:['idSousItem','libelleSousItem','etat','profilModification','date'],
+        where : {
+          date : Between(dateDebut, dateFin),
+          profilModification : user,
+          status : 'C'
+        },
+        relations:["description"]
+      })
     }
 
     for(const si of SiCreate){
@@ -395,6 +519,17 @@ export class ServiceAccueilService {
         etat: si.etat,
         profilCreation : si.profilCreation,
         dateCreation : si.dateCreation,
+        description : si.description,
+        typeObjet : 'SI'
+      })
+    }
+    for(const si of SiCreateSave){
+      InfoPerDay.objectCreated.push( {
+        id : si.idSousItem,
+        libelle: si.libelleSousItem,
+        etat: si.etat,
+        profilCreation : si.profilModification,
+        dateCreation : si.date,
         description : si.description,
         typeObjet : 'SI'
       })
