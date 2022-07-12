@@ -33,10 +33,12 @@ export class EditOrGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   }
  
   handleDisconnect(client: Socket) {
-    let index = this.editOR.findIndex((element) => element.clientId == client);
-    if(index != 1) {
+    let index = this.editOR.findIndex((element) => element.clientId == client.id);
+    if(index != -1) {
       this.editOR.splice(index,1);
     }
+    
+    this.server.emit('broadcastReservation', this.editOR);
   }
  
   handleConnection(client: Socket, ...args: any[]) {
