@@ -226,15 +226,17 @@ export class ObjetrepereService {
       }
     }
  
-
+    let dateModif : Date;
     let statusOr : string = "";
     const oldOr = await this.orsaveservice.findOnebyIDDesc(id);
 
     
     if ( oldOr == undefined || oldOr.status == 'D' ) {
       statusOr = 'C'
+      dateModif = OR.dateCreation   
     } else {
       statusOr = 'M'
+      dateModif = new Date();
     }
 
     let orsaveDto = new CreateOrsaveDto;

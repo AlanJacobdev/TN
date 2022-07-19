@@ -210,13 +210,15 @@ export class SousitemService {
     }
 
     let statusItem : string = "";
+    let dateModif : Date;
     const oldItem = await this.sousitemSaveService.findOnebyIDDesc(id);
-    console.log(oldItem);
     
     if ( oldItem == undefined || oldItem.status == 'D' ) {
       statusItem = 'C'
+      dateModif = sousitem.dateCreation   
     } else {
       statusItem = 'M'
+      dateModif = new Date();
     }
   
     let sousitemsaveDTO = new CreateSousitemsaveDto();
@@ -228,7 +230,7 @@ export class SousitemService {
       securite : sousitem.securite,
       estPrefixe : sousitem.estPrefixe,
       etat : sousitem.etat,
-      date : new Date(),
+      date : dateModif,
       status : statusItem,
       description : sousitem.description,
       profilModification : updateSousitemDto.profilModification,

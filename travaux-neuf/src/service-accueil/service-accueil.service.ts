@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Description } from 'src/description/entities/description.entity';
 import { Item } from 'src/item/entities/item.entity';
 import { Itemsave } from 'src/itemsave/entities/itemsave.entity';
 import { Objetrepere } from 'src/objetrepere/entities/objetrepere.entity';
@@ -7,7 +8,7 @@ import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { Sousitemsave } from 'src/sousitemsave/entities/sousitemsave.entity';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
-import { Between, MoreThan, Repository } from 'typeorm';
+import { Between, In, MoreThan, Repository } from 'typeorm';
 import { infoPerDayModified, infoPerMonth, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
 
 @Injectable()
@@ -107,6 +108,46 @@ export class ServiceAccueilService {
       }
     }
 
+
+    let ItemModifyCreate;
+    const resultItemModifyCreate = this.itemRepo.createQueryBuilder("Item")
+      .select(["TO_CHAR(Item.dateModification, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateModification, 'DD-MM-YYYY')) as count"])
+      .where("Item.dateModification IS NOT NULL")
+      .andWhere("Item.dateModification BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      if(user !=undefined){
+        resultItemModifyCreate.andWhere("Item.profilCreation = :user", {user: user})
+      }
+      resultItemModifyCreate.andWhere(
+        (qb) =>
+          'Item.idItem IN'+ qb.subQuery()
+          .select("is.idItem")
+          .from(Itemsave, "is")
+          .where('is.status = :status',{status :'M'})
+          .orWhere('is.status = :status',{status :'C'})
+          .orderBy("is.date", 'DESC')
+          .getQuery()
+      )
+      resultItemModifyCreate.groupBy("TO_CHAR(Item.dateModification, 'DD-MM-YYYY')")
+    try {
+      ItemModifyCreate = await resultItemModifyCreate.getRawMany();
+    } catch (e) {
+      return {
+        status: HttpStatus.CONFLICT,
+        error: e,
+      }
+    }
+
+    for ( const item of ItemModifyCreate) {
+      let index = itemModify.findIndex((element) => element.date == item.date)
+      if (index != -1) {   
+
+        itemModify[index].count = +itemModify[index].count + +item.count   
+      } else {
+        itemModify.push(item);
+      }
+    }
+    
+
     const resultItemsaveDelete = this.itemSaveRepo.createQueryBuilder("Itemsave")
       .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
       .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
@@ -182,6 +223,49 @@ export class ServiceAccueilService {
         error: "Problème lié à la récupération des objets repères modifiés",
       }
     }
+
+
+
+    let OrModifyCreate;
+    const resultOrModifyCreate = this.OrRepo.createQueryBuilder("Objetrepere")
+      .select(["TO_CHAR(Objetrepere.dateModification, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Objetrepere.dateModification, 'DD-MM-YYYY')) as count"])
+      .where("Objetrepere.dateModification IS NOT NULL")
+      .andWhere("Objetrepere.dateModification BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      if(user !=undefined){
+        resultOrModifyCreate.andWhere("Objetrepere.profilCreation = :user", {user: user})
+      }
+      resultOrModifyCreate.andWhere(
+        (qb) =>
+          'Objetrepere.idObjetRepere IN'+ qb.subQuery()
+          .select("ors.idObjetRepere")
+          .from(Orsave, "ors")
+          .where('ors.status = :status',{status :'M'})
+          .orWhere('ors.status = :status',{status :'C'})
+          .orderBy("ors.date", 'DESC')
+          .getQuery()
+      )
+      resultOrModifyCreate.groupBy("TO_CHAR(Objetrepere.dateModification, 'DD-MM-YYYY')")
+    try {
+      OrModifyCreate = await resultOrModifyCreate.getRawMany();
+    } catch (e) {
+      return {
+        status: HttpStatus.CONFLICT,
+        error: e,
+      }
+    }
+
+
+    for ( const item of OrModifyCreate) {
+      let index = OrModify.findIndex((element) => element.date == item.date)
+      if (index != -1) {   
+
+        OrModify[index].count = +OrModify[index].count + +item.count   
+      } else {
+        OrModify.push(item);
+      }
+    }
+
+
 
     const resultOrsaveDelete = this.OrSaveRepo.createQueryBuilder("Orsave")
       .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
@@ -286,6 +370,46 @@ export class ServiceAccueilService {
         error:  "Problème lié à la récupération des sous items modifiés",
       }
     }
+
+
+    let SiModifyCreate;
+    const resultSiModifyCreate = this.SousItemRepo.createQueryBuilder("Sousitem")
+      .select(["TO_CHAR(Sousitem.dateModification, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitem.dateModification, 'DD-MM-YYYY')) as count"])
+      .where("Sousitem.dateModification IS NOT NULL")
+      .andWhere("Sousitem.dateModification BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      if(user !=undefined){
+        resultSiModifyCreate.andWhere("Sousitem.profilCreation = :user", {user: user})
+      }
+      resultSiModifyCreate.andWhere(
+        (qb) =>
+          'Sousitem.idSousItem IN'+ qb.subQuery()
+          .select("sis.idSousItem")
+          .from(Sousitemsave, "sis")
+          .where('sis.status = :status',{status :'M'})
+          .orWhere('sis.status = :status',{status :'C'})
+          .orderBy("sis.date", 'DESC')
+          .getQuery()
+      )
+      resultSiModifyCreate.groupBy("TO_CHAR(Sousitem.dateModification, 'DD-MM-YYYY')")
+    try {
+      SiModifyCreate = await resultSiModifyCreate.getRawMany();
+    } catch (e) {
+      return {
+        status: HttpStatus.CONFLICT,
+        error: e,
+      }
+    }
+
+    for ( const item of SiModifyCreate) {
+      let index = sousItemModify.findIndex((element) => element.date == item.date)
+      if (index != -1) {   
+
+        sousItemModify[index].count = +sousItemModify[index].count + +item.count   
+      } else {
+        sousItemModify.push(item);
+      }
+    }
+    
 
     const resultSisaveDelete = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
       .select(["TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')) as count"])
@@ -713,6 +837,67 @@ export class ServiceAccueilService {
     }
 
 
+
+    let ItemModifyCreate;
+      const resultItemModifyCreate = this.itemRepo.createQueryBuilder("Item")
+        .select(["Item.idItem AS idItem", "Item.libelleItem AS libelleItem", "Item.etat AS etat", "Item.profilModification AS profilModification", "Item.dateModification AS dateModification"])
+        .leftJoinAndSelect("Item.description", "description")
+        .where("Item.dateModification IS NOT NULL")
+        .andWhere("Item.dateModification BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+        if(user !=undefined){
+          resultItemModifyCreate.andWhere("Item.profilCreation = :user", {user: user})
+        }
+        resultItemModifyCreate.andWhere(
+          (qb) =>
+            'Item.idItem IN'+ qb.subQuery()
+            .select("is.idItem")
+            .from(Itemsave, "is")
+            .where('is.status = :status',{status :'M'})
+            .orWhere('is.status = :status',{status :'C'})
+            .orderBy("is.date", 'DESC')
+            .getQuery()
+        )
+      try {
+        ItemModifyCreate= await resultItemModifyCreate.getRawMany();
+      } catch (e) {
+        return {
+          status: HttpStatus.CONFLICT,
+          error: e,
+        }
+      }
+      
+      for (const itemMC of ItemModifyCreate) {
+        let dateDebut = new Date(itemMC.datemodification)
+        dateDebut.setSeconds(dateDebut.getSeconds()-3)
+        let dateFin = new Date(itemMC.datemodification)
+        let itemModify = await this.itemSaveRepo.findOne({
+          select : ['idItem','libelleItem','etat', 'date','profilModification'],
+          where : {
+            date : Between(dateDebut,dateFin),
+            idItem : itemMC.iditem
+          },
+          relations:["description"]
+        })
+        
+        console.log(itemMC.datemodification + " " + itemMC.iditem )
+        console.log(itemModify);
+        
+        objetNow = {
+          id: itemMC.iditem,
+          libelle: itemModify.libelleItem,
+          etat: itemModify.etat,
+          description: itemModify.description,
+          typeObjet: 'Item',
+          newlibelle: itemMC.libelleitem,
+          newEtat: itemMC.etat,
+          newDescription: itemMC.description_lien,
+          profilModification: itemMC.profilmodification,
+          dateModification: itemMC.datemodification
+        }
+      }
+
+
+
     // Sous-Item
     let SiModify
     if (user == undefined){
@@ -852,6 +1037,9 @@ export class ServiceAccueilService {
           relations:["description"]
         })
       }
+
+      
+
   
       for(const item of ItemDelete){
         InfoPerDay.objectDeleted.push( {

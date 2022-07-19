@@ -19,7 +19,6 @@ export class ServiceSuppressionService {
     let OrCanDeleted: boolean, ItemCanDeleted: boolean, SiCanDeleted : boolean;
     let heure = (await this.paramService.findOne("nbHeure")).valeur;
   
-    console.log(objectToDelete.listeOR.length + " " + objectToDelete.listeItem.length + " " + objectToDelete.listeSI.length );
     
     if(objectToDelete.listeOR.length != 0) {
       OrCanDeleted= await this.verifyOr(profil, objectToDelete.listeOR, Number(heure));
@@ -47,17 +46,14 @@ export class ServiceSuppressionService {
     console.log(dateNow);
     
     dateNow.setHours(dateNow.getHours() - heure)
-    console.log(dateNow);
-    
+ 
     for(const or of Or){
       let OR = await this.ORService.findOne(or);
       if (OR.profilCreation != profil) {
         return false;
       }
-      console.log(OR.dateCreation.getTime() + "  " + dateNow.getTime());
       
       if(OR.dateCreation.getTime() < dateNow.getTime()) {
-        console.log(OR.dateCreation.getTime() + "  " + dateNow.getTime());
         return false;
       }
 
@@ -146,7 +142,10 @@ export class ServiceSuppressionService {
   }
 
   async deleteObjects( profil:string, objectToDelete : deleteObject) {
+    console.log("test");
+    
     const canDeleteAsAdmin = await this.verifyIfCanDeleteTree (profil, objectToDelete);
+    console.log("candelete" + canDeleteAsAdmin);
     
     if (canDeleteAsAdmin) {
       return await this.deleteObject(profil, objectToDelete, true);

@@ -1,11 +1,12 @@
-export interface editOR {
+export interface editObjet {
     clientId : string,
-    idObjetRepere : string,
-    login : string
+    id : string,
+    login : string,
+    profil : string
 }
 
 
 export interface payloadEditOr{
     login : string,
-    idObjetRepere : string
+    id: string
 }

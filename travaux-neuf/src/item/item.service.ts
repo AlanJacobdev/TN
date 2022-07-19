@@ -206,13 +206,15 @@ export class ItemService {
     }
    
     let statusItem : string = "";
+    let dateModif : Date;
     const oldItem = await this.itemSaveService.findOnebyIDDesc(id);
-    console.log(oldItem);
     
     if ( oldItem == undefined || oldItem.status == 'D' ) {
       statusItem = 'C'
+      dateModif = item.dateCreation     
     } else {
       statusItem = 'M'
+      dateModif = new Date();
     }
     let itemSaveDTO = new CreateItemsaveDto();
     itemSaveDTO = {
@@ -226,7 +228,7 @@ export class ItemService {
       etat : item.etat,
       status : statusItem,
       description : item.description,
-      date : new Date(),
+      date : dateModif,
       profilModification : updateItemDto.profilModification,
       posteModification : updateItemDto.posteModification
     }

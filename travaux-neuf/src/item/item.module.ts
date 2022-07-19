@@ -10,7 +10,7 @@ import { DescriptionModule } from 'src/description/description.module';
 import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Item]), TypeobjetModule, ObjetrepereModule, forwardRef(() =>ItemsaveModule), DescriptionModule, UtilisateurModule],
+  imports : [TypeOrmModule.forFeature([Item]), TypeobjetModule, forwardRef(() =>ObjetrepereModule), forwardRef(() =>ItemsaveModule), DescriptionModule, UtilisateurModule],
   controllers: [ItemController],
   providers: [ItemService],
   exports : [ItemService]

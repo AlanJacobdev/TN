@@ -12,10 +12,13 @@ import { OrsaveModule } from 'src/orsave/orsave.module';
 import { DescriptionModule } from 'src/description/description.module';
 import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 import { EditOrGateway } from './gateway/edit-or.gateway';
+import { ItemModule } from 'src/item/item.module';
+import { SousitemModule } from 'src/sousitem/sousitem.module';
+
 
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Objetrepere, Typeobjetrepere, Numerounique, Atelier]), NumerouniqueModule, TypeobjetrepereModule, forwardRef(() =>OrsaveModule), DescriptionModule, UtilisateurModule] ,
+  imports : [TypeOrmModule.forFeature([Objetrepere, Typeobjetrepere, Numerounique, Atelier]), NumerouniqueModule, TypeobjetrepereModule, forwardRef(() =>OrsaveModule), DescriptionModule, UtilisateurModule, ItemModule, SousitemModule] ,
   controllers: [ObjetrepereController],
   providers: [ObjetrepereService, EditOrGateway],
   exports : [ObjetrepereService]
