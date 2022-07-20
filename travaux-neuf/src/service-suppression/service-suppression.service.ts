@@ -19,26 +19,29 @@ export class ServiceSuppressionService {
     let OrCanDeleted: boolean, ItemCanDeleted: boolean, SiCanDeleted : boolean;
     let heure = (await this.paramService.findOne("nbHeure")).valeur;
   
-    
-    if(objectToDelete.listeOR.length != 0) {
-      OrCanDeleted= await this.verifyOr(profil, objectToDelete.listeOR, Number(heure));
-      if(!OrCanDeleted) {
-        return false;
+    try {
+      if(objectToDelete.listeOR.length != 0) {
+        OrCanDeleted= await this.verifyOr(profil, objectToDelete.listeOR, Number(heure));
+        if(!OrCanDeleted) {
+          return false;
+        }
+      }   
+      if(objectToDelete.listeItem.length != 0 ) {
+        ItemCanDeleted = await this.verifyItem(profil,objectToDelete.listeItem, Number(heure));
+        if(!ItemCanDeleted) {
+          return false;
+        }
       }
-    }   
-    if(objectToDelete.listeItem.length != 0 ) {
-      ItemCanDeleted = await this.verifyItem(profil,objectToDelete.listeItem, Number(heure));
-      if(!ItemCanDeleted) {
-        return false;
+      if(objectToDelete.listeSI.length != 0) {
+        SiCanDeleted = await this.verifySi(profil,objectToDelete.listeSI, Number(heure));
+        if(!SiCanDeleted) {
+          return false;
+        }
       }
+      return true;
+    } catch (e :any) {
+      console.log(e);
     }
-    if(objectToDelete.listeSI.length != 0) {
-      SiCanDeleted = await this.verifySi(profil,objectToDelete.listeSI, Number(heure));
-      if(!SiCanDeleted) {
-        return false;
-      }
-    }
-    return true;
   }
 
   async verifyOr(profil:string, Or : string[], heure : number){
@@ -49,35 +52,39 @@ export class ServiceSuppressionService {
  
     for(const or of Or){
       let OR = await this.ORService.findOne(or);
-      if (OR.profilCreation != profil) {
-        return false;
-      }
-      
-      if(OR.dateCreation.getTime() < dateNow.getTime()) {
-        return false;
-      }
+      if(OR != undefined){
+        if (OR.profilCreation != profil) {
+          return false;
+        }
+        
+        if(OR.dateCreation.getTime() < dateNow.getTime()) {
+          return false;
+        }
 
-      const listeItemOfOR = await this.ItemService.getItemByOR(or);
-      if (listeItemOfOR.length != 0) {
-        for (const Item of listeItemOfOR){
-          if (Item.profilCreation != profil) {
-            return false;
-          }
-          if(Item.dateCreation.getTime() < dateNow.getTime()) {
-            return false;
-          }
-          const listeSiOfItem = await this.SIService.getSousItemByItem(Item.idItem);
-          if(listeSiOfItem.length != 0){
-            for (const SI of listeSiOfItem){
-              if (SI.profilCreation != profil) {
-                return false;
-              }
-              if(SI.dateCreation.getTime() < dateNow.getTime()) {
-                return false;
+        const listeItemOfOR = await this.ItemService.getItemByOR(or);
+        if (listeItemOfOR.length != 0) {
+          for (const Item of listeItemOfOR){
+            if (Item.profilCreation != profil) {
+              return false;
+            }
+            if(Item.dateCreation.getTime() < dateNow.getTime()) {
+              return false;
+            }
+            const listeSiOfItem = await this.SIService.getSousItemByItem(Item.idItem);
+            if(listeSiOfItem.length != 0){
+              for (const SI of listeSiOfItem){
+                if (SI.profilCreation != profil) {
+                  return false;
+                }
+                if(SI.dateCreation.getTime() < dateNow.getTime()) {
+                  return false;
+                }
               }
             }
           }
         }
+      } else {
+        return false;
       }
     }
     return true;
@@ -90,29 +97,32 @@ export class ServiceSuppressionService {
 
     for(const item of Item){
       let ITEM = await this.ItemService.findOne(item);
-      console.log(ITEM);
-      console.log(item);
-      
-      
-      if (ITEM.profilCreation != profil) {
-        return false;
-      }
-      if(ITEM.dateCreation.getTime() < dateNow.getTime()) {
-        return false;
-      }
+      if (ITEM != undefined){
+        
+        console.log(ITEM);
+        console.log(item);
+        if (ITEM.profilCreation != profil) {
+          return false;
+        }
+        if(ITEM.dateCreation.getTime() < dateNow.getTime()) {
+          return false;
+        }
 
-      const listeSiOfItem = await this.SIService.getSousItemByItem(ITEM.idItem);
-      console.log(listeSiOfItem);
-      
-      if(listeSiOfItem.length != 0){
-        for (const SI of listeSiOfItem){
-          if (SI.profilCreation != profil) {
-            return false;
-          }
-          if(SI.dateCreation.getTime() < dateNow.getTime()) {
-            return false;
+        const listeSiOfItem = await this.SIService.getSousItemByItem(ITEM.idItem);
+        console.log(listeSiOfItem);
+        
+        if(listeSiOfItem.length != 0){
+          for (const SI of listeSiOfItem){
+            if (SI.profilCreation != profil) {
+              return false;
+            }
+            if(SI.dateCreation.getTime() < dateNow.getTime()) {
+              return false;
+            }
           }
         }
+      } else {
+        return false;
       }
     }
     return true;
@@ -125,11 +135,15 @@ export class ServiceSuppressionService {
       console.log(si);
       
       let SI = await this.SIService.findOne(si);
-      if (SI.profilCreation != profil) {
-        return false;
-      }
-      if(SI.dateCreation.getTime() < dateNow.getTime()) {
-        return false;
+      if (SI != undefined) {
+        if (SI.profilCreation != profil) {
+          return false;
+        }
+        if(SI.dateCreation.getTime() < dateNow.getTime()) {
+          return false;
+        }
+      } else {
+        return false
       }
     }
     return true;
@@ -142,7 +156,6 @@ export class ServiceSuppressionService {
   }
 
   async deleteObjects( profil:string, objectToDelete : deleteObject) {
-    console.log("test");
     
     const canDeleteAsAdmin = await this.verifyIfCanDeleteTree (profil, objectToDelete);
     console.log("candelete" + canDeleteAsAdmin);
@@ -168,22 +181,27 @@ export class ServiceSuppressionService {
     const listeItem : string[] = objectToDelete.listeItem;
     const listeSousItem : string[] = objectToDelete.listeSI;
    
+    try {
     
-    if(listeSousItem.length != 0) {
-      await this.deleteSI(listeSousItem, admin,profil);
-    }
-    if(listeItem.length != 0) {
-      await this.deleteItem(listeItem, admin,profil);
-    } 
-    if(listeOR.length != 0) {
-      await this.deleteOR(listeOR, admin,profil);
-    }
+      if(listeSousItem.length != 0) {
+        await this.deleteSI(listeSousItem, admin,profil);
+      }
+      if(listeItem.length != 0) {
+        await this.deleteItem(listeItem, admin,profil);
+      } 
+      if(listeOR.length != 0) {
+        await this.deleteOR(listeOR, admin,profil);
+      }
+    
     retour = {
       listeOR : this.retourOR,
       listeItem : this.retourItem,
       listeSI : this.retourSI
     };
     return retour;
+    } catch (e:any) {
+      console.log(e);
+    }
   }
 
 
@@ -272,7 +290,6 @@ export class ServiceSuppressionService {
                   flagErrorItem = true;
                 } 
               }
-              
             }
           } else {
               flagErrorItem = true
