@@ -247,7 +247,7 @@ export class ObjetrepereService {
       numeroUnique : OR.numeroUnique,
       etat : OR.etat,
       description : OR.description,
-      date : new Date(),
+      date : dateModif,
       status : statusOr,
       profilModification : updateObjetrepereDto.profilModification,
       posteModification : updateObjetrepereDto.posteModification    
