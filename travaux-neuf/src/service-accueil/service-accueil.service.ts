@@ -784,7 +784,7 @@ export class ServiceAccueilService {
 
     let dateDebutModify = new Date(date);
     let dateFinModify = new Date(date)
-    dateFinModify.setDate(dateFin.getDate() + 1) 
+    dateFinModify.setDate(dateFinModify.getDate() + 1) 
 
     const resultJustCreateOr = this.OrSaveRepo.createQueryBuilder("Orsave")
     .select(["Orsave.idObjetRepere"])
