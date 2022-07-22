@@ -17,10 +17,10 @@ export class DemandeAdminController {
     return this.demandeAdminService.findAll();
   }
 
-  @Get('/get/findAllTraitee')
-  findAllTraitee() {
-    return this.demandeAdminService.findAllTraitee();
-  }
+  // @Get('/get/findAllTraitee')
+  // findAllTraitee() {
+  //   return this.demandeAdminService.findAllTraitee();
+  // }
 
   @Get('/getAllObjectsFromDmd/:idDmd')
   getAllObjectsFromDmd(@Param('idDmd') idDmd: number) {
@@ -37,20 +37,9 @@ export class DemandeAdminController {
     return this.demandeAdminService.getArborescenceOfItem(idItem);
   }
 
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.demandeAdminService.findOne(+id);
-  }
-
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateDemandeAdminDto: UpdateDemandeAdminDto) {
-    return this.demandeAdminService.update(+id, updateDemandeAdminDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.demandeAdminService.remove(+id);
+  @Delete(':id/:profil/:accept')
+  remove(@Param('id') id: string, @Param('profil') profil: string, @Param('accept') accept : boolean ) {
+    return this.demandeAdminService.remove(+id, profil, accept);
   }
 
   @Get('/sendmail/:user/:motif')

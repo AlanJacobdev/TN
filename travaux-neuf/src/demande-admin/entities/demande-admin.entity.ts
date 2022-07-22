@@ -1,4 +1,3 @@
-import { Description } from "src/description/entities/description.entity";
 import { Item } from "src/item/entities/item.entity";
 import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
 import { Sousitem } from "src/sousitem/entities/sousitem.entity";
@@ -12,12 +11,6 @@ export class DemandeAdmin {
 
     @Column()
     motif : string;
-
-    @Column()
-    etat : boolean;
-
-    @Column({nullable:true})
-    isDelete : boolean
 
     @ManyToMany(() => Objetrepere)
     @JoinTable({name : "demandeOR"})
@@ -36,12 +29,6 @@ export class DemandeAdmin {
 
     @Column({type : "timestamp"})
     dateCreation : Date;
-
-    @Column({length : 50, nullable:true})
-    profilModification : string;
-
-    @Column({type : "timestamp", nullable:true})
-    dateModification : Date;
 
 
 }

@@ -29,7 +29,7 @@ import { PassportModule } from '@nestjs/passport';
 import { NbDemandeGateway } from './demande-admin/gateway/nb-demande.gateway';
 import { ServiceAccueilModule } from './service-accueil/service-accueil.module';
 import { ParametreModule } from './parametre/parametre.module';
-import { EditOrGateway } from './objetrepere/gateway/edit-or.gateway';
+import { DemandeAdminTraiteeModule } from './demande-admin-traitee/demande-admin-traitee.module';
 @Module({
   imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule,
   ConfigModule.forRoot({
@@ -43,7 +43,8 @@ import { EditOrGateway } from './objetrepere/gateway/edit-or.gateway';
   AuthModule,
   PassportModule,
   ServiceAccueilModule,
-  ParametreModule
+  ParametreModule,
+  DemandeAdminTraiteeModule
   ],
   controllers: [AppController],
   providers: [AppService, NbDemandeGateway],

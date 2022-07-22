@@ -8,9 +8,11 @@ import { ItemModule } from 'src/item/item.module';
 import { SousitemModule } from 'src/sousitem/sousitem.module';
 import { MailModule } from 'src/mail/mail.module';
 import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
+import { ServiceSuppressionModule } from 'src/service-suppression/service-suppression.module';
+import { DemandeAdminTraiteeModule } from 'src/demande-admin-traitee/demande-admin-traitee.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DemandeAdmin]), ObjetrepereModule, ItemModule, SousitemModule, MailModule, UtilisateurModule],
+  imports: [TypeOrmModule.forFeature([DemandeAdmin]), ObjetrepereModule, ItemModule, SousitemModule, MailModule, UtilisateurModule, ServiceSuppressionModule, DemandeAdminTraiteeModule],
   controllers: [DemandeAdminController],
   providers: [DemandeAdminService],
   exports : [DemandeAdminService]

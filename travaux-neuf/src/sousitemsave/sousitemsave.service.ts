@@ -72,6 +72,19 @@ export class SousitemsaveService {
     })
   }
 
+  findAllSousItemOfItemUseful(id : string, date : Date){
+    return this.sousItemSaveRepo.find({
+      select : ['idSousItem', 'libelleSousItem'],
+      where : {
+        idItem : id,
+        date : date
+      },
+      order : {
+        idSousItem : "ASC"
+      }
+    })
+  }
+
   findOnebyIDDesc(id : string){
     return this.sousItemSaveRepo.findOne({
       where : {

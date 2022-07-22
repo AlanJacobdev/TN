@@ -59,6 +59,19 @@ export class ItemsaveService {
     })
   }
 
+  findAllItemOfOR (id : string, date: Date) {
+    return this.itemSaveRepo.find({
+      where : {
+        idOR : id,
+        date : date
+      },
+      relations: ["description"],
+      order : {
+        idItem : "ASC"
+      }
+    })
+  }
+
   findById(id: string) {
     return this.itemSaveRepo.find({
       where : {

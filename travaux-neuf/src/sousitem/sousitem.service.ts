@@ -254,7 +254,7 @@ export class SousitemService {
     });
   }
 
-  async remove(id: string, user : string, admin? : boolean) {
+  async remove(id: string, user : string, admin? : boolean, date? : Date) {
     const sousitem = await this.sousitemRepo.findOne({
       where : {
         idSousItem : id
@@ -296,38 +296,44 @@ export class SousitemService {
         await this.sousitemSaveService.create(SiCreateSaveDTO);
       } 
 
-
-    let sousitemsaveDTO = new CreateSousitemsaveDto();
-    sousitemsaveDTO = {
-      idSousItem : sousitem.idSousItem,
-      libelleSousItem : sousitem.libelleSousItem,
-      codeSousItem : sousitem.codeSousItem,
-      idItem : sousitem.idItem,
-      securite : sousitem.securite,
-      estPrefixe : sousitem.estPrefixe,
-      etat : sousitem.etat,
-      date : new Date(),
-      status : 'D',
-      description : sousitem.description,
-      profilModification : user,
-      posteModification : ""
-    }
-    await this.sousitemSaveService.create(sousitemsaveDTO);
-
-    try {
-      await this.sousitemRepo.delete(id);
-    } catch ( e : any) {
-      await this.sousitemSaveService.remove(sousitemsaveDTO.idSousItem, sousitemsaveDTO.date);
-      return {
-        status : HttpStatus.CONFLICT,
-        error :'Impossible to delete',
+      let deleteDateSave;
+      if (date){
+        deleteDateSave = date
+      } else {
+        deleteDateSave = new Date()
       }
-    }
-    
-    return {
-      status : HttpStatus.OK,
-      message :'Deleted',
-    }
+
+      let sousitemsaveDTO = new CreateSousitemsaveDto();
+      sousitemsaveDTO = {
+        idSousItem : sousitem.idSousItem,
+        libelleSousItem : sousitem.libelleSousItem,
+        codeSousItem : sousitem.codeSousItem,
+        idItem : sousitem.idItem,
+        securite : sousitem.securite,
+        estPrefixe : sousitem.estPrefixe,
+        etat : sousitem.etat,
+        date : deleteDateSave,
+        status : 'D',
+        description : sousitem.description,
+        profilModification : user,
+        posteModification : ""
+      }
+      await this.sousitemSaveService.create(sousitemsaveDTO);
+
+      try {
+        await this.sousitemRepo.delete(id);
+      } catch ( e : any) {
+        await this.sousitemSaveService.remove(sousitemsaveDTO.idSousItem, sousitemsaveDTO.date);
+        return {
+          status : HttpStatus.CONFLICT,
+          error :'Impossible to delete',
+        }
+      }
+      
+      return {
+        status : HttpStatus.OK,
+        message :'Deleted',
+      }
   }
 
   async getHistory(idItem : string) {

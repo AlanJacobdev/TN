@@ -13,7 +13,7 @@ export class MailService {
     let infoUser = await this.utilisateurService.findOneByLogin(profil)
     let user: string;
     if(infoUser != undefined){
-      user = infoUser.nom.toUpperCase(); 
+      user = infoUser.nom.toUpperCase() +" "+ infoUser.prenom; 
     }else {
       user = profil;
     }
@@ -36,11 +36,11 @@ export class MailService {
   }
 
   async sendUserConfirmationDelete(user : string, motif : string) {
-    let email = (await this.utilisateurService.findEmailByLogin(user)).email;
-
+    let email = await this.utilisateurService.findEmailByLogin(user);
+   
     try {
       await this.mailerService.sendMail({
-      to: email,
+      to: email.email,
       from: '"Logiciel Itemisation" <itemisationlaita@laita.fr>',
       subject: '[Itemisation] Suppression acceptée',
       template: 'confirmDelete',  

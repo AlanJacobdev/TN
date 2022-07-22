@@ -39,6 +39,9 @@ export class AtelierService {
     return this.AtelierRepo.find({
       where : {
         actif : true
+      },
+      order : {
+        idAtelier : "ASC"
       }
     })
   }

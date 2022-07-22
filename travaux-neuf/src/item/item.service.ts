@@ -252,7 +252,7 @@ export class ItemService {
 
   }
 
-  async remove(id: string, user : string, admin? : boolean) {
+  async remove(id: string, user : string, admin? : boolean, date? : Date) {
     const item = await this.itemRepo.findOne({
       where : {
         idItem : id
@@ -297,6 +297,13 @@ export class ItemService {
         await this.itemSaveService.create(itemCreateSaveDTO);
       } 
   
+      let deleteDateSave;
+      if (date){
+        deleteDateSave = date
+      } else {
+        deleteDateSave = new Date()
+      }
+
 
       let itemSaveDTO = new CreateItemsaveDto();
       itemSaveDTO = {
@@ -310,7 +317,7 @@ export class ItemService {
         etat : item.etat,
         status : "D",
         description : item.description,
-        date : new Date(),
+        date : deleteDateSave,
         profilModification : user,
         posteModification : ""
         }    

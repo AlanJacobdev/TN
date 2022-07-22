@@ -270,7 +270,7 @@ export class ObjetrepereService {
     });
   }
 
-  async remove(id: string, user : string, admin? : boolean) {
+  async remove(id: string, user : string, admin? : boolean, date?: Date) {
     const OR = await this.OrRepo.findOne({
       where : {
         idObjetRepere : id,
@@ -284,34 +284,40 @@ export class ObjetrepereService {
       }, HttpStatus.NOT_FOUND);
     }
     
-      if (!admin){
-        if (OR.profilCreation !== user){
-          return {
-            status : HttpStatus.NOT_FOUND,
-            error : 'Impossible de supprimer un objet dont vous n\'êtes pas le créateur',
-          };
-        }
+    if (!admin){
+      if (OR.profilCreation !== user){
+        return {
+          status : HttpStatus.NOT_FOUND,
+          error : 'Impossible de supprimer un objet dont vous n\'êtes pas le créateur',
+        };
       }
-    
-      const oldItem = await this.orsaveservice.findOnebyIDDesc(id);
-      if ( oldItem == undefined || oldItem.status == 'D' ) {
-        let OrCreateSaveDTO = new CreateOrsaveDto();
-        OrCreateSaveDTO = {
-          idObjetRepere : OR.idObjetRepere,
-          libelleObjetRepere : OR.libelleObjetRepere,
-          codeType : OR.codeType,
-          numeroUnique : OR.numeroUnique,
-          etat : OR.etat,
-          description : OR.description,
-          date : OR.dateCreation,
-          status : "C",
-          profilModification : user,
-          posteModification : ""    
-        }
-        
-        await this.orsaveservice.create(OrCreateSaveDTO);
-      } 
+    }
+  
+    const oldItem = await this.orsaveservice.findOnebyIDDesc(id);
+    if ( oldItem == undefined || oldItem.status == 'D' ) {
+      let OrCreateSaveDTO = new CreateOrsaveDto();
+      OrCreateSaveDTO = {
+        idObjetRepere : OR.idObjetRepere,
+        libelleObjetRepere : OR.libelleObjetRepere,
+        codeType : OR.codeType,
+        numeroUnique : OR.numeroUnique,
+        etat : OR.etat,
+        description : OR.description,
+        date : OR.dateCreation,
+        status : "C",
+        profilModification : user,
+        posteModification : ""    
+      }
+      
+      await this.orsaveservice.create(OrCreateSaveDTO);
+    } 
 
+    let deleteDateSave;
+    if (date){
+      deleteDateSave = date
+    } else {
+      deleteDateSave = new Date()
+    }
     let orsaveDto = new CreateOrsaveDto;
     orsaveDto = {
       idObjetRepere : OR.idObjetRepere,
@@ -320,7 +326,7 @@ export class ObjetrepereService {
       numeroUnique : OR.numeroUnique,
       etat : OR.etat,
       description : OR.description,
-      date : new Date(),
+      date : deleteDateSave,
       status : "D",
       profilModification : user,
       posteModification : ""    

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { ItemService } from 'src/item/item.service';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { ParametreService } from 'src/parametre/parametre.service';
@@ -46,7 +46,6 @@ export class ServiceSuppressionService {
 
   async verifyOr(profil:string, Or : string[], heure : number){
     let dateNow = new Date();
-    console.log(dateNow);
     
     dateNow.setHours(dateNow.getHours() - heure)
  
@@ -99,8 +98,6 @@ export class ServiceSuppressionService {
       let ITEM = await this.ItemService.findOne(item);
       if (ITEM != undefined){
         
-        console.log(ITEM);
-        console.log(item);
         if (ITEM.profilCreation != profil) {
           return false;
         }
@@ -109,7 +106,6 @@ export class ServiceSuppressionService {
         }
 
         const listeSiOfItem = await this.SIService.getSousItemByItem(ITEM.idItem);
-        console.log(listeSiOfItem);
         
         if(listeSiOfItem.length != 0){
           for (const SI of listeSiOfItem){
@@ -132,7 +128,6 @@ export class ServiceSuppressionService {
     let dateNow = new Date();
     dateNow.setHours(dateNow.getHours() - heure)
     for(const si of Si){
-      console.log(si);
       
       let SI = await this.SIService.findOne(si);
       if (SI != undefined) {
@@ -158,7 +153,6 @@ export class ServiceSuppressionService {
   async deleteObjects( profil:string, objectToDelete : deleteObject) {
     
     const canDeleteAsAdmin = await this.verifyIfCanDeleteTree (profil, objectToDelete);
-    console.log("candelete" + canDeleteAsAdmin);
     
     if (canDeleteAsAdmin) {
       return await this.deleteObject(profil, objectToDelete, true);
@@ -168,7 +162,7 @@ export class ServiceSuppressionService {
   }
 
 
-  async deleteObject (profil:string, objectToDelete : deleteObject, admin : boolean) {
+  async deleteObject (profil:string, objectToDelete : deleteObject, admin : boolean, date? :Date) {
     let retour : deleteObject = {
       listeOR: [],
       listeItem: [],
@@ -184,13 +178,28 @@ export class ServiceSuppressionService {
     try {
     
       if(listeSousItem.length != 0) {
-        await this.deleteSI(listeSousItem, admin,profil);
+        if (date){
+          await this.deleteSI(listeSousItem, admin, profil, date);
+        } else {
+          await this.deleteSI(listeSousItem, admin, profil);
+        }
+        
       }
       if(listeItem.length != 0) {
-        await this.deleteItem(listeItem, admin,profil);
+        if (date){
+          await this.deleteItem(listeItem, admin,profil,date);
+        } else {
+          await this.deleteItem(listeItem, admin,profil);
+        }
+       
       } 
       if(listeOR.length != 0) {
-        await this.deleteOR(listeOR, admin,profil);
+        if (date){
+          await this.deleteOR(listeOR, admin, profil, date);
+        } else {
+          await this.deleteOR(listeOR, admin,profil);
+        }
+        
       }
     
     retour = {
@@ -201,14 +210,23 @@ export class ServiceSuppressionService {
     return retour;
     } catch (e:any) {
       console.log(e);
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Problème lors de la supression' + e
+      }
     }
   }
 
 
-  async deleteSI(listeSousItem : string[], admin : boolean, profil : string){
+  async deleteSI(listeSousItem : string[], admin : boolean, profil : string, date? : Date){
     for (const SI of listeSousItem){
-      const res = await this.SIService.remove(SI,profil, admin);
-          
+      let res 
+      if(date) {
+        res = await this.SIService.remove(SI, profil, admin, date);
+      } else {
+        res = await this.SIService.remove(SI, profil, admin);
+      }
+
       if (res.hasOwnProperty('message')){
         this.retourSI.push({
           "objet" : SI,
@@ -223,7 +241,7 @@ export class ServiceSuppressionService {
     }
   }
 
-  async deleteItem(listeItem : string [], admin : boolean, profil : string){
+  async deleteItem(listeItem : string [], admin : boolean, profil : string, date? : Date){
     
       let flagErrorSI : boolean = false;
       for(const Item of listeItem){
@@ -232,7 +250,13 @@ export class ServiceSuppressionService {
         if(listeSiOfItem.length != 0){
           if(admin){
             for (const SI of listeSiOfItem){
-              const res = await this.SIService.remove(SI.idSousItem, profil, admin);
+              let res 
+              if(date) {
+                res = await this.SIService.remove(SI.idSousItem, profil, admin, date);
+              } else {
+                res = await this.SIService.remove(SI.idSousItem, profil, admin);
+              }
+             
               if (!res.hasOwnProperty('message')){
                 flagErrorSI = true;
               }
@@ -243,7 +267,13 @@ export class ServiceSuppressionService {
         }
         
         if(!flagErrorSI){
-          const res = await this.ItemService.remove(Item, profil, admin);
+          let res 
+          if(date) {
+            res = await this.ItemService.remove(Item, profil, admin, date);
+          } else {
+            res = await this.ItemService.remove(Item, profil, admin);
+          }
+          
           if (res.hasOwnProperty('message')){
             this.retourItem.push({
               "objet" : Item,
@@ -264,7 +294,7 @@ export class ServiceSuppressionService {
       }
   }
 
-  async deleteOR(listeOR : string [], admin : boolean, profil : string){
+  async deleteOR(listeOR : string [], admin : boolean, profil : string, date? : Date){
 
       let flagErrorSI : boolean = false;
       let flagErrorItem : boolean = false;
@@ -278,14 +308,25 @@ export class ServiceSuppressionService {
               const listeSiOfItem = await this.SIService.getSousItemByItem(Item.idItem);
               if(listeSiOfItem.length != 0){
                 for (const SI of listeSiOfItem){
-                  const res = await this.SIService.remove(SI.idSousItem, profil, admin);
+                  let res 
+                  if(date) {
+                    res = await this.SIService.remove(SI.idSousItem, profil, admin, date);
+                  } else {
+                    res = await this.SIService.remove(SI.idSousItem, profil, admin);
+                  }
                   if (!res.hasOwnProperty('message')){
                     flagErrorSI = true;
                   }
                 }
               } 
               if(!flagErrorSI){
-                const res = await this.ItemService.remove(Item.idItem, profil, admin);
+                let res 
+                if(date) {
+                  res = await this.ItemService.remove(Item.idItem, profil, admin, date);
+                } else {
+                  res = await this.ItemService.remove(Item.idItem, profil, admin);
+                }
+                
                 if (!res.hasOwnProperty('message')){
                   flagErrorItem = true;
                 } 
@@ -296,7 +337,13 @@ export class ServiceSuppressionService {
           }
         }
         if (!flagErrorItem){
-          const res = await this.ORService.remove(OR, profil, admin);
+          let res 
+          if(date) {
+            res = await this.ORService.remove(OR, profil, admin, date);
+          } else {
+            res = await this.ORService.remove(OR, profil, admin);
+          }
+          
           if (res.hasOwnProperty('message')){
             this.retourOR.push({
               "objet" : OR,

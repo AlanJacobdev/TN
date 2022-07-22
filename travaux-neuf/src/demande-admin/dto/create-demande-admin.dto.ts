@@ -10,8 +10,6 @@ export class CreateDemandeAdminDto {
     @Allow()
     motif : string;
 
-    etat : boolean;
-
     @Allow()
     orDelete : Objetrepere[];
     

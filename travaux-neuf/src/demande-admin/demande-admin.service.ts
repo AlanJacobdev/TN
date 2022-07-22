@@ -1,26 +1,30 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DemandeAdminTraiteeService } from 'src/demande-admin-traitee/demande-admin-traitee.service';
+import { CreateDemandeAdminTraiteeDto } from 'src/demande-admin-traitee/dto/create-demande-admin-traitee.dto';
+import { objetTraitee } from 'src/demande-admin-traitee/interface/interfaceDmdTraitee';
 import { ItemService } from 'src/item/item.service';
 import { MailService } from 'src/mail/mail.service';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
+import { ServiceSuppressionService } from 'src/service-suppression/service-suppression.service';
 import { SousitemService } from 'src/sousitem/sousitem.service';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Repository } from 'typeorm';
 import { CreateDemandeAdminDto } from './dto/create-demande-admin.dto';
-import { UpdateDemandeAdminDto } from './dto/update-demande-admin.dto';
+
 import { DemandeAdmin } from './entities/demande-admin.entity';
 
 @Injectable()
 export class DemandeAdminService {
 
   constructor(@InjectRepository(DemandeAdmin) private demandeAdminRepo : Repository<DemandeAdmin>, private objetRepereService : ObjetrepereService, 
-  private itemService : ItemService, private sousItemService : SousitemService,  private mailService : MailService, private utilisateurService : UtilisateurService){}
+  private itemService : ItemService, private sousItemService : SousitemService,  private mailService : MailService, private utilisateurService : UtilisateurService,
+  private serviceSuppression: ServiceSuppressionService, private demandeAdminTraiteeService : DemandeAdminTraiteeService){}
 
   async create(createDemandeAdminDto: CreateDemandeAdminDto) {
 
     
     createDemandeAdminDto.dateCreation = new Date();
-    createDemandeAdminDto.etat = false;
 
     let tabDmdOr = [];
     let tabDmdItem = [];
@@ -49,6 +53,9 @@ export class DemandeAdminService {
         }
       }
     }
+    createDemandeAdminDto.orDelete = tabDmdOr;
+    createDemandeAdminDto.itemDelete = tabDmdItem;
+    createDemandeAdminDto.sousItemDelete = tabDmdSi;
 
     const newDemande = this.demandeAdminRepo.create(createDemandeAdminDto);
     await this.sendMail(createDemandeAdminDto.profilCreation, createDemandeAdminDto.motif)
@@ -62,10 +69,7 @@ export class DemandeAdminService {
 
   async findAll() {
    const demandes = await this.demandeAdminRepo.find({
-    where : {
-      etat : false
-    }
-    ,order: {
+    order: {
       dateCreation : "ASC"
     }
    });
@@ -78,30 +82,31 @@ export class DemandeAdminService {
    return demandes
   }
 
-  async findAllTraitee() {
-    const demandes = await this.demandeAdminRepo.find({
-     where : {
-       etat : true
-     }
-     ,order: {
-       dateModification : "DESC"
-     }
-    });
+  async getAllObjectsFromDmd(idDmd : number) {
+    let demande = await this.demandeAdminRepo.findOne({
+      where : {
+        "idDemande" : idDmd
+      },
+      join :  {
+        alias : "demandeAdmin",
+        leftJoinAndSelect : {
+          item : "demandeAdmin.itemDelete",
+          sousitem : "demandeAdmin.sousItemDelete",
+          objetrepere : "demandeAdmin.orDelete"
+        } 
+      }
+    })
     
-    for (const d of demandes) {
-      const profilCreation = await this.utilisateurService.findOneByLogin(d.profilCreation);
-      d.profilCreation = (profilCreation.nom).toUpperCase() +" "+profilCreation.prenom
-
-      const profilAdmin = await this.utilisateurService.findOneByLogin(d.profilModification);
-      d.profilModification = (profilAdmin.nom).toUpperCase() +" "+profilAdmin.prenom
-
+    const profilCreation = await this.utilisateurService.findOneByLogin(demande.profilCreation);
+    if (profilCreation != undefined){
+      demande.profilCreation = (profilCreation.nom).toUpperCase() +" "+ profilCreation.prenom
     }
-    return demandes
-   }
 
+    return demande
+  } 
 
-  getAllObjectsFromDmd(idDmd : number) {
-    return this.demandeAdminRepo.find({
+  async getAllObjectsFromDmdWithOutName(idDmd : number) {
+    return this.demandeAdminRepo.findOne({
       where : {
         "idDemande" : idDmd
       },
@@ -116,48 +121,116 @@ export class DemandeAdminService {
     })
   } 
 
-  findOne(id: number) {
-    return `This action returns a #${id} demandeAdmin`;
-  }
-
-  async update(id: number, updateDemandeAdminDto: UpdateDemandeAdminDto) {
-    
-      const demande = await this.demandeAdminRepo.findOne({
-        where : {
-          idDemande : id
-        }
-      })
+  async remove(id: number, profil : string, accept : boolean) {
+      const demande = await this.getAllObjectsFromDmdWithOutName(id)
+      
       if (demande == undefined) {
         return {
           status : HttpStatus.NOT_FOUND,
           error : 'Identifiant non trouvé'
         }
       }
-      if (demande.etat == true){
-        return {
-          status : HttpStatus.CONFLICT,
-          error : 'Demande déja traitée'
+      let listOR= [];
+      if (demande.orDelete != undefined) {
+        for (const or of demande.orDelete){
+          listOR.push(or.idObjetRepere)
+        }
+      }
+      
+      let listItem = [];
+      if (demande.itemDelete != undefined){
+        for (const item of demande.itemDelete){
+          listItem.push(item.idItem)
         }
       }
 
-      if(updateDemandeAdminDto.isDelete){
-
-       
-        
-        await this.mailService.sendUserConfirmationDelete(demande.profilCreation, demande.motif)
-      } else {
-
-
+      let listSI = [];
+      if (demande.sousItemDelete != undefined) {
+        for (const si of demande.sousItemDelete){
+          listSI.push(si.idSousItem)
+        }
       }
 
-      updateDemandeAdminDto.etat = true;
-      updateDemandeAdminDto.dateModification = new Date();
-      await this.demandeAdminRepo.update(id, updateDemandeAdminDto);
-      return await this.demandeAdminRepo.findOne(id);
-  }
+      const deleteObjet = {
+        listeOR : listOR,
+        listeItem : listItem,
+        listeSI : listSI
+      }
+      
+      let dateRemove = new Date(); 
+      try {
+    
+      await this.serviceSuppression.deleteObject(profil, deleteObjet, true, dateRemove)
+      } catch (e) {
+        return e 
+      }
+    
+      const Dmd = await this.demandeAdminRepo.findOne({
+        where : {
+          idDemande : id,
+        }
+      })
+      if ( Dmd == undefined) {
+        throw new HttpException({
+          status : HttpStatus.NOT_FOUND,
+          error : 'Demande inconnue',
+        }, HttpStatus.NOT_FOUND);
+      }
+      
+      let orTraitee : objetTraitee[] = []
+      let itemTraitee : objetTraitee[] = []
+      let siTraitee : objetTraitee[] = []
 
-  remove(id: number) {
-    return `This action removes a #${id} demandeAdmin`;
+      for (const or of deleteObjet.listeOR) {
+        orTraitee.push({
+          id : or,
+          date : dateRemove 
+        })
+      }
+
+      for (const item of deleteObjet.listeItem) {
+        itemTraitee.push({
+          id : item,
+          date : dateRemove 
+        })
+      }
+
+      for (const si of deleteObjet.listeSI) {
+        siTraitee.push({
+          id : si,
+          date : dateRemove 
+        })
+      }
+
+      let dmdTraitee : CreateDemandeAdminTraiteeDto = {
+        motif: Dmd.motif,
+        isDelete: Boolean(accept),
+        orDelete: orTraitee,
+        itemDelete: itemTraitee,
+        sousItemDelete: siTraitee,
+        profilCreation: Dmd.profilCreation,
+        dateCreation: Dmd.dateCreation,
+        profilModification: profil,
+        dateModification: dateRemove
+      } ;
+     
+      
+      await this.demandeAdminTraiteeService.create(dmdTraitee);   
+  
+      try {
+        await this.demandeAdminRepo.delete(id);
+      } catch ( e : any) {
+        return e
+      }
+      
+      if (accept) {
+        await this.mailService.sendUserConfirmationDelete(demande.profilCreation, demande.motif)
+      }
+
+      return {
+        status : HttpStatus.OK,
+        message :'Demande traitée',
+      }
   }
 
   async getArborescenceOfOR(idObjetRepere : string) {
@@ -204,7 +277,6 @@ export class DemandeAdminService {
 
   async getArborescenceOfItem(idItem : string) {
     const itemExist = await this.itemService.findOne(idItem);
-    let allSiOfItem = [];
     if (itemExist != undefined) {
       const SiofItem= await this.sousItemService.findAllSousItemOfItemUseful(idItem);
       if (SiofItem.length != 0) {
@@ -236,9 +308,4 @@ export class DemandeAdminService {
       }
     }
   }
-
-
-
-
-
 }
