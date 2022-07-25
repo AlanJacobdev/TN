@@ -96,6 +96,7 @@ export class DemandeAdminTraiteeService {
   } 
 
   async getArborescenceOfOR(idObjetRepere : string, dateDel : Date) {
+    
     const orExist = await this.orsaveService.findOne(idObjetRepere, dateDel);
     let allItemAndSIOfOR = [];
     if (orExist != undefined) {
