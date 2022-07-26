@@ -14,6 +14,5 @@ export class UpdateInformationDto {
     @IsNotEmpty()
     profilModification : string
 
-    @IsNotEmpty()
     dateModification : Date
 }

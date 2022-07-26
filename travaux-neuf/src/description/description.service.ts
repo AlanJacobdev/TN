@@ -77,7 +77,7 @@ export class DescriptionService {
     }
 
     try {
-      await this.descriptionRepo.delete(id)
+      await this.descriptionRepo.remove(item)
     } catch ( e : any) {
       return {
         status : HttpStatus.CONFLICT,

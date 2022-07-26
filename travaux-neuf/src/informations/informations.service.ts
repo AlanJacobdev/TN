@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DocumentService } from 'src/document/document.service';
 import { Repository } from 'typeorm';
@@ -21,7 +21,6 @@ export class InformationsService {
             }  
           }
         }
-
         createInformationDto.dateCreation = new Date();
         createInformationDto.document = tabDocument;
         console.log(createInformationDto);
@@ -34,18 +33,113 @@ export class InformationsService {
   }
 
   findAll() {
-    return `This action returns all informations`;
+    
+    return this.informationServiceRepo.find({
+      order:{
+        dateCreation : "DESC"
+      },
+      relations : ["document"]
+    });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} information`;
+    return this.informationServiceRepo.findOne({
+      where : {
+        idInfo : id
+      },
+      relations : ["document"]
+    })
   }
 
-  update(id: number, updateInformationDto: UpdateInformationDto) {
-    return `This action updates a #${id} information`;
+  async update(id: number, updateInformationDto: UpdateInformationDto) {
+    const info = await this.informationServiceRepo.findOne({
+      where : {
+        idInfo : id
+      },
+      relations : ["document"]
+    })
+
+    if ( info == undefined) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Identifiant non trouvé'
+      }
+    }
+
+    if(info.text === updateInformationDto.text 
+      && JSON.stringify(info.document) === JSON.stringify(updateInformationDto.document)){
+        throw new HttpException({
+          status : HttpStatus.NOT_MODIFIED,
+          error :'Aucune modification effectuée',
+        }, HttpStatus.NOT_FOUND)
+    }
+
+    let tabDocumentAfter = [];
+
+    if( updateInformationDto.idDocument.length != 0 ) {
+      for (const desc of updateInformationDto.idDocument){
+        const doc = await this.documentService.findOne(desc);
+        tabDocumentAfter.push(doc);
+      }
+    }
+
+    
+    info.dateModification = new Date();
+    info.text = updateInformationDto.text;
+    info.profilModification = updateInformationDto.profilModification;
+    info.document = tabDocumentAfter;
+    await this.informationServiceRepo.save(info);
+    
+    return await this.informationServiceRepo.findOne({
+      where : {
+        idInfo : id
+      },
+      relations : ["document"]
+    });
+
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} information`;
+  async remove(id: number) {
+    
+    const info = await this.informationServiceRepo.findOne({
+      where : {
+        idInfo : id
+      },
+      relations : ["document"]
+    })
+
+    if ( info == undefined) {
+      throw new HttpException({
+        status : HttpStatus.NOT_FOUND,
+        error : 'Item non trouvé',
+      }, HttpStatus.NOT_FOUND);
+    }
+
+    try{
+      for (const doc of info.document) {
+        await this.documentService.remove(doc.idDoc);
+      }
+      
+    } catch ( e :any){
+      return {
+        status : HttpStatus.CONFLICT,
+        error : 'Problème de suppression de documents'
+      }
+    }
+    try {
+      await this.informationServiceRepo.remove(info);
+    } catch ( e : any) {
+      return {
+        status : HttpStatus.CONFLICT,
+        error :'Impossible de supprimer l\'information',
+      }
+    }
+    
+    return {
+      status : HttpStatus.OK,
+      message :'Information supprimée',
+    }
+
   }
 }

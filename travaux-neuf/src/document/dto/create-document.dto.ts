@@ -1,4 +1,5 @@
 import { IsNotEmpty } from "class-validator"
+import { type } from "os"
 
 export class CreateDocumentDto {
 
@@ -11,6 +12,9 @@ export class CreateDocumentDto {
     @IsNotEmpty()
     path : string
 
+    @IsNotEmpty()
+    type:string; 
+    
     @IsNotEmpty()
     date : Date
 

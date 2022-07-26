@@ -17,7 +17,6 @@ export class DocumentService {
     
 
     for( const d of document) {
-      console.log(d);
       
       try {
       const newDto : CreateDocumentDto = {
@@ -25,7 +24,8 @@ export class DocumentService {
         nomDocument: d.originalname,
         path : d.path,
         date: date,
-        profil: user
+        profil: user,
+        type: d.mimetype
       }
       
       const newDocument = this.documentRepo.create(newDto);
@@ -66,6 +66,7 @@ export class DocumentService {
   }
 
   async remove(id: number) {
+    const fs = require('fs');
     let doc = await this.documentRepo.findOne({
       where : {
         idDoc : id
@@ -79,11 +80,13 @@ export class DocumentService {
     }
 
     try {
-      await this.documentRepo.delete(id)
+      
+      fs.unlink(doc.path);
+      await this.documentRepo.remove(doc);
     } catch ( e : any) {
       return {
         status : HttpStatus.CONFLICT,
-        error :'Impossible de supprimer le document',
+        error :e,
       }
     }
 

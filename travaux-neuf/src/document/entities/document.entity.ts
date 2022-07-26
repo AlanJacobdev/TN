@@ -12,9 +12,12 @@ export class Document {
     @Column()
     nomDocument : string
 
+    @Column({nullable:true})
+    type : string
+
     @Column()
     path : string
-    
+
     @Column()
     date : Date
 

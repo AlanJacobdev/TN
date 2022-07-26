@@ -187,7 +187,7 @@ export class ItemService {
           error :'Aucune modification effectuée',
         }, HttpStatus.NOT_FOUND)
 
-      }
+    }
 
     let tabDescriptionAfter = [];
 
