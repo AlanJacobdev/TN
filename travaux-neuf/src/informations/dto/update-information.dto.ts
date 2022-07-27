@@ -16,3 +16,4 @@ export class UpdateInformationDto {
 
     dateModification : Date
 }
+

@@ -1,6 +1,8 @@
+import { LogLevel } from '@azure/msal-browser';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DocumentService } from 'src/document/document.service';
+import { infoPerDay } from 'src/service-accueil/interface/structure';
 import { Repository } from 'typeorm';
 import { CreateInformationDto } from './dto/create-information.dto';
 import { UpdateInformationDto } from './dto/update-information.dto';
@@ -14,8 +16,8 @@ export class InformationsService {
   async create(createInformationDto: CreateInformationDto) {
         let tabDocument = [];
         if(createInformationDto.idDocument.length != 0 ) {
-          for (const desc of createInformationDto.idDocument){
-            let document = await this.documentService.findOne(desc);
+          for (const idDoc of createInformationDto.idDocument){
+            let document = await this.documentService.findOne(idDoc);
             if (document != undefined){
               tabDocument.push(document)
             }  
@@ -65,29 +67,54 @@ export class InformationsService {
         error : 'Identifiant non trouvé'
       }
     }
+    
+    let documentOfModification = updateInformationDto.idDocument;
+    let documentOrigin : number[] = [];
+    let tabDocument = [];
+    info.document.forEach((x) => documentOrigin.push(x.idDoc))
+     
 
-    if(info.text === updateInformationDto.text 
-      && JSON.stringify(info.document) === JSON.stringify(updateInformationDto.document)){
-        throw new HttpException({
-          status : HttpStatus.NOT_MODIFIED,
-          error :'Aucune modification effectuée',
-        }, HttpStatus.NOT_FOUND)
+    if(documentOrigin.length != 0 || documentOfModification.length != 0 ) {
+      console.log("origin");
+      console.log(documentOrigin);
+      console.log("modif");
+      console.log(documentOfModification);
+      
+      
+        if(documentOrigin.length > documentOfModification.length){
+          for (const doc of documentOrigin) {
+            let exist = documentOfModification.find((e) => e == doc)
+            if (exist == undefined) {
+              let res = await this.documentService.remove(doc);
+              console.log(res);
+              
+            }
+          }
+        } else {
+          for (const doc of documentOrigin) {
+            let exist = documentOfModification.find((e) => e == doc)
+            if (exist == undefined) {
+              await this.documentService.remove(doc);
+            }
+          
+          }
+        }
+
+        for (const idDoc of documentOfModification){
+          
+          let document = await this.documentService.findOne(idDoc);
+          
+          if (document != undefined){
+            tabDocument.push(document)
+          }  
+        
+        }
     }
-
-    let tabDocumentAfter = [];
-
-    if( updateInformationDto.idDocument.length != 0 ) {
-      for (const desc of updateInformationDto.idDocument){
-        const doc = await this.documentService.findOne(desc);
-        tabDocumentAfter.push(doc);
-      }
-    }
-
     
     info.dateModification = new Date();
     info.text = updateInformationDto.text;
     info.profilModification = updateInformationDto.profilModification;
-    info.document = tabDocumentAfter;
+    info.document = tabDocument;
     await this.informationServiceRepo.save(info);
     
     return await this.informationServiceRepo.findOne({

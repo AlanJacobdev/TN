@@ -16,7 +16,6 @@ export class DocumentController {
     })
   }))
   async createDocument(@UploadedFiles() file: Array<Express.Multer.File>, @Param('user') user :string) {
-    console.log(file);
     
     return this.documentService.create(file, user)
   }

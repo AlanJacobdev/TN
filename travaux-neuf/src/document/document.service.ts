@@ -81,7 +81,7 @@ export class DocumentService {
 
     try {
       
-      fs.unlink(doc.path);
+      fs.unlinkSync(doc.path);
       await this.documentRepo.remove(doc);
     } catch ( e : any) {
       return {
