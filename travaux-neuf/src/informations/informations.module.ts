@@ -4,9 +4,10 @@ import { InformationsController } from './informations.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Information } from './entities/information.entity';
 import { DocumentModule } from 'src/document/document.module';
+import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Information]), DocumentModule],
+  imports : [TypeOrmModule.forFeature([Information]), DocumentModule, UtilisateurModule],
   controllers: [InformationsController],
   providers: [InformationsService],
   exports : [InformationsService]

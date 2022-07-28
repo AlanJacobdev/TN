@@ -1,8 +1,7 @@
-import { LogLevel } from '@azure/msal-browser';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DocumentService } from 'src/document/document.service';
-import { infoPerDay } from 'src/service-accueil/interface/structure';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Repository } from 'typeorm';
 import { CreateInformationDto } from './dto/create-information.dto';
 import { UpdateInformationDto } from './dto/update-information.dto';
@@ -11,7 +10,7 @@ import { Information } from './entities/information.entity';
 @Injectable()
 export class InformationsService {
 
-  constructor(@InjectRepository(Information) private informationServiceRepo : Repository<Information>, private documentService : DocumentService){}
+  constructor(@InjectRepository(Information) private informationServiceRepo : Repository<Information>, private documentService : DocumentService, private utilisateurService : UtilisateurService){}
 
   async create(createInformationDto: CreateInformationDto) {
         let tabDocument = [];
@@ -25,8 +24,6 @@ export class InformationsService {
         }
         createInformationDto.dateCreation = new Date();
         createInformationDto.document = tabDocument;
-        console.log(createInformationDto);
-        
         const newInfo = this.informationServiceRepo.create(createInformationDto);
         await this.informationServiceRepo.save(newInfo);
         return newInfo;
@@ -34,14 +31,27 @@ export class InformationsService {
     
   }
 
-  findAll() {
+  async findAll() {
     
-    return this.informationServiceRepo.find({
+    let res = await this.informationServiceRepo.find({
       order:{
         dateCreation : "DESC"
       },
       relations : ["document"]
     });
+
+    for (const o of res){
+      const profilCreation = await this.utilisateurService.findOneByLogin(o.profilCreation)
+      if (profilCreation != undefined){
+        o.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+      }
+      const profilModification = await this.utilisateurService.findOneByLogin(o.profilModification)
+      if (profilModification != undefined){
+        o.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+      }
+    }
+
+    return res
   }
 
   findOne(id: number) {
@@ -75,12 +85,6 @@ export class InformationsService {
      
 
     if(documentOrigin.length != 0 || documentOfModification.length != 0 ) {
-      console.log("origin");
-      console.log(documentOrigin);
-      console.log("modif");
-      console.log(documentOfModification);
-      
-      
         if(documentOrigin.length > documentOfModification.length){
           for (const doc of documentOrigin) {
             let exist = documentOfModification.find((e) => e == doc)

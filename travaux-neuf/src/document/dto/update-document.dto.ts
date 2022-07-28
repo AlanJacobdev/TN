@@ -1,4 +1,10 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDocumentDto } from './create-document.dto';
+import { IsNotEmpty } from "class-validator"
+export class UpdateDocumentDto {
 
-export class UpdateDocumentDto extends PartialType(CreateDocumentDto) {}
+    @IsNotEmpty()
+    idDocument : number
+    
+    @IsNotEmpty()
+    libelleDocument : string
+
+}

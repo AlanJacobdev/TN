@@ -10,9 +10,12 @@ export class Document {
     idDocument : string
 
     @Column()
+    libelleDocument : string;
+
+    @Column()
     nomDocument : string
 
-    @Column({nullable:true})
+    @Column()
     type : string
 
     @Column()

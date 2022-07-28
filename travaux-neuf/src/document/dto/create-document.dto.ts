@@ -1,5 +1,4 @@
 import { IsNotEmpty } from "class-validator"
-import { type } from "os"
 
 export class CreateDocumentDto {
 
@@ -16,8 +15,10 @@ export class CreateDocumentDto {
     type:string; 
     
     @IsNotEmpty()
-    date : Date
+    date : Date;
 
     @IsNotEmpty()
-    profil : string
+    profil : string;
+
+    libelleDocument: string;
 }

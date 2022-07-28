@@ -1,22 +1,22 @@
-import { Controller, Get, Post,Response, Param, Delete, UploadedFiles, UseInterceptors, StreamableFile, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post,Response, Request, Param, Delete, UploadedFiles, UseInterceptors, StreamableFile, HttpStatus, Put, Body, Req } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { createReadStream } from 'fs';
 import { diskStorage } from 'multer';
 import { join } from 'path';
 import { DocumentService } from './document.service';
+import { UpdateDocumentDto } from './dto/update-document.dto';
 
 @Controller('document')
 export class DocumentController {
   constructor(private readonly documentService: DocumentService) {}
 
   @Post('file-upload/:user')
-@UseInterceptors(FilesInterceptor('document', 20, {
+  @UseInterceptors(FilesInterceptor('document', 20, {
     storage: diskStorage({
       destination: './../document'
     })
   }))
   async createDocument(@UploadedFiles() file: Array<Express.Multer.File>, @Param('user') user :string) {
-    
     return this.documentService.create(file, user)
   }
   
@@ -47,6 +47,12 @@ export class DocumentController {
         error :'Document inconnu',
       }
     }
+  }
+  
+
+  @Put()
+  update(@Body() updateInformationDto: UpdateDocumentDto) {
+    return this.documentService.update(updateInformationDto);
   }
   
   @Delete(':id')

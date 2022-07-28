@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 export class OrsaveService {
 
 
-  constructor(@InjectRepository(Orsave) private orsaveRepo : Repository<Orsave>,  @Inject(forwardRef(() => ObjetrepereService)) private orservice : ObjetrepereService, private configservice : ConfigService){}
+  constructor(@InjectRepository(Orsave) private orsaveRepo : Repository<Orsave>,  @Inject(forwardRef(() => ObjetrepereService)) private orservice : ObjetrepereService){}
 
   async create(createOrsaveDto: CreateOrsaveDto) {
     const orExist = await this.orservice.findOne(createOrsaveDto.idObjetRepere);

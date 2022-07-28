@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateDocumentDto } from './dto/create-document.dto';
+import { UpdateDocumentDto } from './dto/update-document.dto';
 import { Document } from './entities/document.entity';
 
 @Injectable()
@@ -25,7 +26,8 @@ export class DocumentService {
         path : d.path,
         date: date,
         profil: user,
-        type: d.mimetype
+        type: d.mimetype,
+        libelleDocument : ''
       }
       
       const newDocument = this.documentRepo.create(newDto);
@@ -94,7 +96,43 @@ export class DocumentService {
       status : HttpStatus.OK,
       message :'Document supprimé',
     }
-
-   
   }
+
+  async update(updateDocument : UpdateDocumentDto) {
+    let doc = await this.documentRepo.findOne({
+      where : {
+        idDoc : updateDocument.idDocument
+      }
+    })
+    if(doc == undefined) {
+      throw new HttpException({
+        status : HttpStatus.NOT_FOUND,
+        error : 'Document non trouvé',
+      }, HttpStatus.NOT_FOUND);
+    }
+
+    try {
+      
+      doc.libelleDocument = updateDocument.libelleDocument;
+      await this.documentRepo.save(doc);
+    } catch ( e : any) {
+      return {
+        status : HttpStatus.CONFLICT,
+        error :e,
+      }
+    }
+    
+    return await this.documentRepo.findOne({
+      where : {
+        idDoc : updateDocument.idDocument
+      }
+    });
+
+
+  }
+
+
+
+
+
 }
