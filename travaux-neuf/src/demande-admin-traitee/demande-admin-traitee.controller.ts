@@ -2,6 +2,13 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { DemandeAdminTraiteeService } from './demande-admin-traitee.service';
 import { CreateDemandeAdminTraiteeDto } from './dto/create-demande-admin-traitee.dto';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par demande-admin-traitee (ex: localhost/demande-admin-traitee/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('demande-admin-traitee')
 export class DemandeAdminTraiteeController {
   constructor(private readonly demandeAdminTraiteeService: DemandeAdminTraiteeService) {}

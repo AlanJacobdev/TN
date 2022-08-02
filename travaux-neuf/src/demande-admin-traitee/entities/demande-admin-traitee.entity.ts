@@ -1,8 +1,12 @@
-
 import { Itemsave } from "src/itemsave/entities/itemsave.entity";
 import { Orsave } from "src/orsave/entities/orsave.entity";
 import { Sousitemsave } from "src/sousitemsave/entities/sousitemsave.entity";
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+
+/**
+ * Fichier de configuration de la table demandeAdminTraitee au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
 
 @Entity('demandeAdminTraitee')
 export class DemandeAdminTraitee {

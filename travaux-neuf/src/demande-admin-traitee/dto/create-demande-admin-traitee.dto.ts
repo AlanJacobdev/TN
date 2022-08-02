@@ -5,6 +5,13 @@ import { Sousitemsave } from "src/sousitemsave/entities/sousitemsave.entity";
 import { PrimaryGeneratedColumn } from "typeorm";
 import { objetTraitee } from "../interface/interfaceDmdTraitee";
 
+/**
+ * Structure de données attendue pour la création d'une demande de suppression traitée
+ * @IsNotEmpty() => Données obligatoire (Erreur si absente)
+ * @Allow() => Données facultatives
+ * Aucun Decorateur => Données non attendue mais complétées ultérieurement
+ */
+
 export class CreateDemandeAdminTraiteeDto {
 
     

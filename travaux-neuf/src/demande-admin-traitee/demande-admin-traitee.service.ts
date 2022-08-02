@@ -8,12 +8,23 @@ import { Repository } from 'typeorm';
 import { CreateDemandeAdminTraiteeDto } from './dto/create-demande-admin-traitee.dto';
 import { DemandeAdminTraitee } from './entities/demande-admin-traitee.entity';
 
+
+/**
+ * @author : @alanjacobdev
+ */
+
 @Injectable()
 export class DemandeAdminTraiteeService {
 
   constructor(@InjectRepository(DemandeAdminTraitee) private demandeAdminTraiteeRepo : Repository<DemandeAdminTraitee>, private orsaveService: OrsaveService, private itemSaveService: ItemsaveService, private sousItemSaveService : SousitemsaveService,
   private utilisateurService : UtilisateurService){}
   
+
+  /**
+   * Creation d'une demande de suppression traitée
+   * @param createDemandeAdminTraiteeDto : Structure attendue pour la création d'une demande de suppression traitée
+   * @returns : La nouvelle demande de suppression traitée ou une erreur
+   */
   async create(createDemandeAdminTraiteeDto: CreateDemandeAdminTraiteeDto) {
 
     let tabDmdOr = [];
@@ -54,6 +65,10 @@ export class DemandeAdminTraiteeService {
     
   }
 
+  /**
+   * Retourne l'ensemble des demandes de suppression traitées par ordre de modification decroissant
+   * @returns Liste de l'ensemble des demandes de suppression traitées ou [] si aucune demande
+   */
   async findAll() {
     const demandes = await this.demandeAdminTraiteeRepo.find({
       order: {
@@ -69,6 +84,12 @@ export class DemandeAdminTraiteeService {
     return demandes
 
   }
+
+  /**
+   * Retourne l'ensemble des objets (OR, Item, SI) lié à une demande de suppression traitée avec le nom du demandeur en format Nom prénom
+   * @param idDmd : Identifiant de la demande 
+   * @returns Structure contenant l'ensemble des objets liés à la demande
+   */
 
   async getAllObjectsFromDmd(idDmd : number) {
     let demande = await this.demandeAdminTraiteeRepo.findOne({
@@ -95,6 +116,12 @@ export class DemandeAdminTraiteeService {
     return demande
   } 
 
+  /**
+   * Retourne l'arborescence d'un Objet repère sauvegardé
+   * @param idObjetRepere Identifiant de l'objet repère
+   * @param dateDel : Date de création de la demande de suppression traitée
+   * @returns  : { OR: { idObjetRepere: any; libelleObjetRepere: any; }; Item: never[]; } OU {status : HttpStatus, error : string}
+   */
   async getArborescenceOfOR(idObjetRepere : string, dateDel : Date) {
     
     const orExist = await this.orsaveService.findOne(idObjetRepere, dateDel);
@@ -137,7 +164,12 @@ export class DemandeAdminTraiteeService {
     }
   }
 
-
+  /**
+   * Retourne l'arborescence d'un Item
+   * @param idItem Identifiant de l'item
+   * @param dateDel Date de création de la demande de suppression traitée
+   * @returns { Item: {idItem: any; libelle: any;}; SI: any; } OU { status : HttpStatus, error : string}
+   */
   async getArborescenceOfItem(idItem : string, dateDel : Date) {
     const itemExist = await this.itemSaveService.findOne(idItem, dateDel);
     if (itemExist != undefined) {
