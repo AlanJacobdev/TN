@@ -3,6 +3,13 @@ import { InformationsService } from './informations.service';
 import { CreateInformationDto } from './dto/create-information.dto';
 import { UpdateInformationDto } from './dto/update-information.dto';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par informations (ex: localhost/informations/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('informations')
 export class InformationsController {
   constructor(private readonly informationsService: InformationsService) {}

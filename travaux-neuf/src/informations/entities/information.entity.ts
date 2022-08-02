@@ -1,6 +1,11 @@
 import { Document } from "src/document/entities/document.entity";
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
+/**
+ * Fichier de configuration de la table information au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('information')
 export class Information {
 

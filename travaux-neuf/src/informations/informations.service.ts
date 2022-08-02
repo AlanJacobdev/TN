@@ -12,6 +12,11 @@ export class InformationsService {
 
   constructor(@InjectRepository(Information) private informationServiceRepo : Repository<Information>, private documentService : DocumentService, private utilisateurService : UtilisateurService){}
 
+  /**
+   * Création d'une information
+   * @param createInformationDto : Structure attendue pour la création d'une information
+   * @returns La nouvelle information ou une erreur
+   */
   async create(createInformationDto: CreateInformationDto) {
         let tabDocument = [];
         if(createInformationDto.idDocument.length != 0 ) {
@@ -31,8 +36,12 @@ export class InformationsService {
     
   }
 
+
+  /**
+    * Retourne l'ensemble des informations triés par ordre décroissant en fonction de leurs dates de création
+   * @returns : Liste des ateliers ou [] si aucun
+   */
   async findAll() {
-    
     let res = await this.informationServiceRepo.find({
       order:{
         dateCreation : "DESC"
@@ -54,6 +63,12 @@ export class InformationsService {
     return res
   }
 
+
+  /**
+   * Retourne l'information correspondante à l'identifiant id
+   * @param id : Identifiant de l'information
+   * @returns : Structure de l'information recherchée ou undefined si inconnu
+   */
   findOne(id: number) {
     return this.informationServiceRepo.findOne({
       where : {
@@ -63,6 +78,12 @@ export class InformationsService {
     })
   }
 
+  /**
+   * Modifie l'information concerné en fonction des nouvelles données passée en paramètre
+   * @param id : Identifiant de l'information à modifier
+   * @param updateInformationDto : Données modifiés de l'objet id
+   * @returns Retourne l'information modifié ou un objet {status : HttpStatus, error : string}
+   */
   async update(id: number, updateInformationDto: UpdateInformationDto) {
     const info = await this.informationServiceRepo.findOne({
       where : {
@@ -131,6 +152,11 @@ export class InformationsService {
 
   }
 
+  /**
+   * Supprime une information
+   * @param id : Identifiant de l'information à supprimer
+   * @returns Retourne une HttpException ou un objet {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
+   */
   async remove(id: number) {
     
     const info = await this.informationServiceRepo.findOne({
