@@ -3,6 +3,11 @@ import { Numerounique } from 'src/numerounique/entities/numerounique.entity';
 import { Typeobjetrepere } from 'src/typeobjetrepere/entities/typeobjetrepere.entity';
 import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToOne, JoinTable, ManyToMany } from 'typeorm';
 
+/**
+ * Fichier de configuration de la table objetrepere au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('objetrepere')
 export class Objetrepere {
 

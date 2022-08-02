@@ -12,12 +12,21 @@ import { CreateObjetrepereDto } from './dto/create-objetrepere.dto';
 import { UpdateObjetrepereDto } from './dto/update-objetrepere.dto';
 import { Objetrepere } from './entities/objetrepere.entity';
 
+/**
+ * @author : @alanjacobdev
+ */
+
 @Injectable()
 export class ObjetrepereService {
   
   constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, private nuservice : NumerouniqueService, private typeorservice : TypeobjetrepereService,  private orsaveservice : OrsaveService,
               private descriptionService: DescriptionService, private utilisateurService : UtilisateurService ){}
 
+  /**
+   * Créer un objet repère
+   * @param createObjetrepereDto : Structure attendue pour la création d'un objet repère
+   * @returns : Le nouvel objet repère ou une erreur
+   */
   async create(createObjetrepereDto: CreateObjetrepereDto) {
     const typeor = await this.typeorservice.findOne(createObjetrepereDto.codeType); 
     if (typeor != undefined) {
@@ -73,7 +82,11 @@ export class ObjetrepereService {
     }  
   }
 
-
+  /**
+   * Créer plusieurs objet en même temps 
+   * @param createObjetrepereDto : Structure attendue pour la création d'objets repères
+   * @returns : {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
+   */
   async createMultipleObject(createObjetrepereDto: CreateObjetrepereDto) {
     let range = createObjetrepereDto.rangeNu;
     let error = false;
@@ -123,7 +136,10 @@ export class ObjetrepereService {
     }
   }
 
-
+  /**
+   * Retourne la liste de tout les objets repères triés par ordre croissant de leurs identifiants avec leur descriptions
+   * @returns Liste des objets repères ou [] si aucun
+   */
   findAll() {
     return this.OrRepo.find({
       relations: ["description"],
@@ -132,6 +148,12 @@ export class ObjetrepereService {
       }
     });
   }
+
+  /**
+   * Retourne un objet repère correspondant à l'identifiant
+   * @param id : Identifiant de l'objet repère
+   * @returns : Structure de l'objet repère recherché ou undefined si inconnu
+   */
 
   findOne(id: string) {
     return this.OrRepo.findOne({ 
@@ -143,6 +165,11 @@ export class ObjetrepereService {
     )
   }
 
+  /**
+   * Retourne le libellé avec un numéro unqiue correspond à @param nu avec ses descriptions 
+   * @param nu Numéro unique
+   * @returns Structure de l'objet repère recherché ou undefined si inconnu
+   */
   findOneByNU(nu : string) {
     return this.OrRepo.findOne({
       select : ['libelleObjetRepere'],
@@ -153,6 +180,11 @@ export class ObjetrepereService {
     })
   }
 
+  /**
+   * Retourne l'identifiant et le libellé d'un objet repère en fonction de son numero unique
+   * @param nu Numéro unique
+   * @returns Structure de l'objet repère recherché ou undefined si inconnu
+   */
   getORByNU(nu : string) {
     return this.OrRepo.findOne({
       select : ['idObjetRepere','libelleObjetRepere'],
@@ -163,6 +195,11 @@ export class ObjetrepereService {
     })
   }
 
+  /**
+   * Retourne la liste de l'ensemble des objets repère d'un atelier ordonné par identifiant de manière croissante + profil pour visualisation
+   * @param id : Identifiant de l'atelier
+   * @returns  Liste des Or ou [] si aucun
+   */
   async getORByAtelier(id: string) {
     const or = await this.OrRepo.find({
       where : {
@@ -188,6 +225,12 @@ export class ObjetrepereService {
     return or
   }
 
+  /**
+   * Modifie l'objet repère concerné en fonction des nouvelles données passées en paramètre + Créer une sauvegarde
+   * @param id : Identifiant de l'objet repère
+   * @param updateObjetrepereDto : Données modifiés de l'objet id
+   * @returns  Retourne l'objet repère modifié ou un objet {status : HttpStatus, error : string} // HttpException
+   */
   async update(id: string, updateObjetrepereDto: UpdateObjetrepereDto) {
     const OR = await this.OrRepo.findOne({
       where : {
@@ -270,6 +313,15 @@ export class ObjetrepereService {
     });
   }
 
+
+  /**
+   * 
+   * @param id Identifiant de l'objet repère supprimé
+   * @param user Utilisateur supprimant l'objet repère 
+   * @param admin Est administrateur (facultatif)
+   * @param date : Date de création (facultatif)
+   * @returns Retourne une HttpException ou un objet {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
+   */
   async remove(id: string, user : string, admin? : boolean, date?: Date) {
     const OR = await this.OrRepo.findOne({
       where : {
@@ -351,11 +403,22 @@ export class ObjetrepereService {
     }
   }
 
-  async getHistory(idItem : string) {
-    return await this.orsaveservice.findHistoryById(idItem);
+
+  /**
+   * Retoune l'historique de l'objet idOr
+   * @param idOR : Identifiant de l'objet repère
+   * @returns Liste des différents états de l'objet repère ou [] si aucun
+   */
+  async getHistory(idOR : string) {
+    return await this.orsaveservice.findHistoryById(idOR);
   }
 
 
+  /**
+   * Retourne la liste des numéros unqiues d'un atelier en précisant lesquels sont déjà créer
+   * @param Atelier : Identifiant de l'atelier 
+   * @returns Liste des 1000 nu complétée des OR existants
+   */
   async getAllNUAndORByAtelier(Atelier : string) {
     let res= []
     let allNU = await this.nuservice.findAllOnlyID(Atelier);
@@ -376,6 +439,13 @@ export class ObjetrepereService {
     return res;
   }
 
+  /**
+   * Calcul si il est possible ou non de faire un réservation pour la création d'un objet repère
+   * @param Atelier : Identifiant de l'atelier
+   * @param startNU : Numéro unique du premier Objet repèrer
+   * @param additionalNU : Nombre d'objet repère à reserver
+   * @returns : {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
+   */
    async reservationIsPossible(Atelier : string, startNU : string , additionalNU : number) {
     let allNU: string[]= []
     let res = true;
@@ -410,6 +480,14 @@ export class ObjetrepereService {
     })
   }
 
+  /**
+   * Permet le déplacement de la réservation lorsqu'elle est impossible dans le cas d'un premier emplacement
+   * @param Atelier : Identifiant de l'atelier
+   * @param startIteration : Numero unique du début de l'interval de réservation
+   * @param bookOR : Nombre d'or supplémentaire à créer
+   * @param isForward : Vers l'avant
+   * @returns : {status : HttpStatus, error : string} // {range : number, endIndex : string}
+   */
   async getRangeToCreateOR(Atelier : string, startIteration : number, bookOR : number, isForward? : boolean){
     let startIter = +startIteration;
     let allORByAtelier = await this.getORByAtelier(Atelier);
@@ -501,7 +579,11 @@ export class ObjetrepereService {
 
   }
 
-
+  /**
+   * Retourne l'ensemble des types d'objet d'un atelier
+   * @param Atelier identifiant de l'Atelier
+   * @returns Liste de tout les types d'objet repère d'un Atelier ou [] si aucun
+   */
   async getTypeOfItemsForOR(Atelier : string) {
 
     const res = await this.OrRepo.createQueryBuilder("Objetrepere")

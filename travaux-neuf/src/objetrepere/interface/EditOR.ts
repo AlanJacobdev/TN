@@ -1,3 +1,7 @@
+/**
+ * Structure de données autre que les DTO
+ */
+
 export interface editObjet {
     clientId : string,
     id : string,

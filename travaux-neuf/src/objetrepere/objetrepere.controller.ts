@@ -3,6 +3,13 @@ import { ObjetrepereService } from './objetrepere.service';
 import { CreateObjetrepereDto } from './dto/create-objetrepere.dto';
 import { UpdateObjetrepereDto } from './dto/update-objetrepere.dto';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par objetrepere (ex: localhost/objetrepere/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('objetrepere')
 export class ObjetrepereController {
   constructor(private readonly objetrepereService: ObjetrepereService) {}
