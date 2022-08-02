@@ -6,6 +6,13 @@ import { join } from 'path';
 import { DocumentService } from './document.service';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par document (ex: localhost/document/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('document')
 export class DocumentController {
   constructor(private readonly documentService: DocumentService) {}

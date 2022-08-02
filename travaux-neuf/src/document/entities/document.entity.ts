@@ -1,5 +1,10 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
+/**
+ * Fichier de configuration de la table document au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('document')
 export class Document {
 
