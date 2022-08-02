@@ -3,6 +3,13 @@ import { NumerouniqueService } from './numerounique.service';
 import { CreateNumerouniqueDto } from './dto/create-numerounique.dto';
 import { UpdateNumerouniqueDto } from './dto/update-numerounique.dto';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par numerounique (ex: localhost/numerounique/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('numerounique')
 export class NumerouniqueController {
   constructor(private readonly numerouniqueService: NumerouniqueService) {}

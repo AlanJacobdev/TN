@@ -2,6 +2,11 @@ import { Atelier } from "src/atelier/entities/atelier.entity";
 import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 
+/**
+ * Fichier de configuration de la table numerounique au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('numerounique')
 export class Numerounique {
 
