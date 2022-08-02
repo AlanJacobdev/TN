@@ -1,5 +1,10 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
+/**
+ * Fichier de configuration de la table Atelier au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('atelier')
 export class Atelier {
 

@@ -5,13 +5,20 @@ import { CreateAtelierDto } from './dto/create-atelier.dto';
 import { UpdateAtelierDto } from './dto/update-atelier.dto';
 import { Atelier } from './entities/atelier.entity';
 
+/**
+ * @author : @alanjacobdev
+ */
 
 @Injectable()
 export class AtelierService {
 
   constructor(@InjectRepository(Atelier) private AtelierRepo : Repository<Atelier> ){}
 
-  
+  /**
+   * Création d'un atlier 
+   * @param createAtelierDto : Structure attendue pour la création d'un atelier
+   * @returns : Le nouvel atelier ou une erreur
+   */
   async create(createAtelierDto: CreateAtelierDto) {
     const atelier = await this.findOne(createAtelierDto.idAtelier);
     if ( atelier == undefined){
@@ -22,11 +29,15 @@ export class AtelierService {
     } else {
       return {
         status : HttpStatus.CONFLICT,
-        error :'Already exist',
+        error :'Exist déjà',
       }
     }
   }
 
+  /**
+   * Retourne l'ensemble des ateliers triés par ordre croissant en fonction de leurs identifiants
+   * @returns : Liste des ateliers ou [] si aucun
+   */
   findAll() {
     return this.AtelierRepo.find({
       order : {
@@ -35,6 +46,10 @@ export class AtelierService {
     });
   }
 
+  /**
+   * Retourne l'ensemble des ateliers actifs triés par ordre croissant en fonction de leurs identifiants
+   * @returns : Liste des ateliers ou [] si aucun
+   */
   findAllAteliersActif(){
     return this.AtelierRepo.find({
       where : {
@@ -46,6 +61,12 @@ export class AtelierService {
     })
   }
 
+
+  /**
+   * Retourne l'atelier correspondant à l'identifiant id
+   * @param id : Identifiant de l'atelier recherché
+   * @returns : Structure de l'atelier recherché ou undefined si inconnu
+   */
   findOne(id: string) {
     return this.AtelierRepo.findOne({
       where : {
@@ -54,6 +75,12 @@ export class AtelierService {
     })
   }
 
+  /**
+   * Modifie l'atelier concerné en fonction des nouvelles données passée en paramètre
+   * @param id : Identifiant de l'atelier à modifier
+   * @param updateAtelierDto  : Données modifiés de l'objet id
+   * @returns : Retourne l'atelier modifié ou un objet {status : HttpStatus, error : string}
+   */
   async update(id: string, updateAtelierDto: UpdateAtelierDto) {
     const atelier = await this.AtelierRepo.findOne({
       where : {
@@ -72,6 +99,12 @@ export class AtelierService {
     return await this.AtelierRepo.findOne(id);
   }
 
+
+  /**
+   * Supprime un atelier
+   * @param id : Identifiant de l'atelier à supprimer
+   * @returns Retourne une HttpException ou un objet {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
+   */
   async remove(id: string) {
     const Atelier = await this.AtelierRepo.findOne({
       where : {
@@ -94,7 +127,7 @@ export class AtelierService {
     }
     return {
       status : HttpStatus.OK,
-      error :'Deleted',
+      message :'Deleted',
     }
   }
 }
