@@ -11,8 +11,11 @@ import { SousitemService } from 'src/sousitem/sousitem.service';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Repository } from 'typeorm';
 import { CreateDemandeAdminDto } from './dto/create-demande-admin.dto';
-
 import { DemandeAdmin } from './entities/demande-admin.entity';
+
+/**
+ * @author : @alanjacobdev
+ */
 
 @Injectable()
 export class DemandeAdminService {
@@ -21,9 +24,12 @@ export class DemandeAdminService {
   private itemService : ItemService, private sousItemService : SousitemService,  private mailService : MailService, private utilisateurService : UtilisateurService,
   private serviceSuppression: ServiceSuppressionService, private demandeAdminTraiteeService : DemandeAdminTraiteeService){}
 
+  /**
+   * Creation d'une demande de suppression
+   * @param createDemandeAdminDto : Structure attendue pour la création d'une demande de suppression
+   * @returns : La nouvelle demande ou une erreur
+   */
   async create(createDemandeAdminDto: CreateDemandeAdminDto) {
-
-    
     createDemandeAdminDto.dateCreation = new Date();
 
     let tabDmdOr = [];
@@ -63,10 +69,19 @@ export class DemandeAdminService {
     return newDemande;
   }
 
+  /**
+   * Envoi un mail pour notifier les administrateurs d'une nouvelle demande
+   * @param user : Utilisateur faisant la demande
+   * @param motif : Motif de la demande de suppression
+   */
   async sendMail(user : string, motif: string ){
     await this.mailService.sendUserConfirmation(user, motif);
   }
 
+  /**
+   * Retourne l'ensemble des demandes de suppression (non-traitées)
+   * @returns Liste des demande de suppression triées par date de création de manière croissante ou [] si aucune demande
+   */
   async findAll() {
    const demandes = await this.demandeAdminRepo.find({
     order: {
@@ -82,6 +97,12 @@ export class DemandeAdminService {
    return demandes
   }
 
+
+  /**
+   * Retourne l'ensemble des objets (OR, Item, SI) lié à une demande de suppression avec le nom du demandeur en format Nom prénom
+   * @param idDmd : Identifiant de la demande 
+   * @returns Structure contenant l'ensemble des objets liés à la demande
+   */
   async getAllObjectsFromDmd(idDmd : number) {
     let demande = await this.demandeAdminRepo.findOne({
       where : {
@@ -101,10 +122,14 @@ export class DemandeAdminService {
     if (profilCreation != undefined){
       demande.profilCreation = (profilCreation.nom).toUpperCase() +" "+ profilCreation.prenom
     }
-
     return demande
   } 
 
+  /**
+   * Retourne l'ensemble des objets (OR, Item, SI) lié à une demande de suppression 
+   * @param idDmd : Identifiant de la demande 
+   * @returns Structure contenant l'ensemble des objets liés à la demande
+   */
   async getAllObjectsFromDmdWithOutName(idDmd : number) {
     return this.demandeAdminRepo.findOne({
       where : {
@@ -121,6 +146,13 @@ export class DemandeAdminService {
     })
   } 
 
+  /**
+   * Supprime une demande et ses objets (si accept est à true) afin de les ajouter a la table des demandes traitées.
+   * @param id : Identifiant de la demande
+   * @param profil : Profil de la personne ayant traité la demande
+   * @param accept : La demande est acceptée ou refusée
+   * @returns HttpException ou strcuture  {status : HttpStatus, message : string}
+   */
   async remove(id: number, profil : string, accept : boolean) {
       const demande = await this.getAllObjectsFromDmdWithOutName(id)
       
@@ -233,6 +265,11 @@ export class DemandeAdminService {
       }
   }
 
+  /**
+   * Retourne l'arborescence d'un Objet repère 
+   * @param idObjetRepere : Identifiant de l'objet repère
+   * @returns  : { OR: { idObjetRepere: any; libelleObjetRepere: any; }; Item: never[]; } OU {status : HttpStatus, error : string}
+   */
   async getArborescenceOfOR(idObjetRepere : string) {
     const orExist = await this.objetRepereService.findOne(idObjetRepere);
     let allItemAndSIOfOR = [];
@@ -274,7 +311,11 @@ export class DemandeAdminService {
     }
   }
 
-
+  /**
+   * Retourne l'arborescence d'un Item
+   * @param idItem : Identifiant de l'item
+   * @returns : { Item: {idItem: any; libelle: any;}; SI: any; } OU { status : HttpStatus, error : string}
+   */
   async getArborescenceOfItem(idItem : string) {
     const itemExist = await this.itemService.findOne(idItem);
     if (itemExist != undefined) {

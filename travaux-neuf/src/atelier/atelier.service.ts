@@ -15,7 +15,7 @@ export class AtelierService {
   constructor(@InjectRepository(Atelier) private AtelierRepo : Repository<Atelier> ){}
 
   /**
-   * Création d'un atlier 
+   * Création d'un atelier 
    * @param createAtelierDto : Structure attendue pour la création d'un atelier
    * @returns : Le nouvel atelier ou une erreur
    */

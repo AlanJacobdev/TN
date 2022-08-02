@@ -3,6 +3,11 @@ import { Objetrepere } from "src/objetrepere/entities/objetrepere.entity";
 import { Sousitem } from "src/sousitem/entities/sousitem.entity";
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
+/**
+ * Fichier de configuration de la table demandeAdmin au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('demandeAdmin')
 export class DemandeAdmin {
 

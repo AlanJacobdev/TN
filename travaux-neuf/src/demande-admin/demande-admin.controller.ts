@@ -3,6 +3,14 @@ import { DemandeAdminService } from './demande-admin.service';
 import { CreateDemandeAdminDto } from './dto/create-demande-admin.dto';
 import { UpdateDemandeAdminDto } from './dto/update-demande-admin.dto';
 
+
+/**
+ * Entité controllant l'ensemble des requêtes commençant par demande-admin (ex: localhost/demande-admin/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('demande-admin')
 export class DemandeAdminController {
   constructor(private readonly demandeAdminService: DemandeAdminService) {}
@@ -16,11 +24,6 @@ export class DemandeAdminController {
   findAll() {
     return this.demandeAdminService.findAll();
   }
-
-  // @Get('/get/findAllTraitee')
-  // findAllTraitee() {
-  //   return this.demandeAdminService.findAllTraitee();
-  // }
 
   @Get('/getAllObjectsFromDmd/:idDmd')
   getAllObjectsFromDmd(@Param('idDmd') idDmd: number) {
