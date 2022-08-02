@@ -3,6 +3,13 @@ import { DescriptionService } from './description.service';
 import { CreateDescriptionDto } from './dto/create-description.dto';
 import { UpdateDescriptionDto } from './dto/update-description.dto';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par atelier (ex: localhost/atelier/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('description')
 export class DescriptionController {
   constructor(private readonly descriptionService: DescriptionService) {}

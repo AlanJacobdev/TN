@@ -11,6 +11,11 @@ export class DescriptionService {
   constructor(@InjectRepository(Description) private descriptionRepo : Repository<Description> ){
   }
 
+  /**
+   * Création d'une description
+   * @param createDescriptionDto : Structure attendue pour la création d'une description
+   * @returns La nouvelle description ou celle existant déjà
+   */
   async create(createDescriptionDto: CreateDescriptionDto) {
     const descriptionExist = await this.descriptionRepo.findOne({
       where : {
@@ -28,6 +33,11 @@ export class DescriptionService {
   }
 
 
+  /**
+   * Retourne la description donc le lien correspond à @param lien
+   * @param lien : Lien de la decription (pouvant être du texte ou une URL)
+   * @returns : Structure de la description recherché ou undefined si inconnu
+   */
   findOneByLien(lien: string) {
     return this.descriptionRepo.findOne({
       where : {
@@ -36,6 +46,11 @@ export class DescriptionService {
     })
   }
   
+  /**
+   * Retourne la description donc l'identifiant correspond à @param id
+   * @param id : Identifiant de la description
+   * @returns Structure de la description recherché ou undefined si inconnu
+   */
   findOneByID(id: number) {
     return this.descriptionRepo.findOne({
       where : {
@@ -44,7 +59,12 @@ export class DescriptionService {
     })
   }
 
-
+  /**
+   * Modifie la description concernée en fonction des nouvelles données passée en paramètre
+   * @param id : Identifiant de la description
+   * @param updateDescriptionDto : Données modifiés de l'objet id
+   * @returns Retourne la description modifiée ou un objet {status : HttpStatus, error : string}
+   */
   async update(id: number, updateDescriptionDto: UpdateDescriptionDto) {
     const description = await this.descriptionRepo.findOne({
       where : {
@@ -62,7 +82,11 @@ export class DescriptionService {
     
   }
 
-
+  /**
+   * Supprime une description si elle n'est pas liée à d'autre objet.
+   * @param id  Identifiant de la description à supprimer
+   * @returns Retourne une HttpException ou un objet {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
+   */
   async remove(id: number) {
     const item = await this.descriptionRepo.findOne({
       where : {
