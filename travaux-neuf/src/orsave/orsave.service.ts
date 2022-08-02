@@ -11,6 +11,11 @@ export class OrsaveService {
 
   constructor(@InjectRepository(Orsave) private orsaveRepo : Repository<Orsave>,  @Inject(forwardRef(() => ObjetrepereService)) private orservice : ObjetrepereService){}
 
+  /**
+   * Création d'un objet repère sauvegardé
+   * @param createOrsaveDto Structure attendue pour la création d'un objet repère sauvegardé
+   * @returns Le nouvel objet repère sauvegardé ou une erreur 
+   */
   async create(createOrsaveDto: CreateOrsaveDto) {
     const orExist = await this.orservice.findOne(createOrsaveDto.idObjetRepere);
     if ( orExist != undefined) {
@@ -44,10 +49,19 @@ export class OrsaveService {
     }
   }
 
+  /**
+   * Retourne l'ensemble des objets repères sauvegardés
+   * @returns Liste des objets repère sauvegardés
+   */
   findAll() {
     return this.orsaveRepo.find()
   }
 
+  /**
+   * Retourne l'ensemble des sauvegardes de l'objet repère @id trié par ordre decroissant de l'identifiant
+   * @param id : Identifiant de l'objet repère sauvegardé
+   * @returns : Liste des objets repères sauvegardés ou [] si aucun
+   */
   findById(id: string) {
     return this.orsaveRepo.find({
       where : {
@@ -61,6 +75,11 @@ export class OrsaveService {
   }
 
 
+  /**
+   * Retourne l'ensemble des sauvegardes de l'objet repère @id avec descriptions trié par ordre decroissant de l'identifiant
+   * @param id : Identifiant de l'objet repère sauvegardé
+   * @returns : Liste des objets repères sauvegardés avec descriptions ou [] si aucun
+   */
   findOnebyIDDesc(id: string) {
     return this.orsaveRepo.findOne({
       where : {
@@ -73,6 +92,11 @@ export class OrsaveService {
     })
   }
 
+  /**
+   * Retourne l'historique d'un objet repère ( au maximum 5 etat) depuis sa création ou sa dernière suppression
+   * @param id : identifiant de l'objet repère
+   * @returns Liste d'état d'objet repère sauvegardé
+   */
   async findHistoryById(id: string) {
     let finalHistory = [];
     const history = await this.orsaveRepo.find({
@@ -103,6 +127,12 @@ export class OrsaveService {
 
   }
 
+  /**
+   * Retourne un objet repère sauvegardé en fonction de son identifiant et de sa date
+   * @param id : Identifiant de l'objet repère sauvegardé
+   * @param date : Date de création de l'objet repère sauvegardé 
+   * @returns Structure de l'objet repère sauvegardé recherché ou undefined si inconnu
+   */
   findOne(id: string, date: Date){
     
     return this.orsaveRepo.findOne({
@@ -115,6 +145,12 @@ export class OrsaveService {
   }
 
  
+  /**
+   * Supprime un objet repère sauvegardé 
+   * @param idObjetRepere : Identifiant de l'objet repère  
+   * @param date : Date de création de l'objet repère sauvegardé  
+   * @returns Retourne une HttpException ou un objet {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
+   */
   async remove(idObjetRepere: string, date: Date) {
     date = new Date(date);
     

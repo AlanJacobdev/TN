@@ -1,6 +1,11 @@
 import { Description } from "src/description/entities/description.entity";
 import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from "typeorm"
 
+/**
+ * Fichier de configuration de la table objetreperesauvegarde au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('objetreperesauvegarde')
 export class Orsave {
     

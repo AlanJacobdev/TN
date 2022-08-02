@@ -131,8 +131,8 @@ export class ItemsaveService {
   }
 
   /**
-   * 
-   * @param id Retourne l'historique d'un item ( au maximum 5 etat) depui sa création ou sa dernière suppression
+   * Retourne l'historique d'un item ( au maximum 5 etat) depuis sa création ou sa dernière suppression
+   * @param id Identifiant d'item
    * @returns Liste d'état d'item sauvegardé
    */
   async findHistoryById(id: string) {
