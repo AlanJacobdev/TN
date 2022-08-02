@@ -19,6 +19,11 @@ export class ItemService {
   constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService, private OrService : ObjetrepereService, private itemSaveService : ItemsaveService,
               private descriptionService: DescriptionService, private utilisateurService : UtilisateurService){}
   
+  /**
+   * Création d'un item
+   * @param createItemDto : Structure attendue pour la création d'un item
+   * @returns : Le nouvel item ou une erreur 
+   */
   async create(createItemDto: CreateItemDto) {
  
     if (createItemDto.idOR.substring(2,6) !== createItemDto.numeroUnique) {
@@ -85,6 +90,10 @@ export class ItemService {
     }
   }
 
+  /**
+   * Retourne l'ensemble des items triés par ordre croissant en fonction de leurs identifiants
+   * @returns Liste des items ou [] si aucun
+   */
   findAll() {
     return this.itemRepo.find({
       relations: ["description"],
@@ -94,6 +103,11 @@ export class ItemService {
     });
   }
 
+  /**
+   * Retourne l'item correspondant à l'identifiant id
+   * @param id : Identifiant de l'item
+   * @returns Structure de l'atelier recherché ou undefined si inconnu
+   */
   findOne(id: string) {
     return this.itemRepo.findOne({
       where : {
@@ -103,6 +117,11 @@ export class ItemService {
     })
   }
 
+  /**
+   * Retourne tout les items appartenant à un Objet repère en les triant par ordre croissant de leurs identifiants
+   * @param id : Identifiant de l'objet repère
+   * @returns Liste des items dépendant d'un Objet repère ou [] si aucun
+   */
   findAllItemOfOR (id : string) {
     return this.itemRepo.find({
       where : {
@@ -115,6 +134,12 @@ export class ItemService {
     })
   }
 
+
+  /**
+   * Retourne tout les items appartenant à un Objet repère en les triant par ordre croissant de leurs identifiants avec le profil destiné à l'affichage
+   * @param id : Identifiant de l'objet repère
+   * @returns : Liste des items triés par ordre croissant de leur identifiant 
+   */
   async getItemByORAffichage(id: string) {
     const item = await this.itemRepo.find({
       where : {
@@ -140,6 +165,11 @@ export class ItemService {
     return item;
   }
 
+  /**
+   * Retourne tout les items appartenant à un Objet repère en les triant par ordre croissant de leurs identifiants
+   * @param id : Identifiant de l'objet repère
+   * @returns Liste des items dépendant d'un Objet repère ou [] si aucun
+   */
   async getItemByOR(id: string) {
     const item = await this.itemRepo.find({
       where : {
@@ -153,6 +183,12 @@ export class ItemService {
     return item;
   }
 
+  /**
+   * Retourne les items dépendant d'un objet repère et du type @param type
+   * @param id : Identifiant de l'objet repère
+   * @param type : Type d'objet de l'item
+   * @returns Liste des items correspodnant aux critères ou [] si aucun
+   */
   getItemByORAndType(id: string, type : string) {
     return this.itemRepo.find({
       where : {
@@ -165,6 +201,12 @@ export class ItemService {
     })
   }
 
+  /**
+   * Modifie l'item concerné en fonction des nouvelles données passées en paramètre
+   * @param id : Identifiant de l'item à modifier
+   * @param updateItemDto : Données modifiés de l'item correspodnant à id
+   * @returns Retourne l'item modifié ou un objet {status : HttpStatus, error : string} // HttpException
+   */
   async update(id: string, updateItemDto: UpdateItemDto) {
     const item = await this.itemRepo.findOne({
       where : {
@@ -252,6 +294,15 @@ export class ItemService {
 
   }
 
+
+  /**
+   * Supprime un item
+   * @param id : Identifiant de l'item
+   * @param user : Profil de l'utilisateur 
+   * @param admin : Est administrateur ou non (Facultatif)
+   * @param date : Date de suppression (facultatif)
+   * @returns Retourne une HttpException ou un objet {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
+   */
   async remove(id: string, user : string, admin? : boolean, date? : Date) {
     const item = await this.itemRepo.findOne({
       where : {
@@ -338,11 +389,21 @@ export class ItemService {
       }
   }
 
+  /**
+   * Retourne l'historique de modification d'un Item 
+   * @param idItem : Identifiant de l'item
+   * @returns Liste des anciens etats de l'objet ou [] si aucun
+   */
   async getHistory(idItem : string) {
     return await this.itemSaveService.findHistoryById(idItem);
   }
 
-
+  /**
+   * Retourne la liste des items d'un objet repère correspondant à un type d'objet (création)
+   * @param idOr : Identifiant de l'objet repère parent
+   * @param type : Type d'objet
+   * @returns Liste de 10 items correpondant au type
+   */
   async getItemFromOrAndDispo(idOr : string, type : string){
     let ItemByORAndType = await this.getItemByOR(idOr);
     let itemAndDispo= [];
@@ -360,12 +421,14 @@ export class ItemService {
         "libelle" : item.libelleItem
       }
     }
-
     return itemAndDispo;
-
-
   }
 
+  /**
+   * Retourne l'ensemble des types d'item appartenant à un objet repère
+   * @param idOR : Identifiant d'objet repère
+   * @returns : Liste des type d'item ou [] si aucun 
+   */
   async getTypeOfItemsOfOR(idOR : string) {
 
     const res = await this.itemRepo.createQueryBuilder("Item")
@@ -373,12 +436,21 @@ export class ItemService {
     .where("Item.idOR = :id", { id : idOR})
     .distinct()
     .getRawMany()
-      
     return res;
 
   }
 
-
+  /**
+   * Retourne la liste des items en correspondance avec les filtres @param
+   * @param atelier : Identifiant de l'atelier
+   * @param typeObjet : Identifiant d'un type d'objet
+   * @param objetRepere : Identifiant d'un objet repère Parent
+   * @param dateDebut : Début d'intervalle sur la dernière activité effectué sur l'item
+   * @param dateFin : Fin d'intervalle sur la dernière activité effectué sur l'item
+   * @param estActif : L'item est actif 
+   * @param estSecurite : L'item est un item de sécurité
+   * @returns 
+   */
   async getItemForExport(atelier : string, typeObjet : string, objetRepere : string, dateDebut : string, dateFin : string, estActif : string, estSecurite : string){
     let date: Date;
    

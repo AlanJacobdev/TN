@@ -3,6 +3,13 @@ import { ItemService } from './item.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par item (ex: localhost/item/5)
+ * Permet de rediriger la requete vers la fonction dédiée 
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('item')
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}

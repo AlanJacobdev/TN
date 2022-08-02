@@ -6,6 +6,11 @@ import { Sousitem } from "src/sousitem/entities/sousitem.entity";
 import { Typeobjet } from "src/typeobjet/entities/typeobjet.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 
+/**
+ * Fichier de configuration de la table item au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('item')
 export class Item {
     

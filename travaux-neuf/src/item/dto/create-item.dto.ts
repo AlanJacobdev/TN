@@ -1,6 +1,12 @@
 import { Allow, IsInt, IsNotEmpty } from "class-validator";
 import { Description } from "src/description/entities/description.entity";
 
+/**
+ * Structure de données attendue pour la création d'un Item
+ * @IsNotEmpty() => Données obligatoire (Erreur si absente)
+ * @Allow() => Données facultatives
+ * Aucun Decorateur => Données non attendue mais complétées ultérieurement
+ */
 export class CreateItemDto {
    
 
