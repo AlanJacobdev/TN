@@ -7,6 +7,11 @@ import { CreateInformationDto } from './dto/create-information.dto';
 import { UpdateInformationDto } from './dto/update-information.dto';
 import { Information } from './entities/information.entity';
 
+
+/**
+ * @author : @alanjacobdev
+ */
+
 @Injectable()
 export class InformationsService {
 

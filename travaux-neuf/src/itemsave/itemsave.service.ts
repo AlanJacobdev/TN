@@ -6,11 +6,21 @@ import { CreateItemsaveDto } from './dto/create-itemsave.dto';
 import { ConfigService } from '@nestjs/config';
 import { Itemsave } from './entities/itemsave.entity';
 
+
+/**
+ * @author : @alanjacobdev
+ */
+
 @Injectable()
 export class ItemsaveService {
   
   constructor(@InjectRepository(Itemsave) private itemSaveRepo : Repository<Itemsave> , @Inject(forwardRef(() => ItemService)) private itemservice: ItemService, private configservice : ConfigService){}
 
+  /**
+   * Création d'un item sauvegarde 
+   * @param createItemsaveDto Structure attendue pour la sauvegarde d'un item
+   * @returns Le nouvel item sauvegardé ou une erreur
+   */
   async create(createItemsaveDto: CreateItemsaveDto) {
     const item = await this.itemservice.findOne(createItemsaveDto.idItem);
     if(item != undefined) {
@@ -45,10 +55,20 @@ export class ItemsaveService {
     }
   }
 
+  /**
+   * Retourne l'ensemble des items sauvegardés
+   * @returns Liste des items sauvegardé ou [] si aucun
+   */
   findAll() {
     return this.itemSaveRepo.find();
   }
 
+  /**
+   * Retourne l'item sauvegardé correspondant à l'identifiant id
+   * @param id : Identifiant de l'item sauvegardé 
+   * @param date : Date de création de la sauvegarde
+   * @returns : Structure de l'item sauvegardé recherché ou undefined si inconnu
+   */
   findOne(id: string, date : Date) {
     return this.itemSaveRepo.findOne({
       where : {
@@ -59,6 +79,12 @@ export class ItemsaveService {
     })
   }
 
+  /**
+   * Retourne l'ensemble des items sauvegardés triés par ordre croissant en fonction de leurs identifiants et ayant comme parent @param idOr
+   * @param id : Identifiant de l'objet parent
+   * @param date : Date de création de la sauvegarde
+   * @returns : Liste des items sauvegardés recherché ou [] si aucun 
+   */
   findAllItemOfOR (id : string, date: Date) {
     return this.itemSaveRepo.find({
       where : {
@@ -72,6 +98,12 @@ export class ItemsaveService {
     })
   }
 
+  /**
+   * Retourne tout les items sauvegardé ayant pour identifiant @param id
+   * @param id : Identifiant de l'item sauvegardé recherché
+   * @returns : Liste de tout les items sauvegardés correspondant ou [] si aucun
+   */
+
   findById(id: string) {
     return this.itemSaveRepo.find({
       where : {
@@ -81,6 +113,11 @@ export class ItemsaveService {
     })
   }
 
+ /**
+   * Retourne tout les items sauvegardé ayant pour identifiant @param id avec ses descriptions
+   * @param id : Identifiant de l'item sauvegardé recherché
+   * @returns : Liste de tout les items sauvegardés correspondant ou [] si aucun
+   */
   findOnebyIDDesc(id: string){
     return this.itemSaveRepo.findOne({
       where : {
@@ -93,6 +130,11 @@ export class ItemsaveService {
     })
   }
 
+  /**
+   * 
+   * @param id Retourne l'historique d'un item ( au maximum 5 etat) depui sa création ou sa dernière suppression
+   * @returns Liste d'état d'item sauvegardé
+   */
   async findHistoryById(id: string) {
     let finalHistory = [];
     const history = await this.itemSaveRepo.find({
@@ -105,7 +147,6 @@ export class ItemsaveService {
       take : 5,
       relations: ["description"]
     })
-
 
     const verifyIfDeleted = history.findIndex((element) => element.status == 'D')
 
@@ -124,7 +165,12 @@ export class ItemsaveService {
   }
 
 
-
+  /**
+   * Supprime un item sauvegardé 
+   * @param idItem Identifiant de l'item
+   * @param date Date de la création de la sauvegarde
+   * @returns Retourne une HttpException ou un objet {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
+   */
   async remove(idItem: string, date: Date) {
     date = new Date(date);
     const itemsave = await this.itemSaveRepo.findOne({
@@ -145,7 +191,7 @@ export class ItemsaveService {
     })
     return {
       status : HttpStatus.OK,
-      error :'Deleted',
+      message :'Deleted',
     }
   }
 

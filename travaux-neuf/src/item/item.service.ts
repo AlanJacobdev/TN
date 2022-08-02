@@ -13,6 +13,10 @@ import { UpdateItemDto } from './dto/update-item.dto';
 import { Item } from './entities/item.entity';
 
 
+/**
+ * @author : @alanjacobdev
+ */
+
 @Injectable()
 export class ItemService {
   

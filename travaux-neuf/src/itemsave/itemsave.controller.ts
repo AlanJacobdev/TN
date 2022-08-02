@@ -3,6 +3,13 @@ import { ItemsaveService } from './itemsave.service';
 import { CreateItemsaveDto } from './dto/create-itemsave.dto';
 import { UpdateItemsaveDto } from './dto/update-itemsave.dto';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par itemsave (ex: localhost/itemsave/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('itemsave')
 export class ItemsaveController {
   constructor(private readonly itemsaveService: ItemsaveService) {}

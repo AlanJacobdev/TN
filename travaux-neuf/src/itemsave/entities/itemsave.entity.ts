@@ -1,6 +1,12 @@
 import { Description } from "src/description/entities/description.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
 
+
+/**
+ * Fichier de configuration de la table itemsauvegarde au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('itemsauvegarde')
 export class Itemsave {
     

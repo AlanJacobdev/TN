@@ -8,6 +8,11 @@ import { CreateDroitparutilisateurDto } from './dto/create-droitparutilisateur.d
 import { UpdateDroitparutilisateurDto } from './dto/update-droitparutilisateur.dto';
 import { Droitparutilisateur } from './entities/droitparutilisateur.entity';
 
+
+/**
+ * @author : @alanjacobdev
+ */
+
 @Injectable()
 export class DroitparutilisateurService {
 
