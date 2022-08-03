@@ -521,6 +521,38 @@ export class ItemService {
   }
 
 
+  /**
+   *   
+   * Créer des items sauvegardé au statut DAR ( demande admin refusée) pour permettre leur consultations après traitement 
+   * @param listeItem Liste des objets repères à sauvegarder 
+   * @param profil profil du créateur
+   * @param date Date de création
+   */
+
+
+  async createItemForDemandeRefuse(listeItem : string[], profil : string, date : Date) {
+    for (const item of listeItem) {
+      let itemExist = await this.findOne(item);
+      let createItemsaveDto :CreateItemsaveDto = {
+        idItem: itemExist.idItem,
+        libelleItem: itemExist.libelleItem,
+        idOR: itemExist.idOR,
+        numeroUnique: itemExist.numeroUnique,
+        digit: itemExist.digit,
+        codeObjet: itemExist.codeObjet,
+        securite: itemExist.securite,
+        etat: itemExist.etat,
+        date: date,
+        description: itemExist.description,
+        status: 'DAR',
+        profilModification: profil,
+        posteModification: ''
+      };      
+      await this.itemSaveService.create(createItemsaveDto);
+    }
+  }
+
+
 }
 
 

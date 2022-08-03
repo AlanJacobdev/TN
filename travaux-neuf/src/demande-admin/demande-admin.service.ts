@@ -265,7 +265,7 @@ export class DemandeAdminService {
       await this.demandeAdminTraiteeService.create(dmdTraitee);   
   
       try {
-        //await this.demandeAdminRepo.delete(id);
+        await this.demandeAdminRepo.delete(id);
       } catch ( e : any) {
         return e
       }

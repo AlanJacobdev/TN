@@ -1,6 +1,5 @@
 import { Allow, IsNotEmpty } from "class-validator";
 import { Description } from "src/description/entities/description.entity";
-import { Sousitem } from "src/sousitem/entities/sousitem.entity";
 
 export class CreateSousitemsaveDto {
     

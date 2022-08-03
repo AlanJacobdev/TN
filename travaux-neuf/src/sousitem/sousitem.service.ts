@@ -384,5 +384,32 @@ export class SousitemService {
     return alltype;
   }
   
-
+  /**
+   * Créer des sous items sauvegardé au statut DAR ( demande admin refusée) pour permettre leur consultations après traitement 
+   * @param listeOR Liste des objets repères à sauvegarder 
+   * @param profil profil du créateur
+   * @param date Date de création
+   */
+  async createSIForDemandeRefuse (listeSI : string[], profil : string, date : Date) {
+      for (const si of listeSI) {
+        let siExist = await this.findOne(si);
+        let createSousItemsaveDto : CreateSousitemsaveDto = {
+          idSousItem: siExist.idSousItem,
+          libelleSousItem: siExist.libelleSousItem,
+          idItem: siExist.idItem,
+          codeSousItem: siExist.codeSousItem,
+          securite: siExist.securite,
+          estPrefixe: siExist.estPrefixe,
+          etat: siExist.etat,
+          description: siExist.description,
+          date: date,
+          status: 'DAR',
+          profilModification: profil,
+          posteModification: ''
+        };      
+        await this.sousitemSaveService.create(createSousItemsaveDto);
+    }
+  }
+    
+  
 }

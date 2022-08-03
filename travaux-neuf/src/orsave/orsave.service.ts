@@ -135,7 +135,6 @@ export class OrsaveService {
    */
   findOne(id: string, date: Date){   
     date = new Date(date);
-    console.log(date);
     
     return this.orsaveRepo.findOne({
       where : {
@@ -157,7 +156,6 @@ export class OrsaveService {
   async remove(idObjetRepere: string, date: Date) {
     
     date = new Date(date);
-
 
     const OR = await this.orsaveRepo.findOne({
       where : {

@@ -48,6 +48,6 @@ export class Itemsave {
     @JoinTable({name : "descriptionParItemSave"})
     description : Description[];
 
-    @Column({length : 1})
+    @Column({length : 3, nullable: true})
     status : string;
 }

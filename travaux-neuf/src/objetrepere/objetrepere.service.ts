@@ -616,14 +616,9 @@ export class ObjetrepereService {
         date: date,
         profilModification: profil,
         posteModification: ''
-      };
-
-      console.log(createOrsaveDto);
-      
-      this.orsaveservice.create(createOrsaveDto);
+      };      
+      await this.orsaveservice.create(createOrsaveDto);
     }
-
-
   }
 
 }

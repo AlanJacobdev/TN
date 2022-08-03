@@ -1,14 +1,19 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ItemService } from 'src/item/item.service';
+import { CreateItemsaveDto } from 'src/itemsave/dto/create-itemsave.dto';
+import { ItemsaveService } from 'src/itemsave/itemsave.service';
 import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { ParametreService } from 'src/parametre/parametre.service';
 import { SousitemService } from 'src/sousitem/sousitem.service';
+import { CreateSousitemsaveDto } from 'src/sousitemsave/dto/create-sousitemsave.dto';
+import { SousitemsaveService } from 'src/sousitemsave/sousitemsave.service';
 import { deleteObject } from './interface/SuppressionInterface';
 
 @Injectable()
 export class ServiceSuppressionService {
  
-  constructor(private ORService : ObjetrepereService ,private ItemService : ItemService, private SIService : SousitemService, private paramService : ParametreService){}
+  constructor(private ORService : ObjetrepereService ,private ItemService : ItemService, private SIService : SousitemService, private paramService : ParametreService,
+              private ItemSaveService : ItemsaveService, private SISaveService : SousitemsaveService,){}
  
   private retourSI = [];
   private retourItem = [];
@@ -372,21 +377,88 @@ export class ServiceSuppressionService {
     
       try {
       
-        // if(listeSousItem.length != 0) {
-        //   if (date){
-        //     await this.deleteSI(listeSousItem, profil, date);
-        //   }
+        if(listeSousItem.length != 0) {
+          if (date){
+            await this.SIService.createSIForDemandeRefuse(listeSousItem, profil, date);
+          }
           
-        // }
-        // if(listeItem.length != 0) {
-        //   if (date){
-        //     await this.deleteItem(listeItem, admin,profil,date);
-        //   }
+        }
+        if(listeItem.length != 0) {
+          if (date){
+            await this.ItemService.createItemForDemandeRefuse(listeItem, profil, date);
+            for (const item of listeItem) {
+              let siList = await this.SIService.getSousItemByItem(item)
+              if ( siList.length != 0) {
+                for (const si of siList) {
+                  let createSousitemsaveDto: CreateSousitemsaveDto = {
+                    idSousItem: si.idSousItem,
+                    libelleSousItem: si.libelleSousItem,
+                    idItem: si.idItem,
+                    codeSousItem: si.codeSousItem,
+                    securite: si.securite,
+                    estPrefixe: si.estPrefixe,
+                    etat: si.etat,
+                    date: date,
+                    description: si.description,
+                    status: 'DAR',
+                    profilModification: profil,
+                    posteModification: ''
+                  }
+                  await this.SISaveService.create(createSousitemsaveDto)
+                }
+              }
+            }
+          }
         
-        // } 
+        } 
         if(listeOR.length != 0) {
           if (date){
             await this.ORService.createORForDemandeRefuse(listeOR, profil, date);
+
+            for (const or of listeOR){
+              let itemList = await this.ItemService.getItemByOR(or);              
+              if ( itemList.length != 0) {
+                for (const item of itemList) {
+                  let createItemsaveDto : CreateItemsaveDto= {
+                    idItem: item.idItem,
+                    libelleItem: item.libelleItem,
+                    idOR: item.idOR,
+                    numeroUnique: item.numeroUnique,
+                    digit: item.digit,
+                    codeObjet: item.codeObjet,
+                    securite: item.securite,
+                    etat: item.etat,
+                    date: date,
+                    description: item.description,
+                    status: 'DAR',
+                    profilModification: profil,
+                    posteModification: ''
+                  } 
+                  await this.ItemSaveService.create(createItemsaveDto)
+                  let siList = await this.SIService.getSousItemByItem(item.idItem)
+                  
+                  if ( siList.length != 0) {
+                    for (const si of siList) {
+                      let createSousitemsaveDto: CreateSousitemsaveDto = {
+                        idSousItem: si.idSousItem,
+                        libelleSousItem: si.libelleSousItem,
+                        idItem: si.idItem,
+                        codeSousItem: si.codeSousItem,
+                        securite: si.securite,
+                        estPrefixe: si.estPrefixe,
+                        etat: si.etat,
+                        date: date,
+                        description: si.description,
+                        status: 'DAR',
+                        profilModification: profil,
+                        posteModification: ''
+                      }
+                      await this.SISaveService.create(createSousitemsaveDto)
+                    }
+                  }
+                }
+              }
+            }
           } 
           
         }

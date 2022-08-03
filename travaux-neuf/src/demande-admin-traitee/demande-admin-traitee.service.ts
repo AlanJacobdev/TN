@@ -32,10 +32,8 @@ export class DemandeAdminTraiteeService {
     let tabDmdSi = [];
     if(createDemandeAdminTraiteeDto.orDelete.length != 0){
       for (const or of createDemandeAdminTraiteeDto.orDelete){
-        console.log(or.id+" "+or.date);
-        const orExist = await this.orsaveService.findOne(or.id, or.date);
-        console.log(orExist);
         
+        const orExist = await this.orsaveService.findOne(or.id, or.date);        
         if (orExist != undefined){
           tabDmdOr.push(orExist)
         }
@@ -60,12 +58,10 @@ export class DemandeAdminTraiteeService {
     createDemandeAdminTraiteeDto.orDelete = tabDmdOr;
     createDemandeAdminTraiteeDto.itemDelete = tabDmdItem;
     createDemandeAdminTraiteeDto.sousItemDelete = tabDmdSi;
-    console.log(createDemandeAdminTraiteeDto.orDelete);
 
     
     const newDemande = this.demandeAdminTraiteeRepo.create(createDemandeAdminTraiteeDto);
     this.demandeAdminTraiteeRepo.save(newDemande);
-    console.log(newDemande);
     
     return newDemande;
     
@@ -130,7 +126,7 @@ export class DemandeAdminTraiteeService {
    */
   async getArborescenceOfOR(idObjetRepere : string, dateDel : Date) {
     
-    const orExist = await this.orsaveService.findOne(idObjetRepere, dateDel);
+    const orExist = await this.orsaveService.findOne(idObjetRepere, dateDel);    
     let allItemAndSIOfOR = [];
     if (orExist != undefined) {
       const allItemOfOR = await this.itemSaveService.findAllItemOfOR(idObjetRepere, dateDel);
@@ -161,6 +157,7 @@ export class DemandeAdminTraiteeService {
         },
         Item: []
       }
+      
       return ORArborescence;
     } else {
       return {
