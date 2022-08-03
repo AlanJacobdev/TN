@@ -28,7 +28,7 @@ export class Orsave {
     @JoinTable({name : "descriptionParObjetRepereSave"})
     description : Description[];
 
-    @Column({ length : 1})
+    @Column({ length : 3,nullable :true})
     status : String ;
 
     @PrimaryColumn({type : "timestamp"})

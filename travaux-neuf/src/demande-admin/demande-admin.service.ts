@@ -153,8 +153,15 @@ export class DemandeAdminService {
    * @param accept : La demande est acceptée ou refusée
    * @returns HttpException ou strcuture  {status : HttpStatus, message : string}
    */
-  async remove(id: number, profil : string, accept : boolean) {
-      const demande = await this.getAllObjectsFromDmdWithOutName(id)
+  async remove(id: number, profil : string, accept : string) {
+    let bool : Boolean
+    if (accept == "true") {
+      bool = true;
+    } else {
+      bool = false;
+    }
+    
+    const demande = await this.getAllObjectsFromDmdWithOutName(id)
       
       if (demande == undefined) {
         return {
@@ -188,13 +195,19 @@ export class DemandeAdminService {
         listeItem : listItem,
         listeSI : listSI
       }
-      
       let dateRemove = new Date(); 
-      try {
-    
-      await this.serviceSuppression.deleteObject(profil, deleteObjet, true, dateRemove)
-      } catch (e) {
-        return e 
+      if (bool) {
+        try {
+        await this.serviceSuppression.deleteObject(profil, deleteObjet, true, dateRemove)
+        } catch (e) {
+          return e 
+        }
+      } else {
+        try {
+          await this.serviceSuppression.createObjectSaveForDemandeAdminRefuse(profil, deleteObjet, dateRemove)
+          } catch (e) {
+            return e 
+          }
       }
     
       const Dmd = await this.demandeAdminRepo.findOne({
@@ -216,7 +229,7 @@ export class DemandeAdminService {
       for (const or of deleteObjet.listeOR) {
         orTraitee.push({
           id : or,
-          date : dateRemove 
+          date : dateRemove
         })
       }
 
@@ -234,9 +247,11 @@ export class DemandeAdminService {
         })
       }
 
+      
+      
       let dmdTraitee : CreateDemandeAdminTraiteeDto = {
         motif: Dmd.motif,
-        isDelete: Boolean(accept),
+        isDelete: bool,
         orDelete: orTraitee,
         itemDelete: itemTraitee,
         sousItemDelete: siTraitee,
@@ -245,17 +260,17 @@ export class DemandeAdminService {
         profilModification: profil,
         dateModification: dateRemove
       } ;
-     
+      
       
       await this.demandeAdminTraiteeService.create(dmdTraitee);   
   
       try {
-        await this.demandeAdminRepo.delete(id);
+        //await this.demandeAdminRepo.delete(id);
       } catch ( e : any) {
         return e
       }
       
-      if (accept) {
+      if (bool) {
         await this.mailService.sendUserConfirmationDelete(demande.profilCreation, demande.motif)
       }
 

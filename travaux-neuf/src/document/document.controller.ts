@@ -41,13 +41,23 @@ export class DocumentController {
   @Get('/readFile/:id')
   async getFile(@Response({ passthrough: true }) res, @Param('id') id: number): Promise<StreamableFile | { status: HttpStatus; error: string; }> {
     try{
+      const fs = require('fs');
       let doc = await this.documentService.findOne(id)
-      const file = createReadStream(join(process.cwd(), doc.path));
-      res.set({
-        'Content-Type': doc.type,
-        'Content-Disposition': 'attachment; filename="'+doc.nomDocument+'"',
-      });
-      return new StreamableFile(file);
+      
+      if (fs.existsSync(doc.path)) {
+        const file = createReadStream(join(process.cwd(), doc.path));
+        res.set({
+          'Content-Type': doc.type,
+          'Content-Disposition': 'attachment; filename="'+doc.nomDocument+'"',
+        });
+        return new StreamableFile(file);
+      } else {
+        return {
+          status : HttpStatus.CONFLICT,
+          error :'Document inconnu',
+        }
+      }
+      
     } catch (e :any) {
       return {
         status : HttpStatus.CONFLICT,

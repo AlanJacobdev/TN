@@ -4,7 +4,6 @@ import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { Repository } from 'typeorm';
 import { CreateOrsaveDto } from './dto/create-orsave.dto';
 import { Orsave } from './entities/orsave.entity';
-import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class OrsaveService {
 
@@ -29,6 +28,7 @@ export class OrsaveService {
         // }
         return save;
         } catch (e : any){
+          console.log(e);
           
           throw new HttpException ({
             status : HttpStatus.CONFLICT,
@@ -133,7 +133,9 @@ export class OrsaveService {
    * @param date : Date de création de l'objet repère sauvegardé 
    * @returns Structure de l'objet repère sauvegardé recherché ou undefined si inconnu
    */
-  findOne(id: string, date: Date){
+  findOne(id: string, date: Date){   
+    date = new Date(date);
+    console.log(date);
     
     return this.orsaveRepo.findOne({
       where : {
@@ -142,6 +144,7 @@ export class OrsaveService {
       },
       relations: ["description"]
     })
+
   }
 
  
@@ -152,8 +155,9 @@ export class OrsaveService {
    * @returns Retourne une HttpException ou un objet {status : HttpStatus, error : string} // {status : HttpStatus, message : string}
    */
   async remove(idObjetRepere: string, date: Date) {
-    date = new Date(date);
     
+    date = new Date(date);
+
 
     const OR = await this.orsaveRepo.findOne({
       where : {

@@ -41,7 +41,7 @@ export class DemandeAdminController {
   }
 
   @Delete(':id/:profil/:accept')
-  remove(@Param('id') id: string, @Param('profil') profil: string, @Param('accept') accept : boolean ) {
+  remove(@Param('id') id: string, @Param('profil') profil: string, @Param('accept') accept : string ) {
     return this.demandeAdminService.remove(+id, profil, accept);
   }
 

@@ -365,7 +365,44 @@ export class ServiceSuppressionService {
     }
     
 
-
+    async createObjectSaveForDemandeAdminRefuse(profil:string, objectToDelete : deleteObject, date :Date){
+      const listeOR : string[] = objectToDelete.listeOR;
+      const listeItem : string[] = objectToDelete.listeItem;
+      const listeSousItem : string[] = objectToDelete.listeSI;
+    
+      try {
+      
+        // if(listeSousItem.length != 0) {
+        //   if (date){
+        //     await this.deleteSI(listeSousItem, profil, date);
+        //   }
+          
+        // }
+        // if(listeItem.length != 0) {
+        //   if (date){
+        //     await this.deleteItem(listeItem, admin,profil,date);
+        //   }
+        
+        // } 
+        if(listeOR.length != 0) {
+          if (date){
+            await this.ORService.createORForDemandeRefuse(listeOR, profil, date);
+          } 
+          
+        }
+      
+        return {
+          status : HttpStatus.ACCEPTED,
+          message : 'Création effectuée' 
+        }
+      } catch (e:any) {
+        console.log(e);
+        return {
+          status : HttpStatus.NOT_FOUND,
+          error : 'Problème lors de la supression' + e
+        }
+      }
+    }
 
 
 }

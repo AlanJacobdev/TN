@@ -596,6 +596,35 @@ export class ObjetrepereService {
 
   }
 
+  /**
+   * Créer des objets repère sauvegardé au statut DAR ( demande admin refusée) pour permettre leur consultations après traitement 
+   * @param listeOR Liste des objets repères à sauvegarder 
+   * @param profil profil du créateur
+   * @param date Date de création
+   */
+  async createORForDemandeRefuse(listeOR : string[], profil : string, date : Date) {
+    for (const or of listeOR) {
+      let orExist = await this.findOne(or);
+      let createOrsaveDto :CreateOrsaveDto = {
+        idObjetRepere: orExist.idObjetRepere,
+        libelleObjetRepere: orExist.libelleObjetRepere,
+        codeType: orExist.codeType,
+        numeroUnique: orExist.numeroUnique,
+        etat: orExist.etat,
+        description: orExist.description,
+        status: 'DAR',
+        date: date,
+        profilModification: profil,
+        posteModification: ''
+      };
+
+      console.log(createOrsaveDto);
+      
+      this.orsaveservice.create(createOrsaveDto);
+    }
+
+
+  }
 
 }
 

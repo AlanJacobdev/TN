@@ -19,7 +19,7 @@ export class CreateDemandeAdminTraiteeDto {
     motif : string;
 
     @IsNotEmpty()
-    isDelete : boolean
+    isDelete : Boolean
 
     @Allow()
     orDelete : objetTraitee[];

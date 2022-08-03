@@ -18,7 +18,7 @@ export class DemandeAdminTraitee {
     motif : string;
 
     @Column()
-    isDelete : boolean
+    isDelete : Boolean
 
     @ManyToMany(() => Orsave)
     @JoinTable({name : "demandeORTraitee"})
