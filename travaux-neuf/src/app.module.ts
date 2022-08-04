@@ -32,6 +32,7 @@ import { DemandeAdminTraiteeModule } from './demande-admin-traitee/demande-admin
 import { InformationsModule } from './informations/informations.module';
 import { ServiceSuppressionModule } from './service-suppression/service-suppression.module';
 import { DocumentModule } from './document/document.module';
+import { RoleModule } from './role/role.module';
 @Module({
   imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule,
   ConfigModule.forRoot({
@@ -48,7 +49,8 @@ import { DocumentModule } from './document/document.module';
   ParametreModule,
   DemandeAdminTraiteeModule,
   InformationsModule,
-  DocumentModule
+  DocumentModule,
+  RoleModule
   ],
   controllers: [AppController],
   providers: [AppService, NbDemandeGateway],
