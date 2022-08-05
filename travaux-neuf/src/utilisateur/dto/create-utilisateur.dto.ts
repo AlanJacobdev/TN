@@ -20,7 +20,7 @@ export class CreateUtilisateurDto {
     email :string;
 
     @IsNotEmpty()
-    idService : string;
+    idRole : number;
 
     @IsNotEmpty()
     estAdministrateur : boolean;

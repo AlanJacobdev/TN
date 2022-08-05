@@ -15,7 +15,7 @@ export class UpdateUtilisateurDto {
     email: string;
 
     @Allow()
-    idService : string;
+    idRole : number;
 
     @Allow()
     estAdministrateur : boolean;

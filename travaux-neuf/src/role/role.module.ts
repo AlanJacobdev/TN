@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
 import { AtelierModule } from 'src/atelier/atelier.module';
 import { TypeobjetrepereModule } from 'src/typeobjetrepere/typeobjetrepere.module';
+import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 /**
  * Entités permettant de gérer les dépendances et relations d'une caractéristique de l'application
@@ -17,7 +18,7 @@ import { TypeobjetrepereModule } from 'src/typeobjetrepere/typeobjetrepere.modul
  */
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Role]), AtelierModule, TypeobjetrepereModule],
+  imports : [TypeOrmModule.forFeature([Role]), AtelierModule, TypeobjetrepereModule, UtilisateurModule],
   controllers: [RoleController],
   providers: [RoleService],
   exports : [RoleService]

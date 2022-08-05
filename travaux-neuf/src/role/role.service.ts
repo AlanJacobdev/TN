@@ -4,6 +4,7 @@ import { AtelierService } from 'src/atelier/atelier.service';
 import { Atelier } from 'src/atelier/entities/atelier.entity';
 import { Typeobjetrepere } from 'src/typeobjetrepere/entities/typeobjetrepere.entity';
 import { TypeobjetrepereService } from 'src/typeobjetrepere/typeobjetrepere.service';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -12,7 +13,7 @@ import { Role } from './entities/role.entity';
 @Injectable()
 export class RoleService {
 
-  constructor(@InjectRepository(Role) private roleRepository : Repository<Role>, private atelierService : AtelierService, private typeORService : TypeobjetrepereService){
+  constructor(@InjectRepository(Role) private roleRepository : Repository<Role>, private atelierService : AtelierService, private typeORService : TypeobjetrepereService, private utilisateurService :UtilisateurService){
 
   }
 
@@ -58,10 +59,23 @@ export class RoleService {
     }
   }
 
-  findAll() {
-    return this.roleRepository.find({
+  async findAll() {
+    let role = await this.roleRepository.find({
       relations : ["atelier", "typeObjet"]
     })
+    for (const d of role) {
+      const profilC = await this.utilisateurService.findOneByLogin(d.profilCreation);
+      if (profilC != undefined){
+        d.profilCreation = profilC.nom.toUpperCase() + " " + profilC.prenom
+      }
+      if (d.profilModification != undefined){
+        const profilM = await this.utilisateurService.findOneByLogin(d.profilModification);
+        if (profilM != undefined){
+          d.profilModification = profilM.nom.toUpperCase() + " " + profilM.prenom
+        }
+      }
+    }
+    return role
   }
 
   findOne(id: number) {

@@ -19,8 +19,7 @@ export class UtilisateurService {
   async create(createUtilisateurDto: CreateUtilisateurDto) {
     const saltOrRounds = await bcrypt.genSalt();
     
-    const service = await this.serviceService.findOne(createUtilisateurDto.idService);
-    if (service != undefined) {
+    
       const uti = await this.findOne(createUtilisateurDto.idUtilisateur);
       if (uti == undefined){
         createUtilisateurDto.dateCreation = new Date();
@@ -35,12 +34,7 @@ export class UtilisateurService {
           error :'Already exist',
         }
       }
-    } else {
-      return {
-        status : HttpStatus.NOT_FOUND,
-        error :'Service doesn\'t exist',
-      }
-    }
+    
   }
 
   findAll() {

@@ -1,12 +1,10 @@
-import { Droitparutilisateur } from "src/droitparutilisateur/entities/droitparutilisateur.entity";
-import { Service } from "src/service/entities/service.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Role } from "src/role/entities/role.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity('utilisateur')
 export class Utilisateur {
     
-   
     @PrimaryGeneratedColumn()
     idUtilisateur: number;
 
@@ -16,7 +14,7 @@ export class Utilisateur {
     @Column({length : 50})
     prenom : string;
 
-    @Column()
+    @Column({select: false})
     password : string
 
     @Column({unique : true})
@@ -25,10 +23,10 @@ export class Utilisateur {
     @Column()
     email : string;
 
-    @ManyToOne(() => Service)
-    @JoinColumn({name: 'idService'})
-    @Column({length : 50})
-    idService : string;
+    @ManyToOne(() => Role)
+    @JoinColumn({name: 'idRole'})
+    @Column({nullable : true})
+    idRole : number
 
     @Column()
     estAdministrateur : boolean;
