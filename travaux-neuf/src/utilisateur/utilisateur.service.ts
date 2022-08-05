@@ -10,35 +10,47 @@ import { emailUser, userIdentity } from './dto/user';
 
 @Injectable()
 export class UtilisateurService {
-  test() {
-    throw new Error('Method not implemented.');
-  }
 
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private serviceService: ServiceService){}
   
   async create(createUtilisateurDto: CreateUtilisateurDto) {
-    const saltOrRounds = await bcrypt.genSalt();
-    
-    
-      const uti = await this.findOne(createUtilisateurDto.idUtilisateur);
-      if (uti == undefined){
-        createUtilisateurDto.dateCreation = new Date();
-        createUtilisateurDto.password =  await bcrypt.hash(createUtilisateurDto.password, saltOrRounds)
+    let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
+    let isEmail = regex.test(createUtilisateurDto.email);
+    if (isEmail) {
+      const saltOrRounds = await bcrypt.genSalt();   
+        const uti = await this.findOne(createUtilisateurDto.idUtilisateur);
+        if (uti == undefined){
+          createUtilisateurDto.dateCreation = new Date();
+          createUtilisateurDto.password =  await bcrypt.hash(createUtilisateurDto.password, saltOrRounds)
 
-        const newUti = this.utiRepo.create(createUtilisateurDto);
-        const u = await this.utiRepo.save(newUti);
-        return u;
-      } else {
-        return {
-          status : HttpStatus.CONFLICT,
-          error :'Already exist',
+          const newUti = this.utiRepo.create(createUtilisateurDto);
+          const u = await this.utiRepo.save(newUti);
+          delete u.password;
+          return u;
+        } else {
+          return {
+            status : HttpStatus.CONFLICT,
+            error :'Already exist',
+          }
         }
+    } else {
+      return  {
+        status : HttpStatus.NOT_ACCEPTABLE,
+        error :'Format d\'adresse mail incorrect (attendu = user@test.fr ou user.test@test.fr) '
       }
-    
+    }
   }
 
-  findAll() {
-    return this.utiRepo.find();
+  async findAll() {
+    let res = await this.utiRepo.find({
+      order: {
+        login : "ASC"
+      }
+    });
+    for (const u of res){
+      delete u.password
+    }
+    return res
   }
 
   async findOne(id: number) {
@@ -76,6 +88,7 @@ export class UtilisateurService {
     if (user != undefined) {    
       const match = await bcrypt.compare(password, user.password)
       if (match) {
+        delete user.password;
         return user;
       } else {
         return undefined
@@ -86,9 +99,49 @@ export class UtilisateurService {
   }
 
   async update(id: number, updateUtilisateurDto: UpdateUtilisateurDto) {
+    let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
+    let isEmail = regex.test(updateUtilisateurDto.email);
+    if (isEmail) {
+      const uti = await this.utiRepo.findOne({
+        where : {
+          idUtilisateur : id
+        }
+      })
+      if (uti == undefined) {
+        return {
+          status : HttpStatus.NOT_FOUND,
+          error : 'Identifier not found'
+        }
+      }
+      
+      if(uti.nom == updateUtilisateurDto.nom 
+        && uti.prenom == updateUtilisateurDto.prenom 
+        && uti.email == updateUtilisateurDto.email 
+        && uti.idRole == updateUtilisateurDto.idRole
+        && uti.estAdministrateur == updateUtilisateurDto.estAdministrateur){
+          return {
+            status : HttpStatus.CONFLICT,
+            error :'Aucune modification apportées',
+          }
+      }
+
+      updateUtilisateurDto.dateModification = new Date();
+      await this.utiRepo.update(id, updateUtilisateurDto);
+      let user =  await this.utiRepo.findOne(id);
+      delete user.password;
+      return user;
+    } else {
+      return  {
+        status : HttpStatus.NOT_ACCEPTABLE,
+        error :'Format d\'adresse mail incorrect'
+      }
+    }
+  }
+
+  async updatePwd(idUser: number, updateUtilisateurDto: UpdateUtilisateurDto) {
     const uti = await this.utiRepo.findOne({
       where : {
-        idUtilisateur : id
+        idUtilisateur : idUser
       }
     })
     if (uti == undefined) {
@@ -97,11 +150,14 @@ export class UtilisateurService {
         error : 'Identifier not found'
       }
     }
-    
-    updateUtilisateurDto.dateModification = new Date();
-    await this.utiRepo.update(id, updateUtilisateurDto);
-    return await this.utiRepo.findOne(id);
 
+    const saltOrRounds = await bcrypt.genSalt(); 
+    updateUtilisateurDto.password = await bcrypt.hash(updateUtilisateurDto.password, saltOrRounds)
+    updateUtilisateurDto.dateModification = new Date();
+    await this.utiRepo.update(idUser, updateUtilisateurDto);
+    let user =  await this.utiRepo.findOne(idUser);
+    delete user.password;
+    return user;
   }
 
   async remove(id: number) {
@@ -113,7 +169,7 @@ export class UtilisateurService {
     if (uti == undefined) {
       throw new HttpException({
         status : HttpStatus.NOT_FOUND,
-        error : 'Not Found',
+        error : 'Utilisateur non trouvé',
       }, HttpStatus.NOT_FOUND)
     }
     try {
@@ -121,12 +177,12 @@ export class UtilisateurService {
     } catch ( e : any) {
       return {
         status : HttpStatus.CONFLICT,
-        error :'Impossible to delete',
+        error :'Impossible de supprimer l\'utilisateur',
       }
     }
     return {
       status : HttpStatus.OK,
-      error :'Deleted',
+      message :'Deleted',
     }
   }
 

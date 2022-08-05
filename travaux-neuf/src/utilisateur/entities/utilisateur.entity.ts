@@ -14,7 +14,7 @@ export class Utilisateur {
     @Column({length : 50})
     prenom : string;
 
-    @Column({select: false})
+    @Column()
     password : string
 
     @Column({unique : true})

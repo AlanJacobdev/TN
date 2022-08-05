@@ -14,7 +14,6 @@ export class UtilisateurController {
     console.log(req.user.displayName);
     // console.log(req);
     
-    return this.utilisateurService.test();
   }
   
   @Post()
@@ -46,6 +45,11 @@ export class UtilisateurController {
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUtilisateurDto: UpdateUtilisateurDto) {
     return this.utilisateurService.update(+id, updateUtilisateurDto);
+  }
+
+  @Put('updatePwd/:id')
+  updatePwd(@Param('id') id: string, @Body() updateUtilisateurDto: UpdateUtilisateurDto) {
+    return this.utilisateurService.updatePwd(+id, updateUtilisateurDto);
   }
 
   @Delete(':id')

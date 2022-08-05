@@ -17,7 +17,7 @@ export class AuthService {
   async validateUser (login : string , password : string) {
     const user = await this.utilisateurService.findOneConnexion(login,password);
     if (user != undefined) {
-      const { password,profilCreation, posteCreation, dateCreation, profilModification, posteModification : string , dateModification, ...result}= user
+      const { password,profilCreation, posteCreation, dateCreation, profilModification, posteModification , dateModification, ...result}= user
       return result
     }
     return null;
