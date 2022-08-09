@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { profile } from 'console';
 import { AtelierService } from './atelier.service';
 import { CreateAtelierDto } from './dto/create-atelier.dto';
 import { UpdateAtelierDto } from './dto/update-atelier.dto';
@@ -27,9 +28,16 @@ export class AtelierController {
   }
 
   @Get('/getAll/isActif')
-  findfindAllAteliersActifAll() {
+  findAllAteliersActifAll() {
     return this.atelierService.findAllAteliersActif();
   }
+
+  
+  @Get('/findAllAteliersActifForUser/:profil')
+  findAllAteliersActifForUser(@Param('profil') profil: string) {
+    return this.atelierService.findAllAteliersActifForUser(profil);
+  }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

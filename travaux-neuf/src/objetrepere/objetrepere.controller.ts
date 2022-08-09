@@ -45,6 +45,11 @@ export class ObjetrepereController {
     return this.objetrepereService.getORByAtelier(id);
   }
 
+  @Get('getORByAtelierForOneUser/:atelier/:user')
+  getORByAtelierForOneUser(@Param('atelier') atelier: string, @Param('user') user: string){
+    return this.objetrepereService.getORByAtelierForOneUser(atelier, user);
+  }
+
   @Get('reservationIsPossible/:idAtelier/:start/:length')
   reservationIsPossible(@Param('idAtelier') idAtelier: string, @Param('start') start: string, @Param('length') length: number){
     return this.objetrepereService.reservationIsPossible(idAtelier, start, length);

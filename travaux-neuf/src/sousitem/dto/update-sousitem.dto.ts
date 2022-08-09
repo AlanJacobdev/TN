@@ -20,4 +20,7 @@ export class UpdateSousitemDto {
 
     dateModification : Date;
     
+    @Allow()
+    exporte : boolean
+
 }

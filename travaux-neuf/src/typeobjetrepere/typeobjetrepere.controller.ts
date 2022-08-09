@@ -17,6 +17,11 @@ export class TypeobjetrepereController {
     return this.typeobjetrepereService.findAll();
   }
 
+  @Get('/findAllTypeORForUser/:profil')
+  findAllTypeORForUser(@Param('profil') profil: string) {
+    return this.typeobjetrepereService.findAllTypeORForUser(profil);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.typeobjetrepereService.findOne(id);

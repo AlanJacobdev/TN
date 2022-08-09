@@ -129,6 +129,17 @@ export class SousitemService {
     })
   }
 
+    /**
+   * Retourne l'ensemble des objets repère créé / modifier et non itemiser au sein de la GMAO
+   */
+    async getSIforExportGMAO(){
+    return this.sousitemRepo.find({
+      where : {
+        exporte :  false
+      }
+    })
+  }
+
   async getSousItemByItemAffichage(id: string) {
     const sousItem = await this.sousitemRepo.find({
       where : {

@@ -7,7 +7,7 @@ import { CreateOrsaveDto } from 'src/orsave/dto/create-orsave.dto';
 import { OrsaveService } from 'src/orsave/orsave.service';
 import { TypeobjetrepereService } from 'src/typeobjetrepere/typeobjetrepere.service';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
-import { ILike, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 import { CreateObjetrepereDto } from './dto/create-objetrepere.dto';
 import { UpdateObjetrepereDto } from './dto/update-objetrepere.dto';
 import { Objetrepere } from './entities/objetrepere.entity';
@@ -223,6 +223,41 @@ export class ObjetrepereService {
     }
 
     return or
+  }
+
+    /**
+   * Retourne la liste de l'ensemble des objets repère d'un atelier ordonné par identifiant de manière croissante donné pour un utilisateur
+   * @param id : Identifiant de l'atelier
+   * @returns  Liste des Or ou [] si aucun
+   */
+     async getORByAtelierForOneUser(atelier: string, user : string) {
+      let listeType = (await this.utilisateurService.getTypeORFromUser(user)).typeObjet;
+      let listetypeAutorize = [];
+      for (const t of listeType) {
+        listetypeAutorize.push(t.idTypeOR);
+      }
+      const or = await this.OrRepo.find({
+        where : {
+          numeroUnique : ILike(atelier+"%"),
+          codeType : In(listetypeAutorize)
+        },
+        relations: ["description"],
+        order : {
+          idObjetRepere : "ASC"
+        }
+      })
+      return or
+    }
+
+  /**
+   * Retourne l'ensemble des objets repère créé / modifier et non itemiser au sein de la GMAO
+   */
+  async getORforExportGMAO(){
+    return this.OrRepo.find({
+      where : {
+        exporte :  false
+      }
+    })
   }
 
   /**

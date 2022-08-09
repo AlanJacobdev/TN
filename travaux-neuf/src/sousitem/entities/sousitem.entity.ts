@@ -53,6 +53,7 @@ export class Sousitem {
     @JoinTable({name : "descriptionParSousItem"})
     description : Description[];
 
- 
+    @Column({default : false})
+    exporte : boolean
 
 }

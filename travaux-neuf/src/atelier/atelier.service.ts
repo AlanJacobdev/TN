@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
+import { In, Repository } from 'typeorm';
 import { CreateAtelierDto } from './dto/create-atelier.dto';
 import { UpdateAtelierDto } from './dto/update-atelier.dto';
 import { Atelier } from './entities/atelier.entity';
@@ -12,7 +13,8 @@ import { Atelier } from './entities/atelier.entity';
 @Injectable()
 export class AtelierService {
 
-  constructor(@InjectRepository(Atelier) private AtelierRepo : Repository<Atelier> ){}
+
+  constructor(@InjectRepository(Atelier) private AtelierRepo : Repository<Atelier> , private utilisateurService: UtilisateurService){}
 
   /**
    * Création d'un atelier 
@@ -60,6 +62,29 @@ export class AtelierService {
       }
     })
   }
+
+    /**
+   * Retourne l'ensemble des ateliers actifs triés par ordre croissant en fonction de leurs identifiants pour un utilisateur donné
+   * @returns : Liste des ateliers ou [] si aucun
+   */
+    async findAllAteliersActifForUser(profil : string){
+      let atelier = (await this.utilisateurService.getAtelierFromUser(profil)).atelier;
+      let atelierAutorize = [];  
+      for (const a of atelier) {
+        atelierAutorize.push(a.idAtelier)
+      }
+      
+      return this.AtelierRepo.find({
+        where : {
+          actif : true,
+          idAtelier : In(atelierAutorize)
+        },
+        order : {
+          idAtelier : "ASC"
+        }
+      })
+    }
+
 
 
   /**

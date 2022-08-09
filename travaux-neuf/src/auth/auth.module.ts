@@ -22,6 +22,7 @@ import { AADStrategy } from './strategy/AAD.strategy';
     JwtModule.register({
       secret: jwtKey.secret,
       signOptions: { expiresIn: '30m' },
+      
     }),],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, AADStrategy],

@@ -1,14 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateTypeobjetrepereDto } from './dto/create-typeobjetrepere.dto';
 import { UpdateTypeobjetrepereDto } from './dto/update-typeobjetrepere.dto';
 import { Typeobjetrepere } from './entities/typeobjetrepere.entity';
 
 @Injectable()
 export class TypeobjetrepereService {
-  constructor(@InjectRepository(Typeobjetrepere) private TypeOrRepo : Repository<Typeobjetrepere>, private utilisateurService : UtilisateurService ){}
+  constructor(@InjectRepository(Typeobjetrepere) private TypeOrRepo : Repository<Typeobjetrepere>, @Inject(forwardRef(() => UtilisateurService)) private utilisateurService : UtilisateurService ){}
 
   async create(createTypeobjetrepereDto: CreateTypeobjetrepereDto) {
     const typeor = await this.findOne(createTypeobjetrepereDto.idTypeOR)
@@ -49,6 +49,30 @@ export class TypeobjetrepereService {
       }
     })
   }
+
+     /**
+   * Retourne l'ensemble des type d'objets répère autorisées triés par ordre croissant en fonction de leurs identifiants pour un utilisateur donné
+   * @returns : Liste des types d'objet repère ou [] si aucun
+   */
+    async findAllTypeORForUser(profil: string) {
+      let typeor = (await this.utilisateurService.getTypeORFromUser(profil)).typeObjet;
+      let typeorAutorize = [];  
+      for (const t of typeor) {
+        typeorAutorize.push(t.idTypeOR)
+      }
+      
+      return this.TypeOrRepo.find({
+        where : {
+          actif : true,
+          idTypeOR : In(typeorAutorize)
+        },
+        order : {
+          idTypeOR : "ASC"
+        }
+      })
+    }
+
+
 
   async  update(id: string, updateTypeobjetrepereDto: UpdateTypeobjetrepereDto) {
     const typeor = await this.TypeOrRepo.findOne({

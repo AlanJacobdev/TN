@@ -3,6 +3,7 @@ import { AtelierService } from './atelier.service';
 import { AtelierController } from './atelier.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Atelier } from './entities/atelier.entity';
+import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 /**
  * Entités permettant de gérer les dépendances et relations d'une caractéristique de l'application
@@ -16,7 +17,7 @@ import { Atelier } from './entities/atelier.entity';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Atelier])],
+  imports: [TypeOrmModule.forFeature([Atelier]), UtilisateurModule],
   controllers: [AtelierController],
   providers: [AtelierService],
   exports : [AtelierService]

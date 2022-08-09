@@ -52,4 +52,6 @@ export class Objetrepere {
     @JoinTable({name : "descriptionParObjetRepere"})
     description : Description[];
 
+    @Column({default : false})
+    exporte : boolean
 }

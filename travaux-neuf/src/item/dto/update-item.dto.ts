@@ -13,7 +13,7 @@ export class UpdateItemDto {
     @IsNotEmpty()
     libelleItem : string
 
-    @IsNotEmpty()
+    @Allow()
     etat : string;
 
     @Allow()
@@ -27,4 +27,6 @@ export class UpdateItemDto {
     @Allow()
     posteModification : string;
 
+    @Allow()
+    exporte : boolean
 }

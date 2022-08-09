@@ -65,6 +65,7 @@ export class Item {
     @JoinTable({name : "descriptionParItem"})
     description : Description[];
 
-
+    @Column({default : false})
+    exporte : boolean
     
 }

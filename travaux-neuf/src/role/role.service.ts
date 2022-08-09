@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AtelierService } from 'src/atelier/atelier.service';
 import { Atelier } from 'src/atelier/entities/atelier.entity';
@@ -13,7 +13,7 @@ import { Role } from './entities/role.entity';
 @Injectable()
 export class RoleService {
 
-  constructor(@InjectRepository(Role) private roleRepository : Repository<Role>, private atelierService : AtelierService, private typeORService : TypeobjetrepereService, private utilisateurService :UtilisateurService){
+  constructor(@InjectRepository(Role) private roleRepository : Repository<Role>, @Inject(forwardRef(() => AtelierService)) private atelierService : AtelierService, private typeORService : TypeobjetrepereService, @Inject(forwardRef(() => UtilisateurService)) private utilisateurService :UtilisateurService){
 
   }
 
@@ -85,6 +85,31 @@ export class RoleService {
       },
       relations : ["atelier", "typeObjet"]
     })
+  }
+
+
+  async getAtelierFromRole(idRole : number){
+
+    let atelier = await this.roleRepository.findOne({
+      where : {
+        idRole : idRole
+      },
+      relations : ["atelier"]
+    })
+    
+    return atelier
+  }
+
+  async getTypeORFromRole(idRole : number){
+
+    let atelier = await this.roleRepository.findOne({
+      where : {
+        idRole : idRole
+      },
+      relations : ["typeObjet"]
+    })
+    
+    return atelier
   }
 
 

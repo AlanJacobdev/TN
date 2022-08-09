@@ -1,17 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ServiceService } from 'src/service/service.service';
 import { Repository } from 'typeorm';
 import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 import * as bcrypt from 'bcrypt';
 import { emailUser, userIdentity } from './dto/user';
+import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class UtilisateurService {
 
-  constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private serviceService: ServiceService){}
+  constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private roleService : RoleService){}
   
   async create(createUtilisateurDto: CreateUtilisateurDto) {
     let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
@@ -60,6 +60,30 @@ export class UtilisateurService {
       }
     })
   }
+
+
+  async getAtelierFromUser(user :string){
+    let role = await this.utiRepo.findOne({
+      select:['idRole'],
+      where : {
+        login : user
+      }
+    })
+    return await this.roleService.getAtelierFromRole(role.idRole);
+
+  }
+
+  async getTypeORFromUser(user :string){
+    let role = await this.utiRepo.findOne({
+      select:['idRole'],
+      where : {
+        login : user
+      }
+    })
+    return await this.roleService.getTypeORFromRole(role.idRole);
+
+  }
+
 
   async findOneByLogin(loginUser :string) : Promise<userIdentity>{
     return this.utiRepo.findOne({

@@ -14,7 +14,7 @@ export class UpdateObjetrepereDto {
     @IsNotEmpty()
     libelleObjetRepere : string;
 
-    @IsNotEmpty()
+    @Allow()
     etat : string;
 
     @Allow()
@@ -27,5 +27,8 @@ export class UpdateObjetrepereDto {
     posteModification : string;
     
     dateModification : Date;
+    
+    @Allow()
+    exporte : boolean
 
 }

@@ -169,6 +169,17 @@ export class ItemService {
     return item;
   }
 
+    /**
+   * Retourne l'ensemble des items créé / modifier et non itemiser au sein de la GMAO
+   */
+    async getItemforExportGMAO(){
+    return this.itemRepo.find({
+      where : {
+        exporte :  false
+      }
+    })
+  }
+
   /**
    * Retourne tout les items appartenant à un Objet repère en les triant par ordre croissant de leurs identifiants
    * @param id : Identifiant de l'objet repère
