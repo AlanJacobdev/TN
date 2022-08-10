@@ -132,12 +132,28 @@ export class SousitemService {
     /**
    * Retourne l'ensemble des objets repère créé / modifier et non itemiser au sein de la GMAO
    */
-    async getSIforExportGMAO(){
-    return this.sousitemRepo.find({
+  async getSIforExportGMAO(){
+    let res = await this.sousitemRepo.find({
       where : {
         exporte :  false
+      },
+      order : {
+        dateCreation : "ASC",
+        dateModification : "ASC"
       }
     })
+
+    for (const si of res){
+      const profilCreation = await this.utilisateurService.findOneByLogin(si.profilCreation)
+      if (profilCreation != undefined){
+        si.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+      }
+      const profilModification = await this.utilisateurService.findOneByLogin(si.profilModification)
+      if (profilModification != undefined){
+        si.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+      }
+    }
+     return res;
   }
 
   async getSousItemByItemAffichage(id: string) {
@@ -264,6 +280,37 @@ export class SousitemService {
       relations: ["description"]
     });
   }
+
+    /**
+   * Change le status d'exportation 
+   * @param or identifiant sous item
+   * @param value Valeur du champ exporte
+   * @returns HttpException ou l'objet repère modifié
+   */
+     async updateExportStatus(si : string, value : boolean){
+      const SI = await this.sousitemRepo.findOne({
+        where : {
+          idSousItem : si
+        },
+        relations: ["description"],
+      })
+      if (SI == undefined){
+        throw new HttpException({
+          status : HttpStatus.NOT_FOUND,
+          error :'Sous Item inconnu',
+        }, HttpStatus.NOT_FOUND)
+      }
+  
+      SI.exporte = value;
+  
+      await this.sousitemRepo.save(SI);
+      return await this.sousitemRepo.findOne({
+        where : {
+          idSousItem : si
+        },
+        relations: ["description"]
+      });
+    }
 
   async remove(id: string, user : string, admin? : boolean, date? : Date) {
     const sousitem = await this.sousitemRepo.findOne({

@@ -172,12 +172,27 @@ export class ItemService {
     /**
    * Retourne l'ensemble des items créé / modifier et non itemiser au sein de la GMAO
    */
-    async getItemforExportGMAO(){
-    return this.itemRepo.find({
+  async getItemforExportGMAO(){
+    let res = await this.itemRepo.find({
       where : {
         exporte :  false
+      },
+      order : {
+        dateCreation : "ASC",
+        dateModification : "ASC"
       }
     })
+    for (const item of res){
+      const profilCreation = await this.utilisateurService.findOneByLogin(item.profilCreation)
+      if (profilCreation != undefined){
+        item.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+      }
+      const profilModification = await this.utilisateurService.findOneByLogin(item.profilModification)
+      if (profilModification != undefined){
+        item.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+      }
+    }
+    return res
   }
 
   /**
@@ -309,6 +324,37 @@ export class ItemService {
 
   }
 
+
+    /**
+   * Change le status d'exportation 
+   * @param or identifiant Item 
+   * @param value Valeur du champ exporte
+   * @returns HttpException ou l'item modifié
+   */
+     async updateExportStatus(item : string, value : boolean){
+      const Item = await this.itemRepo.findOne({
+        where : {
+          idItem : item
+        },
+        relations: ["description"],
+      })
+      if (Item == undefined){
+        throw new HttpException({
+          status : HttpStatus.NOT_FOUND,
+          error :'Item inconnu',
+        }, HttpStatus.NOT_FOUND)
+      }
+  
+      Item.exporte = value;
+  
+      await this.itemRepo.save(Item);
+      return await this.itemRepo.findOne({
+        where : {
+          idItem : item
+        },
+        relations: ["description"]
+      });
+    }
 
   /**
    * Supprime un item

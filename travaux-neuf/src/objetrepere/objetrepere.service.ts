@@ -7,7 +7,7 @@ import { CreateOrsaveDto } from 'src/orsave/dto/create-orsave.dto';
 import { OrsaveService } from 'src/orsave/orsave.service';
 import { TypeobjetrepereService } from 'src/typeobjetrepere/typeobjetrepere.service';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
-import { ILike, In, Repository } from 'typeorm';
+import { Brackets, ILike, In, Repository } from 'typeorm';
 import { CreateObjetrepereDto } from './dto/create-objetrepere.dto';
 import { UpdateObjetrepereDto } from './dto/update-objetrepere.dto';
 import { Objetrepere } from './entities/objetrepere.entity';
@@ -130,7 +130,7 @@ export class ObjetrepereService {
       }
     } else {
       return  {
-        status : HttpStatus.NOT_FOUND,
+        status : HttpStatus.OK,
         message :'Création des objets repères effectuée'
       }
     }
@@ -253,11 +253,28 @@ export class ObjetrepereService {
    * Retourne l'ensemble des objets repère créé / modifier et non itemiser au sein de la GMAO
    */
   async getORforExportGMAO(){
-    return this.OrRepo.find({
+    let res = await this.OrRepo.find({
       where : {
         exporte :  false
+      },
+      order : {
+        dateCreation : "ASC",
+        dateModification : "ASC"
       }
     })
+
+    for (const o of res){
+      const profilCreation = await this.utilisateurService.findOneByLogin(o.profilCreation)
+      if (profilCreation != undefined){
+        o.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+      }
+      const profilModification = await this.utilisateurService.findOneByLogin(o.profilModification)
+      if (profilModification != undefined){
+        o.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+      }
+    }
+
+    return res
   }
 
   /**
@@ -348,6 +365,37 @@ export class ObjetrepereService {
     });
   }
 
+
+  /**
+   * Change le status d'exportation 
+   * @param or identifiant Objet repère 
+   * @param value Valeur du champ exporte
+   * @returns HttpException ou l'objet repère modifié
+   */
+  async updateExportStatus(or : string, value : boolean){
+    const OR = await this.OrRepo.findOne({
+      where : {
+        idObjetRepere : or
+      },
+      relations: ["description"],
+    })
+    if (OR == undefined){
+      throw new HttpException({
+        status : HttpStatus.NOT_FOUND,
+        error :'Objet repère inconnu',
+      }, HttpStatus.NOT_FOUND)
+    }
+
+    OR.exporte = value;
+
+    await this.OrRepo.save(OR);
+    return await this.OrRepo.findOne({
+      where : {
+        idObjetRepere : or
+      },
+      relations: ["description"]
+    });
+  }
 
   /**
    * 

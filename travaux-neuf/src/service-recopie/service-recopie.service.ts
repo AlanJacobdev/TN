@@ -264,7 +264,7 @@ export class ServiceRecopieService {
         // } else {
             retour = JSON.stringify(
                 { 
-                    status : HttpStatus.NOT_FOUND, 
+                    status : HttpStatus.OK, 
                     message :'Les items ont été recopiés' 
                 }
             )

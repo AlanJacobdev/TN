@@ -5,5 +5,8 @@ import { Sousitem } from "src/sousitem/entities/sousitem.entity";
 export interface exportGMAO{
     listeOR : Objetrepere[],
     listeItem : Item[],
-    listeSI : Sousitem[]
+    listeSI : Sousitem[],
+    user : string,
+    nomDocument : string
+
 }
