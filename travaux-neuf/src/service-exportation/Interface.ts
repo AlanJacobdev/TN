@@ -6,7 +6,7 @@ export interface exportGMAO{
     listeOR : Objetrepere[],
     listeItem : Item[],
     listeSI : Sousitem[],
-    user : string,
+    profilCreation : string,
     nomDocument : string
 
 }

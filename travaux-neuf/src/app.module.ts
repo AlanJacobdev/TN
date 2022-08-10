@@ -34,6 +34,7 @@ import { ServiceSuppressionModule } from './service-suppression/service-suppress
 import { DocumentModule } from './document/document.module';
 import { RoleModule } from './role/role.module';
 import { ServiceExportationModule } from './service-exportation/service-exportation.module';
+import { ExportationModule } from './exportation/exportation.module';
 @Module({
   imports: [TypeOrmModule.forRoot(config), ObjetrepereModule, TypeobjetrepereModule, NumerouniqueModule, AtelierModule, OrsaveModule, TypeobjetModule, ItemModule, ItemsaveModule, SousitemModule, SousitemsaveModule, DroitModule, ServiceModule, DroitparserviceModule, UtilisateurModule, DroitparutilisateurModule,
   ConfigModule.forRoot({
@@ -52,7 +53,8 @@ import { ServiceExportationModule } from './service-exportation/service-exportat
   InformationsModule,
   DocumentModule,
   RoleModule,
-  ServiceExportationModule
+  ServiceExportationModule,
+  ExportationModule
   ],
   controllers: [AppController],
   providers: [AppService, NbDemandeGateway],

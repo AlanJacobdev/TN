@@ -4,17 +4,14 @@ import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { SousitemService } from 'src/sousitem/sousitem.service';
 import { exportGMAO } from './Interface';
 import * as xlsx from 'xlsx';
-import { createReadStream } from 'fs';
-import { join } from 'path';
-import { doc } from 'prettier';
-import { Objetrepere } from 'src/objetrepere/entities/objetrepere.entity';
-import { Item } from 'src/item/entities/item.entity';
-import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
+import { ExportationService } from 'src/exportation/exportation.service';
+import { CreateExportationDto } from 'src/exportation/dto/create-exportation.dto';
+
 
 @Injectable()
 export class ServiceExportationService {
 
-  constructor(private orService : ObjetrepereService ,private itemService: ItemService ,private siService: SousitemService){}
+  constructor(private orService : ObjetrepereService ,private itemService: ItemService ,private siService: SousitemService, private exportationService :ExportationService){}
 
   findAll() {
     return `This action returns all serviceExportation`;
@@ -36,7 +33,7 @@ export class ServiceExportationService {
       listeOR: OrToExport,
       listeItem: ItemToExport,
       listeSI: SiToExport,
-      user: '',
+      profilCreation: '',
       nomDocument: ''
     }
     return res;
@@ -223,12 +220,23 @@ export class ServiceExportationService {
           }
         }
         let EXCEL_EXTENSION = '.xlsx';
-        let path ='./../exports/'+ data.nomDocument +'_export_' + new Date().getTime() + EXCEL_EXTENSION
+        let date = new Date().getTime()
+        let name = data.nomDocument +'_export_' + date + EXCEL_EXTENSION
+        let path ='./../exports/'+ name;
         xlsx.writeFile(workbook, path );
         
         
         const fs = require('fs');    
-        if (fs.existsSync(path)) {      
+        if (fs.existsSync(path)) {   
+
+          let createExport :CreateExportationDto = {
+            nomDocument: name,
+            path: path,
+            date: new Date(),
+            profil: data.profilCreation
+          }
+          this.exportationService.create(createExport);
+          
           return path;
         } else {
           return {
