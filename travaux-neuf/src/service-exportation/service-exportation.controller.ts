@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Response, Param, Delete, StreamableFile } 
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { doc } from 'prettier';
-import { exportGMAO } from './Interface';
+import { createExportGMAO, exportGMAO } from './Interface';
 import { ServiceExportationService } from './service-exportation.service';
 
 @Controller('service-exportation')
@@ -26,8 +26,14 @@ export class ServiceExportationController {
     return this.serviceExportationService.getAllExportItemForGMAO();
   }
 
+  @Get('export/getAllExportItemForGMAOForOneUser/:user')
+  getAllExportItemForGMAOForOneUser(@Param('user') user: string){
+    return this.serviceExportationService.getAllExportItemForGMAOForOneUser(user);
+  }
+  
+
   @Post('export/exportationData')
-  async exportationData(@Response({ passthrough: true }) res, @Body() data: exportGMAO){
+  async exportationData(@Response({ passthrough: true }) res, @Body() data: createExportGMAO){
 
     let resFunc: any = await this.serviceExportationService.exportationData(data);
     if(!resFunc.hasOwnProperty('error')) {

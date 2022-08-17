@@ -41,6 +41,11 @@ export class UtilisateurController {
     return this.utilisateurService.findOneByLogin(login);
   }
  
+  @Get('getTypeORFromUser/:user')
+  getTypeORFromUser(@Param('user') user: string){
+    return this.utilisateurService.getTypeORFromUser(user);
+  }
+  
 
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUtilisateurDto: UpdateUtilisateurDto) {

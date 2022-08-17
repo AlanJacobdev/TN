@@ -51,6 +51,7 @@ export class ObjetrepereService {
             }
           }
           try {
+          createObjetrepereDto.exporte = false;
           createObjetrepereDto.dateCreation = new Date();
           createObjetrepereDto.description = tabDescription;
           const newOr = this.OrRepo.create(createObjetrepereDto);
@@ -252,18 +253,37 @@ export class ObjetrepereService {
   /**
    * Retourne l'ensemble des objets repère créé / modifier et non itemiser au sein de la GMAO
    */
-  async getORforExportGMAO(){
-    let res = await this.OrRepo.find({
-      where : {
-        exporte :  false
-      },
-      order : {
-        dateCreation : "ASC",
-        dateModification : "ASC"
-      }
-    })
+  async getORforExportGMAOForOneUser(user : string){
+    let atelier = (await this.utilisateurService.getAtelierFromUser(user)).atelier;
+    let typeor = (await this.utilisateurService.getTypeORFromUser(user)).typeObjet;
+    let atelierAutorize = [];
+    for (const a of atelier) {
+      atelierAutorize.push(a.idAtelier);
+    }
+    let listetypeAutorize = [];
+    for (const t of typeor) {
+      listetypeAutorize.push(t.idTypeOR);
+    }
 
-    for (const o of res){
+    const res = this.OrRepo.createQueryBuilder("Objetrepere")
+      .select('Objetrepere')
+      .where("Objetrepere.exporte = false")
+      .andWhere("Objetrepere.codeType IN(:...listCode)", { listCode: listetypeAutorize })
+      
+      res.andWhere(new Brackets(qb=>{
+      let i =0;
+        for (const a of atelierAutorize){
+          const queryName = `query_${i}`;
+          qb.orWhere(`Objetrepere.numeroUnique like :${queryName}`, {[queryName]: a +'%'},)
+          i = i+1;
+        }
+      }));
+      res.orderBy("Objetrepere.dateCreation", "ASC")
+      res.addOrderBy("Objetrepere.dateModification", "ASC")
+      
+      let result =  await res.getMany();
+      
+    for (const o of result){
       const profilCreation = await this.utilisateurService.findOneByLogin(o.profilCreation)
       if (profilCreation != undefined){
         o.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
@@ -274,6 +294,31 @@ export class ObjetrepereService {
       }
     }
 
+    return result
+  }
+  async getORforExportGMAO(){
+   
+      let res = await this.OrRepo.find({
+      where : {
+        exporte :  false,
+        
+
+      },
+      order : {
+        dateCreation : "ASC",
+        dateModification : "ASC"
+      }
+    })
+    for (const item of res){
+      const profilCreation = await this.utilisateurService.findOneByLogin(item.profilCreation)
+      if (profilCreation != undefined){
+        item.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+      }
+      const profilModification = await this.utilisateurService.findOneByLogin(item.profilModification)
+      if (profilModification != undefined){
+        item.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+      }
+    }
     return res
   }
 
@@ -357,6 +402,7 @@ export class ObjetrepereService {
 
     await this.orsaveservice.create(orsaveDto);   
     await this.OrRepo.save(OR);
+    await this.updateExportStatus(id, false);
     return await this.OrRepo.findOne({
       where : {
         idObjetRepere : id

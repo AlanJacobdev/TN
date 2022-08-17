@@ -47,4 +47,6 @@ export class CreateItemDto {
     @Allow()
     posteCreation : string;
 
+    exporte : boolean
+    
 }

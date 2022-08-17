@@ -34,4 +34,5 @@ export class CreateSousitemDto {
 
     dateCreation : Date;
 
+    exporte : boolean
 }

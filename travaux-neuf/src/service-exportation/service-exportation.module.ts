@@ -9,9 +9,10 @@ import { ObjetrepereModule } from 'src/objetrepere/objetrepere.module';
 import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { SousitemModule } from 'src/sousitem/sousitem.module';
 import { ExportationModule } from 'src/exportation/exportation.module';
+import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Objetrepere, Item, Sousitem]), ObjetrepereModule, ItemModule, SousitemModule, ExportationModule],
+  imports : [TypeOrmModule.forFeature([Objetrepere, Item, Sousitem]), ObjetrepereModule, ItemModule, SousitemModule, ExportationModule, UtilisateurModule],
   controllers: [ServiceExportationController],
   providers: [ServiceExportationService]
 })

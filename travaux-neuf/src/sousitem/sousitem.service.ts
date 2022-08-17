@@ -1,13 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { async } from 'rxjs';
 import { DescriptionService } from 'src/description/description.service';
 import { CreateDescriptionDto } from 'src/description/dto/create-description.dto';
+import { Item } from 'src/item/entities/item.entity';
 import { ItemService } from 'src/item/item.service';
 import { CreateSousitemsaveDto } from 'src/sousitemsave/dto/create-sousitemsave.dto';
 import { SousitemsaveService } from 'src/sousitemsave/sousitemsave.service';
 import { TypeobjetService } from 'src/typeobjet/typeobjet.service';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
-import { Repository } from 'typeorm';
+import { Brackets, In, Repository } from 'typeorm';
 import { CreateSousitemDto } from './dto/create-sousitem.dto';
 import { UpdateSousitemDto } from './dto/update-sousitem.dto';
 import { Sousitem } from './entities/sousitem.entity';
@@ -16,7 +18,7 @@ import { Sousitem } from './entities/sousitem.entity';
 export class SousitemService {
   
   
-  constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>, private typeObjetService : TypeobjetService, private itemservice: ItemService, private sousitemSaveService : SousitemsaveService,
+  constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>,@InjectRepository(Item) private itemRepo:Repository<Item>, private typeObjetService : TypeobjetService, private itemservice: ItemService, private sousitemSaveService : SousitemsaveService,
               private descriptionService: DescriptionService, private utilisateurService : UtilisateurService){}
   
   async create(createSousitemDto: CreateSousitemDto) {
@@ -68,6 +70,7 @@ export class SousitemService {
             }
           }
         }
+        createSousitemDto.exporte = false;
         createSousitemDto.description = tabDescription;
         createSousitemDto.dateCreation = new Date();
         const newSousItem = this.sousitemRepo.create(createSousitemDto);
@@ -132,6 +135,71 @@ export class SousitemService {
     /**
    * Retourne l'ensemble des objets repère créé / modifier et non itemiser au sein de la GMAO
    */
+  async getSIforExportGMAOForOneUser(user :string){
+    let atelier = (await this.utilisateurService.getAtelierFromUser(user)).atelier;
+    let typeor = (await this.utilisateurService.getTypeORFromUser(user)).typeObjet;
+    let atelierAutorize = [];
+    for (const a of atelier) {
+      atelierAutorize.push(a.idAtelier);
+    }
+    let listetypeAutorize = [];
+    for (const t of typeor) {
+      listetypeAutorize.push(t.idTypeOR);
+    }
+
+    const resItem = this.itemRepo.createQueryBuilder("Item")
+    .select('Item')
+    
+    resItem.andWhere(new Brackets(qb=>{
+    let i =0;
+      for (const type of listetypeAutorize){
+        const queryName = `query_${i}`;
+        qb.orWhere(`Item.idOR like :${queryName}`, {[queryName]: type+ '%' })
+        i = i+1;
+      }
+    }));
+
+    resItem.andWhere(new Brackets(qb=>{
+      let i =0;
+        for (const atelier of atelierAutorize){
+          const queryName = `query_${i}`;
+          qb.orWhere(`Item.numeroUnique like :${queryName}`, {[queryName]: atelier.charAt(0) +'%'})
+          i = i+1;
+        }
+      }));
+
+      let resultitem =  await resItem.getMany();
+      let idItem = [];
+      for (const item of resultitem){
+        idItem.push(item.idItem);
+      }
+
+    let result = await this.sousitemRepo.find({
+      where : {
+            exporte :  false,
+            idItem : In(idItem)
+          },
+          order : {
+            dateCreation : "ASC",
+            dateModification : "ASC"
+          }
+    })
+     
+
+    for (const o of result){
+      const profilCreation = await this.utilisateurService.findOneByLogin(o.profilCreation)
+      if (profilCreation != undefined){
+        o.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+      }
+      const profilModification = await this.utilisateurService.findOneByLogin(o.profilModification)
+      if (profilModification != undefined){
+        o.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+      }
+    }
+
+    return result
+  }
+
   async getSIforExportGMAO(){
     let res = await this.sousitemRepo.find({
       where : {
@@ -153,9 +221,9 @@ export class SousitemService {
         si.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
       }
     }
-     return res;
+    return res;
   }
-
+  
   async getSousItemByItemAffichage(id: string) {
     const sousItem = await this.sousitemRepo.find({
       where : {
@@ -273,6 +341,7 @@ export class SousitemService {
     sousitem.posteModification  = updateSousitemDto.posteModification;
     sousitem.dateModification = new Date();
     await this.sousitemRepo.save(sousitem);
+    await this.updateExportStatus(id, false)
     return await this.sousitemRepo.findOne({
       where : {
         idSousItem : id

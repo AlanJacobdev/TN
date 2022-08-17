@@ -75,6 +75,7 @@ export class ItemService {
           }
         }
 
+        createItemDto.exporte = false;
         createItemDto.dateCreation = new Date();
         createItemDto.description = tabDescription;
         const newItem = this.itemRepo.create(createItemDto);
@@ -172,27 +173,80 @@ export class ItemService {
     /**
    * Retourne l'ensemble des items créé / modifier et non itemiser au sein de la GMAO
    */
-  async getItemforExportGMAO(){
-    let res = await this.itemRepo.find({
-      where : {
-        exporte :  false
-      },
-      order : {
-        dateCreation : "ASC",
-        dateModification : "ASC"
-      }
-    })
-    for (const item of res){
-      const profilCreation = await this.utilisateurService.findOneByLogin(item.profilCreation)
+  async getItemforExportGMAOForOneUser(user : string){
+    
+    let atelier = (await this.utilisateurService.getAtelierFromUser(user)).atelier;
+    let typeor = (await this.utilisateurService.getTypeORFromUser(user)).typeObjet;
+    let atelierAutorize = [];
+    for (const a of atelier) {
+      atelierAutorize.push(a.idAtelier);
+    }
+    let listetypeAutorize = [];
+    for (const t of typeor) {
+      listetypeAutorize.push(t.idTypeOR);
+    }
+
+    const res = this.itemRepo.createQueryBuilder("Item")
+      .select('Item')
+      .where("Item.exporte = false")
+      res.andWhere(new Brackets(qb=>{
+      let i =0;
+        for (const type of listetypeAutorize){
+          const queryName = `query_${i}`;
+          qb.orWhere(`Item.idOR like :${queryName}`, {[queryName]: type+ '%' })
+          i = i+1;
+        }
+      }));
+
+      res.andWhere(new Brackets(qb=>{
+        let i =0;
+          for (const atelier of atelierAutorize){
+            const queryName = `query_${i}`;
+            qb.orWhere(`Item.numeroUnique like :${queryName}`, {[queryName]: atelier.charAt(0) +'%'})
+            i = i+1;
+          }
+        }));
+
+      res.orderBy("Item.dateCreation", "ASC")
+      res.addOrderBy("Item.dateModification", "ASC")
+      
+      let result =  await res.getMany();
+
+    for (const o of result){
+      const profilCreation = await this.utilisateurService.findOneByLogin(o.profilCreation)
       if (profilCreation != undefined){
-        item.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+        o.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
       }
-      const profilModification = await this.utilisateurService.findOneByLogin(item.profilModification)
+      const profilModification = await this.utilisateurService.findOneByLogin(o.profilModification)
       if (profilModification != undefined){
-        item.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+        o.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
       }
     }
-    return res
+
+    return result
+
+  }
+  async getItemforExportGMAO (){
+    let res = await this.itemRepo.find({
+        where : {
+          exporte :  false
+        },
+        order : {
+          dateCreation : "ASC",
+          dateModification : "ASC"
+        }
+      })
+      for (const item of res){
+        const profilCreation = await this.utilisateurService.findOneByLogin(item.profilCreation)
+        if (profilCreation != undefined){
+          item.profilCreation = profilCreation.nom.toUpperCase() +" "+ profilCreation.prenom;
+        }
+        const profilModification = await this.utilisateurService.findOneByLogin(item.profilModification)
+        if (profilModification != undefined){
+          item.profilModification = profilModification.nom.toUpperCase() +" "+ profilModification.prenom;
+        }
+      }
+      return res
   }
 
   /**
@@ -314,7 +368,7 @@ export class ItemService {
     item.profilModification = updateItemDto.profilModification;
     item.posteModification = updateItemDto.posteModification;
     await this.itemRepo.save(item);
-    
+    await this.updateExportStatus(id, false);
     return await this.itemRepo.findOne({
       where : {
         idItem : id

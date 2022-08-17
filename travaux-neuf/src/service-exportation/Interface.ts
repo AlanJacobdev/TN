@@ -10,3 +10,19 @@ export interface exportGMAO{
     nomDocument : string
 
 }
+
+export interface createExportGMAO{
+
+    createObject :  {
+                    listeOR : Objetrepere[],
+                    listeItem : Item[],
+                    listeSI : Sousitem[],
+                    },
+    updateObject :  {
+                    listeOR : Objetrepere[],
+                    listeItem : Item[],
+                    listeSI : Sousitem[],
+                    },
+    user : string,
+    nomDocument :string
+    }

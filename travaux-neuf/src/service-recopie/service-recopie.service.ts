@@ -39,7 +39,8 @@ export class ServiceRecopieService {
                                 description : item.description,
                                 profilCreation : this.configservice.get('profil') ,
                                 dateCreation : new Date(),
-                                posteCreation : ""
+                                posteCreation : "",
+                                exporte: false
                             }
                             await this.itemService.create(createitem);
                         }
@@ -90,6 +91,7 @@ export class ServiceRecopieService {
                                 profilCreation : profil,
                                 posteCreation : "",
                                 dateCreation : new Date(),
+                                exporte : false
                             }
                             await this.SiService.create(createsousitem);
                         }
@@ -137,7 +139,8 @@ export class ServiceRecopieService {
                         description : item.description,
                         profilCreation : profil,
                         dateCreation : new Date(),
-                        posteCreation : ""
+                        posteCreation : "",
+                        exporte: false
                     }
                     return await this.itemService.create(createitem);
                 } else {

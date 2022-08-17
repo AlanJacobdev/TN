@@ -8,9 +8,10 @@ import { TypeobjetModule } from 'src/typeobjet/typeobjet.module';
 import { SousitemsaveModule } from 'src/sousitemsave/sousitemsave.module';
 import { DescriptionModule } from 'src/description/description.module';
 import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
+import { Item } from 'src/item/entities/item.entity';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([Sousitem]), ItemModule, TypeobjetModule, forwardRef(() => SousitemsaveModule), DescriptionModule, UtilisateurModule ],
+  imports : [TypeOrmModule.forFeature([Sousitem, Item]), ItemModule, TypeobjetModule, forwardRef(() => SousitemsaveModule), DescriptionModule, UtilisateurModule ],
   controllers: [SousitemController],
   providers: [SousitemService],
   exports : [SousitemService]

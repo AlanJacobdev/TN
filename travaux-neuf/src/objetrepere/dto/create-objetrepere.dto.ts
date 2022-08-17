@@ -49,4 +49,5 @@ export class CreateObjetrepereDto {
     @Allow()
     rangeNu : string[]
 
+    exporte : boolean
 }
