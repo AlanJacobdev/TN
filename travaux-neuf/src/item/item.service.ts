@@ -171,7 +171,7 @@ export class ItemService {
   }
 
     /**
-   * Retourne l'ensemble des items créé / modifier et non itemiser au sein de la GMAO
+   * Retourne l'ensemble des items créé / modifier et non itemiser au sein de la GMAO pour un utilisateur donné (restriction des ateliers et type d'objet parent)
    */
   async getItemforExportGMAOForOneUser(user : string){
     
@@ -226,6 +226,11 @@ export class ItemService {
     return result
 
   }
+
+  /**
+   * Retourne l'ensemble des items créé / modifier et non itemiser au sein de la GMAO
+   * @returns Liste des items créés / modifiés.
+   */
   async getItemforExportGMAO (){
     let res = await this.itemRepo.find({
         where : {
@@ -562,11 +567,11 @@ export class ItemService {
    * @param objetRepere : Identifiant d'un objet repère Parent
    * @param dateDebut : Début d'intervalle sur la dernière activité effectué sur l'item
    * @param dateFin : Fin d'intervalle sur la dernière activité effectué sur l'item
-   * @param estActif : L'item est actif 
+   * @param etat : Etat de l'item
    * @param estSecurite : L'item est un item de sécurité
    * @returns 
    */
-  async getItemForExport(atelier : string, typeObjet : string, objetRepere : string, dateDebut : string, dateFin : string, estActif : string, estSecurite : string){
+  async getItemForExport(atelier : string, typeObjet : string, objetRepere : string, dateDebut : string, dateFin : string, etat : string, estSecurite : string){
     let date: Date;
    
     date = new Date(dateFin)
@@ -614,8 +619,8 @@ export class ItemService {
       })); 
 
     }
-    if(estActif != '-1'){
-      result.andWhere("Item.actif = :actif", {actif : estActif});
+    if(etat != 'Aucun'){
+      result.andWhere("Item.etat = :etat", {etat : etat});
     }
 
     if(estSecurite != '-1'){
@@ -626,7 +631,7 @@ export class ItemService {
     } catch (e){
       return {
         status : HttpStatus.CONFLICT,
-        error :'Format de date invalide',
+        error :e,
       }
     }
   }

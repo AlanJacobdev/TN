@@ -14,29 +14,37 @@ export class UtilisateurService {
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private roleService : RoleService){}
   
   async create(createUtilisateurDto: CreateUtilisateurDto) {
-    let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
-    let isEmail = regex.test(createUtilisateurDto.email);
-    if (isEmail) {
-      const saltOrRounds = await bcrypt.genSalt();   
-        const uti = await this.findOne(createUtilisateurDto.idUtilisateur);
-        if (uti == undefined){
-          createUtilisateurDto.dateCreation = new Date();
-          createUtilisateurDto.password =  await bcrypt.hash(createUtilisateurDto.password, saltOrRounds)
+    let loginExist = this.findOneByLogin(createUtilisateurDto.login);
+    if (loginExist == undefined){
+      let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
+      let isEmail = regex.test(createUtilisateurDto.email);
+      if (isEmail) {
+        const saltOrRounds = await bcrypt.genSalt();   
+          const uti = await this.findOne(createUtilisateurDto.idUtilisateur);
+          if (uti == undefined){
+            createUtilisateurDto.dateCreation = new Date();
+            createUtilisateurDto.password =  await bcrypt.hash(createUtilisateurDto.password, saltOrRounds)
 
-          const newUti = this.utiRepo.create(createUtilisateurDto);
-          const u = await this.utiRepo.save(newUti);
-          delete u.password;
-          return u;
-        } else {
-          return {
-            status : HttpStatus.CONFLICT,
-            error :'Already exist',
+            const newUti = this.utiRepo.create(createUtilisateurDto);
+            const u = await this.utiRepo.save(newUti);
+            delete u.password;
+            return u;
+          } else {
+            return {
+              status : HttpStatus.CONFLICT,
+              error :'Already exist',
+            }
           }
+      } else {
+        return  {
+          status : HttpStatus.NOT_ACCEPTABLE,
+          error :'Format d\'adresse mail incorrect (attendu = user@test.fr ou user.test@test.fr) '
         }
+      }
     } else {
       return  {
         status : HttpStatus.NOT_ACCEPTABLE,
-        error :'Format d\'adresse mail incorrect (attendu = user@test.fr ou user.test@test.fr) '
+        error :'Le login est déjà lié à un utilisateur'
       }
     }
   }

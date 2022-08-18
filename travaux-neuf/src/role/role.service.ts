@@ -179,7 +179,7 @@ export class RoleService {
     } catch ( e : any) {
       return {
         status : HttpStatus.CONFLICT,
-        error :'Impossible de supprimer l\'item (sous-item lié)',
+        error :'Impossible de supprimer le rôle (utilisateur lié)',
       }
     }
     return {
