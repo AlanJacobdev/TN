@@ -26,6 +26,9 @@ export class UpdateUtilisateurDto {
     @Allow()
     posteModification : string;
     
+    @Allow()
+    estActif : boolean
+
     dateModification : Date;
 
 }

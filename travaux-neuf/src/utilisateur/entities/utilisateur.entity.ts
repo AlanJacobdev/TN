@@ -23,6 +23,9 @@ export class Utilisateur {
     @Column()
     email : string;
 
+    @Column({default: true})
+    estActif : boolean;
+
     @ManyToOne(() => Role)
     @JoinColumn({name: 'idRole'})
     @Column({nullable : true})

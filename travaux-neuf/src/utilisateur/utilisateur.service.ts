@@ -117,6 +117,13 @@ export class UtilisateurService {
         login : login,
       }
     })
+    if (user.estActif == false){
+      return {
+        status : HttpStatus.I_AM_A_TEAPOT,
+        error : 'Votre compte a été désactivé.'
+      }
+    }
+    
     if (user != undefined) {    
       const match = await bcrypt.compare(password, user.password)
       if (match) {
@@ -186,6 +193,25 @@ export class UtilisateurService {
     const saltOrRounds = await bcrypt.genSalt(); 
     updateUtilisateurDto.password = await bcrypt.hash(updateUtilisateurDto.password, saltOrRounds)
     updateUtilisateurDto.dateModification = new Date();
+    await this.utiRepo.update(idUser, updateUtilisateurDto);
+    let user =  await this.utiRepo.findOne(idUser);
+    delete user.password;
+    return user;
+  }
+
+  async updateActif(idUser: number, updateUtilisateurDto: UpdateUtilisateurDto) {
+    const uti = await this.utiRepo.findOne({
+      where : {
+        idUtilisateur : idUser
+      }
+    })
+    if (uti == undefined) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Identifier not found'
+      }
+    }
+
     await this.utiRepo.update(idUser, updateUtilisateurDto);
     let user =  await this.utiRepo.findOne(idUser);
     delete user.password;
