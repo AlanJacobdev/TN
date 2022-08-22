@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
@@ -10,6 +10,7 @@ import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class UtilisateurService {
+
 
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private roleService : RoleService){}
   
@@ -69,6 +70,15 @@ export class UtilisateurService {
     })
   }
 
+  findOneForToken( login : string, refreshToken : string, refreshTokenExp : string) {
+    return this.utiRepo.findOne({
+      where : {
+        login : login,
+        refreshToken : refreshToken,
+        refreshTokenExp : MoreThanOrEqual(refreshTokenExp)
+      }
+    })
+  }
 
   async getAtelierFromUser(user :string){
     let role = await this.utiRepo.findOne({
@@ -200,6 +210,25 @@ export class UtilisateurService {
   }
 
   async updateActif(idUser: number, updateUtilisateurDto: UpdateUtilisateurDto) {
+    const uti = await this.utiRepo.findOne({
+      where : {
+        idUtilisateur : idUser
+      }
+    })
+    if (uti == undefined) {
+      return {
+        status : HttpStatus.NOT_FOUND,
+        error : 'Identifier not found'
+      }
+    }
+
+    await this.utiRepo.update(idUser, updateUtilisateurDto);
+    let user =  await this.utiRepo.findOne(idUser);
+    delete user.password;
+    return user;
+  }
+
+  async updateToken(idUser: number, updateUtilisateurDto: any) {
     const uti = await this.utiRepo.findOne({
       where : {
         idUtilisateur : idUser

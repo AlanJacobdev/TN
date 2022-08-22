@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,  } from '@nestjs/common';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { JwtService } from '@nestjs/jwt';
-import { NOMEM } from 'dns';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
+import * as randomToken from 'rand-token';
+import * as moment from 'moment';
+
 
 @Injectable()
 export class AuthService {
-
+ 
   constructor(private utilisateurService : UtilisateurService, private jwtService: JwtService){}
 
   /**
@@ -43,8 +45,33 @@ export class AuthService {
     }
     const payload = { idUtilisateur: user.idUtilisateur, nom: user.nom, prenom: user.prenom, login : user.login, idService : user.idService, estAdministrateur: user.estAdministrateur };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload), 
     };
+  }
+
+
+   
+  public async getRefreshToken(userId: number): Promise<string> {
+      const update = {
+        refreshToken: randomToken.generate(16),
+        refreshTokenExp: moment().day(1).format('YYYY/MM/DD'),
+      };
+  
+      await this.utilisateurService.updateToken(userId, update);
+      return update.refreshToken;
+  }
+
+
+
+  public async validRefreshToken(login: any, refreshToken: any) {
+   const currentDate = moment().format('YYYY/MM/DD');
+   
+   let user = await this.utilisateurService.findOneForToken(login, refreshToken, currentDate)
+   
+   if (!user) {
+    return null;
+   }
+   return user;
   }
 
 

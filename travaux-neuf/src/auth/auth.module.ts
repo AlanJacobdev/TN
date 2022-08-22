@@ -5,7 +5,8 @@ import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtKey } from './constants';
 import { LocalStrategy } from './strategy/local.strategy';
-import { AADStrategy } from './strategy/AAD.strategy';
+import { JwtStrategy } from './strategy/jwt.strategy';
+import { RefreshStrategy } from './strategy/refresh.strategy';
 
 /**
  * Entités permettant de gérer les dépendances et relations d'une caractéristique de l'application
@@ -21,11 +22,11 @@ import { AADStrategy } from './strategy/AAD.strategy';
   imports : [UtilisateurModule,
     JwtModule.register({
       secret: jwtKey.secret,
-      signOptions: { expiresIn: '30s' },
+      signOptions: { expiresIn: '10s' },
       
     }),],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, AADStrategy],
-  exports:[AuthService, AADStrategy]
+  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshStrategy],
+  exports:[AuthService ]
 })
 export class AuthModule {}

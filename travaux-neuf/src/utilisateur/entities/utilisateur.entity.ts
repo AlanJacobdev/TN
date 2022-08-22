@@ -52,4 +52,10 @@ export class Utilisateur {
     @Column({type : "timestamp", nullable:true})
     dateModification : Date;
 
+    @Column({ nullable: true,name:'refreshtoken' })
+    refreshToken: string;
+  
+    @Column({ type: 'date', nullable: true, name:'refreshtokenexp' })
+    refreshTokenExp: string;
+    
 }

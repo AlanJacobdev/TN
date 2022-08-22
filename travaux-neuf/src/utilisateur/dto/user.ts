@@ -6,3 +6,8 @@ export interface userIdentity {
 export interface emailUser {
     email : string
 }
+
+export interface updateToken{
+    refreshToken: string,
+    refreshTokenExp: string,
+}
