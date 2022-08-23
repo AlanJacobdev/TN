@@ -9,10 +9,10 @@ import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from "typeorm"
 @Entity('objetreperesauvegarde')
 export class Orsave {
     
-    @PrimaryColumn({length : 6})
+    @PrimaryColumn({length : 7})
     idObjetRepere : string;
 
-    @Column({length : 50})
+    @Column({length : 250})
     libelleObjetRepere : string;
     
     @Column({length : 2})
@@ -23,6 +23,9 @@ export class Orsave {
 
     @Column()
     etat : string;
+
+    @Column()
+    securite : boolean;
 
     @ManyToMany(() => Description)
     @JoinTable({name : "descriptionParObjetRepereSave"})

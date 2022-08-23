@@ -35,6 +35,9 @@ export class CreateObjetrepereDto {
     @IsNotEmpty()
     etat : string;
 
+    @IsNotEmpty()
+    securite : boolean;
+    
     @Allow()
     description : Description[];
 

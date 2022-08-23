@@ -11,10 +11,10 @@ import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToOne, JoinTab
 @Entity('objetrepere')
 export class Objetrepere {
 
-    @PrimaryColumn({length : 6, unique: true})
+    @PrimaryColumn({length : 7, unique: true})
     idObjetRepere : string;
 
-    @Column({length : 50})
+    @Column({length : 250})
     libelleObjetRepere : string;
 
     @Column({length : 2})
@@ -29,6 +29,9 @@ export class Objetrepere {
 
     @Column()
     etat : string
+
+    @Column()
+    securite : boolean
 
     @Column({length : 50})
     profilCreation : string;

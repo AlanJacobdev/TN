@@ -14,10 +14,10 @@ export class Itemsave {
     @PrimaryColumn({length : 10})
     idItem : string;
     
-    @Column({length : 50})
+    @Column({length : 250})
     libelleItem : string;
     
-    @Column({length : 6})
+    @Column({length : 7})
     idOR : string;
     
     @Column({length : 4})

@@ -32,7 +32,7 @@ export class ObjetrepereService {
     if (typeor != undefined) {
       const nu = await this.nuservice.findOne(createObjetrepereDto.numeroUnique);
       if(nu != undefined) {
-        createObjetrepereDto.idObjetRepere = createObjetrepereDto.codeType + createObjetrepereDto.numeroUnique;
+        createObjetrepereDto.idObjetRepere = (createObjetrepereDto.securite ? createObjetrepereDto.codeType + createObjetrepereDto.numeroUnique + 'Z' : createObjetrepereDto.codeType + createObjetrepereDto.numeroUnique);
         const or = await this.findOne(createObjetrepereDto.idObjetRepere)
         if ( or == undefined){
           let tabDescription = [];
@@ -58,6 +58,8 @@ export class ObjetrepereService {
           await this.OrRepo.save(newOr);
           return newOr;
           } catch (e:any){
+            console.log(e);
+            
             throw new HttpException({
               status : HttpStatus.CONFLICT,
               error :'Numéro Unique déja utilisé',
@@ -104,6 +106,7 @@ export class ObjetrepereService {
           description: createObjetrepereDto.description,
           profilCreation: createObjetrepereDto.profilCreation,
           posteCreation: createObjetrepereDto.posteCreation,
+          securite : createObjetrepereDto.securite
         };
       } else {
         createDto = {
@@ -114,6 +117,7 @@ export class ObjetrepereService {
           description: [],
           profilCreation: createObjetrepereDto.profilCreation,
           posteCreation: createObjetrepereDto.posteCreation,
+          securite : createObjetrepereDto.securite
         };
       }
 
@@ -390,7 +394,8 @@ export class ObjetrepereService {
       date : dateModif,
       status : statusOr,
       profilModification : updateObjetrepereDto.profilModification,
-      posteModification : updateObjetrepereDto.posteModification    
+      posteModification : updateObjetrepereDto.posteModification,
+      securite : OR.securite 
     }
 
     OR.libelleObjetRepere = updateObjetrepereDto.libelleObjetRepere;
@@ -487,7 +492,8 @@ export class ObjetrepereService {
         date : OR.dateCreation,
         status : "C",
         profilModification : user,
-        posteModification : ""    
+        posteModification : "",
+        securite : OR.securite    
       }
       
       await this.orsaveservice.create(OrCreateSaveDTO);
@@ -510,7 +516,8 @@ export class ObjetrepereService {
       date : deleteDateSave,
       status : "D",
       profilModification : user,
-      posteModification : ""    
+      posteModification : "",
+      securite : OR.securite   
     }
     
     await this.orsaveservice.create(orsaveDto);   
@@ -744,7 +751,8 @@ export class ObjetrepereService {
         status: 'DAR',
         date: date,
         profilModification: profil,
-        posteModification: ''
+        posteModification: '',
+        securite : orExist.securite
       };      
       await this.orsaveservice.create(createOrsaveDto);
     }

@@ -26,6 +26,9 @@ export class CreateOrsaveDto {
     etat : string;
 
     @IsNotEmpty()
+    securite : boolean;
+
+    @IsNotEmpty()
     description: Description[];
 
     @IsNotEmpty()

@@ -9,7 +9,7 @@ export class Sousitem {
     @PrimaryColumn({length : 20})
     idSousItem : string;
 
-    @Column({length : 50})
+    @Column({length : 250})
     libelleSousItem : string;
 
     @ManyToOne(() => Item)

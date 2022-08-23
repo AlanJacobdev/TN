@@ -1,6 +1,5 @@
 import { Description } from "src/description/entities/description.entity";
-import { Sousitem } from "src/sousitem/entities/sousitem.entity";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm"
+import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from "typeorm"
 
 @Entity('sousitemsauvegarde')
 export class Sousitemsave {
@@ -9,7 +8,7 @@ export class Sousitemsave {
     @PrimaryColumn({length : 20})
     idSousItem : string;
     
-    @Column({length : 50})
+    @Column({length : 250})
     libelleSousItem: string;
     
     @Column({length : 12})

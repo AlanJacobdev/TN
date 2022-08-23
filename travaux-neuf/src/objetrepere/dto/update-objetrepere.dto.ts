@@ -18,6 +18,9 @@ export class UpdateObjetrepereDto {
     etat : string;
 
     @Allow()
+    securite : boolean;
+    
+    @Allow()
     description : Description[];
 
     @IsNotEmpty()
