@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
@@ -8,7 +9,7 @@ import { jwtKey } from "../constants";
  
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
-    constructor(private authService: AuthService){
+    constructor(private authService: AuthService, private jwt : JwtService){
         super({
             ignoreExpiration: true,
             passReqToCallback:true,
@@ -28,6 +29,19 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
             throw new BadRequestException('invalid jwt token');
         }
         let data = req?.cookies["auth-cookie"];
+        
+        let res = data.token.access_token;
+        let decoderes :any = this.jwt.decode(res);
+        let exptime = decoderes.exp
+        let limiteInactivite : any= new Date(exptime*1000 + jwtKey.timeSession * 60000);
+        limiteInactivite = limiteInactivite.getTime();
+        let currentDate = new Date().getTime();
+       
+        
+        if(currentDate > limiteInactivite){
+            throw new BadRequestException('Inactivité depuis le dernier refresh');
+        }
+        
         if(!data?.refreshToken){
             throw new BadRequestException('invalid refresh token');
         }

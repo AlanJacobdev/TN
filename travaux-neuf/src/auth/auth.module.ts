@@ -22,7 +22,8 @@ import { RefreshStrategy } from './strategy/refresh.strategy';
   imports : [UtilisateurModule,
     JwtModule.register({
       secret: jwtKey.secret,
-      signOptions: { expiresIn: '10s' },
+      signOptions: { expiresIn: jwtKey.timeSession+jwtKey.uniteTemps},
+
       
     }),],
   controllers: [AuthController],
