@@ -380,7 +380,7 @@ export class ObjetrepereService {
       dateModif = OR.dateCreation   
     } else {
       statusOr = 'M'
-      dateModif = new Date();
+      dateModif = OR.dateModification;
     }
 
     let orsaveDto = new CreateOrsaveDto;
@@ -478,26 +478,38 @@ export class ObjetrepereService {
         };
       }
     }
-  
-    const oldItem = await this.orsaveservice.findOnebyIDDesc(id);
-    if ( oldItem == undefined || oldItem.status == 'D' ) {
-      let OrCreateSaveDTO = new CreateOrsaveDto();
-      OrCreateSaveDTO = {
-        idObjetRepere : OR.idObjetRepere,
-        libelleObjetRepere : OR.libelleObjetRepere,
-        codeType : OR.codeType,
-        numeroUnique : OR.numeroUnique,
-        etat : OR.etat,
-        description : OR.description,
-        date : OR.dateCreation,
-        status : "C",
-        profilModification : user,
-        posteModification : "",
-        securite : OR.securite    
-      }
-      
-      await this.orsaveservice.create(OrCreateSaveDTO);
-    } 
+    const oldOr = await this.orsaveservice.findOnebyIDDesc(id);
+    if ( oldOr == undefined || oldOr.status == 'D' || oldOr.status == 'M' ||  oldOr.status == 'C') {
+    
+    let dateDel : Date;
+    let statusOr : string = "";
+    if ( oldOr == undefined || oldOr.status == 'D' ) {
+      statusOr = 'C'
+      dateDel = OR.dateCreation   
+    } else if (oldOr.status == 'M' || oldOr.status == 'C'){
+      statusOr = 'M'
+      dateDel = OR.dateModification;
+    }
+
+    
+    let OrCreateSaveDTO = new CreateOrsaveDto();
+    OrCreateSaveDTO = {
+      idObjetRepere : OR.idObjetRepere,
+      libelleObjetRepere : OR.libelleObjetRepere,
+      codeType : OR.codeType,
+      numeroUnique : OR.numeroUnique,
+      etat : OR.etat,
+      description : OR.description,
+      date : dateDel,
+      status : statusOr,
+      profilModification : user,
+      posteModification : "",
+      securite : OR.securite    
+    }
+    
+    await this.orsaveservice.create(OrCreateSaveDTO);
+    
+  }
 
     let deleteDateSave;
     if (date){

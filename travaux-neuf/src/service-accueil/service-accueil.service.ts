@@ -7,7 +7,7 @@ import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { Sousitemsave } from 'src/sousitemsave/entities/sousitemsave.entity';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
-import { Between, MoreThan, Repository } from 'typeorm';
+import { Between, In, MoreThan, Not, Repository } from 'typeorm';
 import { infoPerDayModified, infoPerMonth, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
 
 
@@ -113,13 +113,17 @@ export class ServiceAccueilService {
     .select(["Itemsave.idItem"])
     .where((qb) => 
             'Itemsave.date = '+ qb.subQuery()
-            .select(["MAX(a.date)"])
+            .select(["a.date"])
             .from(Itemsave, "a")
             .where("Itemsave.idItem = a.idItem")
+            .andWhere("Itemsave.status = 'C'")
+            .orderBy("Itemsave.date", "DESC")
+            .limit(1)
             .getQuery()
     )
-    .andWhere("Itemsave.status = :status");
   
+
+    
     let ItemModifyCreate;
     const resultItemModifyCreate = this.itemRepo.createQueryBuilder("Item")
       .select(["TO_CHAR(Item.dateModification, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateModification, 'DD-MM-YYYY')) as count"])
@@ -129,11 +133,12 @@ export class ServiceAccueilService {
         resultItemModifyCreate.andWhere("Item.profilCreation = :user", {user: user})
       }
       resultItemModifyCreate.andWhere('Item.idItem IN ('+ resultJustCreateItem.getQuery() +')')
-      .setParameter("status", 'C')
+    
       resultItemModifyCreate.groupBy("TO_CHAR(Item.dateModification, 'DD-MM-YYYY')")
     try {
       
       ItemModifyCreate = await resultItemModifyCreate.getRawMany();
+      
     } catch (e) {
       return {
         status: HttpStatus.CONFLICT,
@@ -494,8 +499,9 @@ export class ServiceAccueilService {
     }
 
     // Create
-    let OrCreate
-    let OrCreateSave
+    let OrCreate;
+    let OrCreateSave;
+ 
     if (user == undefined){
       OrCreate = await this.OrRepo.find({
         select:['idObjetRepere', 'libelleObjetRepere','etat','profilCreation','dateCreation'],
@@ -513,6 +519,7 @@ export class ServiceAccueilService {
         },
         relations : ["description"]
       })
+
     } else {
       OrCreate = await this.OrRepo.find({
         select:['idObjetRepere', 'libelleObjetRepere','etat','profilCreation','dateCreation'],
@@ -532,8 +539,11 @@ export class ServiceAccueilService {
         },
         relations : ["description"]
       })
+
+
     }
 
+    
     for(const or of OrCreate){
       InfoPerDay.objectCreated.push( {
         id : or.idObjetRepere,
@@ -559,6 +569,7 @@ export class ServiceAccueilService {
 
     let ItemCreate
     let ItemCreateSave
+ 
     if (user == undefined){
       ItemCreate = await this.itemRepo.find({
         select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
@@ -576,6 +587,9 @@ export class ServiceAccueilService {
         },
         relations:["description"]
       })
+
+ 
+
     } else {
       ItemCreate = await this.itemRepo.find({
         select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
@@ -595,7 +609,10 @@ export class ServiceAccueilService {
         },
         relations:["description"]
       })
+  
     }
+
+    
 
     for(const item of ItemCreate){
       InfoPerDay.objectCreated.push( {
@@ -695,7 +712,7 @@ export class ServiceAccueilService {
         select : ['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
         where : {
           date : Between(dateDebut,dateFin),
-          status : 'M'
+          status : In(['M','C'])
         },
         relations:["description"]
       })
@@ -704,7 +721,7 @@ export class ServiceAccueilService {
         select : ['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
         where : {
           date : Between(dateDebut,dateFin),
-          status : 'M',
+          status : In(['M','C']),
           profilModification : user
         },
         relations:["description"]
@@ -729,6 +746,7 @@ export class ServiceAccueilService {
     if ( OrModify.length > 0 ) {
       
       for (const orM of OrModify){
+        let error :boolean = false;
         objetNow = {
           id: orM.idObjetRepere,
           libelle: orM.libelleObjetRepere,
@@ -752,108 +770,65 @@ export class ServiceAccueilService {
           select : ['idObjetRepere','libelleObjetRepere','etat', 'date','profilModification'],
           where : {
             date : MoreThan(orM.date),
-            idObjetRepere : orM.idObjetRepere
+            idObjetRepere : orM.idObjetRepere,
+            status : 'M'
           },
           relations:["description"]
         })
 
-        let OrReplaceOrModify; 
+        let OrReplaceOrModifyonCreation; 
         if(OrModify == undefined) {
-          OrReplaceOrModify = await this.OrRepo.findOne({
+          OrReplaceOrModifyonCreation = await this.OrRepo.findOne({
             select : ['idObjetRepere','libelleObjetRepere','etat', 'profilModification', 'dateModification'],
             where : {
-              dateModification : Between(dateDebut,dateFin),
+              dateModification : MoreThan(orM.date),
               idObjetRepere : orM.idObjetRepere
             },
             relations:["description"]
           })
-            objetNow.newlibelle = OrReplaceOrModify.libelleObjetRepere;
-            objetNow.newEtat = OrReplaceOrModify.etat;
-            objetNow.newDescription = OrReplaceOrModify.description;
-            objetNow.profilModification = OrReplaceOrModify.profilModification;
+  
+            if(OrReplaceOrModifyonCreation == undefined) {
+              let orReplaceORModifyonModification;
+              orReplaceORModifyonModification = await this.OrRepo.findOne({
+                select : ['idObjetRepere','libelleObjetRepere','etat', 'profilModification', 'dateModification'],
+                where : {
+                  dateModification : MoreThan(orM.date),
+                  idObjetRepere : orM.idObjetRepere
+                },
+                relations:["description"]
+              })
+              
+              if(orReplaceORModifyonModification == undefined){
+                error = true;
+              } else {
+                objetNow.newlibelle = orReplaceORModifyonModification.libelleObjetRepere;
+                objetNow.newEtat = orReplaceORModifyonModification.etat;
+                objetNow.newDescription = orReplaceORModifyonModification.description;
+                objetNow.profilModification = orReplaceORModifyonModification.profilModification;
+                objetNow.dateModification = orReplaceORModifyonModification.dateModification;
+              }
+            } else {
+
+            objetNow.newlibelle = OrReplaceOrModifyonCreation.libelleObjetRepere;
+            objetNow.newEtat = OrReplaceOrModifyonCreation.etat;
+            objetNow.newDescription = OrReplaceOrModifyonCreation.description;
+            objetNow.profilModification = OrReplaceOrModifyonCreation.profilModification;
+            objetNow.dateModification = OrReplaceOrModifyonCreation.dateModification;
+            }
         } else {
           objetNow.newlibelle = OrModify.libelleObjetRepere;
           objetNow.newEtat = OrModify.etat;
           objetNow.newDescription = OrModify.description;
           objetNow.profilModification = OrModify.profilModification;
+          objetNow.dateModification = OrModify.date;
         }
-
-        InfoPerDay.objectModified.push(objetNow);
+        if (error != true) {
+          InfoPerDay.objectModified.push(objetNow);
+        }
       }
     }
 
-    let dateDebutModify = new Date(date);
-    let dateFinModify = new Date(date)
-    dateFinModify.setDate(dateFinModify.getDate() + 1) 
-
-    const resultJustCreateOr = this.OrSaveRepo.createQueryBuilder("Orsave")
-    .select(["Orsave.idObjetRepere"])
-    .where((qb) => 
-            'Orsave.date = '+ qb.subQuery()
-            .select(["MAX(a.date)"])
-            .from(Orsave, "a")
-            .where("Orsave.idObjetRepere = a.idObjetRepere")
-            .getQuery()
-    )
-    .andWhere("Orsave.status = :status");
-    
-      
-    let OrModifyCreate;
-    const resultOrModifyCreate = this.OrRepo.createQueryBuilder("Objetrepere")
-      .select(["Objetrepere.idObjetRepere AS idObjetRepere", "Objetrepere.libelleObjetRepere AS libelleObjetRepere", "Objetrepere.etat AS etat", "Objetrepere.profilCreation AS profilCreation", "Objetrepere.dateCreation AS dateCreation", "Objetrepere.profilModification AS profilModification", "Objetrepere.dateModification AS dateModification"])
-      .where("Objetrepere.dateModification IS NOT NULL")
-      .andWhere("Objetrepere.dateModification BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
-      if(user !=undefined){
-        resultOrModifyCreate.andWhere("Objetrepere.profilCreation = :user", {user: user})
-      }
-      resultOrModifyCreate.andWhere('Objetrepere.idObjetRepere IN ('+ resultJustCreateOr.getQuery() +')')
-      .setParameter("status", 'C')
-      
-    try {
-      OrModifyCreate = await resultOrModifyCreate.getRawMany();
-    } catch (e) {
-      return {
-        status: HttpStatus.CONFLICT,
-        error: e,
-      }
-    }
-
-    for (const OrMC of OrModifyCreate) {
-      
-      
-      let orModify = await this.OrSaveRepo.findOne({
-        select : ['idObjetRepere','libelleObjetRepere','etat', 'date','profilModification'],
-        where : {
-          date : OrMC.datecreation,
-          idObjetRepere : OrMC.idobjetrepere
-        },
-        relations:["description"]
-      })
-
-      let getDescOfOR = await this.OrRepo.findOne({
-        where : {
-          idObjetRepere : OrMC.idobjetrepere
-        }, 
-        relations : ["description"]
-      })
-     
-        objetNow = {
-        id: OrMC.idobjetrepere,
-        libelle: orModify.libelleObjetRepere,
-        etat: orModify.etat,
-        description: orModify.description,
-        typeObjet: 'OR',
-        newlibelle: OrMC.libelleobjetrepere,
-        newEtat: OrMC.etat,
-        newDescription: getDescOfOR.description,
-        profilModification: OrMC.profilmodification,
-        dateModification: OrMC.datemodification
-      }
-      
-      InfoPerDay.objectModified.push(objetNow);
-    }
-
-
+  
 
     // Item //
     let ItemModify
@@ -862,7 +837,7 @@ export class ServiceAccueilService {
         select : ['idItem','libelleItem','etat','profilModification','date'],
         where : {
           date : Between(dateDebut,dateFin),
-          status : 'M'
+          status : In(['M','C'])
         },
         relations:["description"]
       })
@@ -871,15 +846,17 @@ export class ServiceAccueilService {
         select : ['idItem','libelleItem','etat','profilModification','date'],
         where : {
           date : Between(dateDebut,dateFin),
-          status : 'M',
+          status : In(['M','C']),
           profilModification : user
         },
         relations:["description"]
       })
     }
 
+    
     if ( ItemModify.length > 0 ) {
       for (const itemM of ItemModify){
+        let error :boolean = false;
         objetNow = {
           id: itemM.idItem,
           libelle: itemM.libelleItem,
@@ -892,110 +869,72 @@ export class ServiceAccueilService {
           profilModification: '',
           dateModification: itemM.date
         }
-        let dateDebut = new Date(itemM.date)
-        dateDebut.setSeconds(dateDebut.getSeconds()-3)
-        let dateFin = new Date(itemM.date)
-        dateFin.setSeconds(dateFin.getSeconds()+1)
+
         
         let itemModify = await this.itemSaveRepo.findOne({
           select : ['idItem','libelleItem','etat', 'date','profilModification'],
           where : {
             date : MoreThan(itemM.date),
-            idItem : itemM.idItem
+            idItem : itemM.idItem,
+            status:'M'
           },
           relations:["description"]
         })
+        
 
-        let itemReplaceitemModify; 
+        
         if(itemModify == undefined) {
-          itemReplaceitemModify = await this.itemRepo.findOne({
+          let itemReplaceitemModifyonCreation; 
+          itemReplaceitemModifyonCreation = await this.itemRepo.findOne({
             select : ['idItem','libelleItem','etat', 'profilModification', 'dateModification'],
             where : {
-              dateModification : Between(dateDebut,dateFin),
+              dateCreation : MoreThan(itemM.date),
               idItem : itemM.idItem
             },
             relations:["description"]
           })
-          objetNow.newlibelle = itemReplaceitemModify.libelleItem;
-          objetNow.newEtat = itemReplaceitemModify.etat;
-          objetNow.newDescription = itemReplaceitemModify.description;
-          objetNow.profilModification = itemReplaceitemModify.profilModification;
+
+
+
+          if(itemReplaceitemModifyonCreation == undefined) {
+            let itemReplaceitemModifyonModification;
+            itemReplaceitemModifyonModification = await this.itemRepo.findOne({
+              select : ['idItem','libelleItem','etat', 'profilModification', 'dateModification'],
+              where : {
+                dateModification : MoreThan(itemM.date),
+                idItem : itemM.idItem
+              },
+              relations:["description"]
+            })
+            if(itemReplaceitemModifyonModification == undefined) {
+              error =true;
+            } else {
+              objetNow.newlibelle = itemReplaceitemModifyonModification.libelleItem;
+              objetNow.newEtat = itemReplaceitemModifyonModification.etat;
+              objetNow.newDescription = itemReplaceitemModifyonModification.description;
+              objetNow.profilModification = itemReplaceitemModifyonModification.profilModification;
+              objetNow.dateModification = itemReplaceitemModifyonModification.dateModification
+            }
+          } else {
+            objetNow.newlibelle = itemReplaceitemModifyonCreation.libelleItem;
+            objetNow.newEtat = itemReplaceitemModifyonCreation.etat;
+            objetNow.newDescription = itemReplaceitemModifyonCreation.description;
+            objetNow.profilModification = itemReplaceitemModifyonCreation.profilModification;
+            objetNow.dateModification = itemReplaceitemModifyonCreation.dateModification
+          }
         } else {
           objetNow.newlibelle = itemModify.libelleItem;
           objetNow.newEtat = itemModify.etat;
           objetNow.newDescription = itemModify.description;
           objetNow.profilModification = itemModify.profilModification;
+          objetNow.dateModification = itemModify.date;
         }
-
-        InfoPerDay.objectModified.push(objetNow);
+        if (error != true) {
+          InfoPerDay.objectModified.push(objetNow);
+        }
       }
     }
 
-
-       
-    
-    const resultJustCreateItem = this.itemSaveRepo.createQueryBuilder("Itemsave")
-    .select(["Itemsave.idItem"])
-    .where((qb) => 
-            'Itemsave.date = '+ qb.subQuery()
-            .select(["MAX(a.date)"])
-            .from(Itemsave, "a")
-            .where("Itemsave.idItem = a.idItem")
-            .getQuery()
-    )
-    .andWhere("Itemsave.status = :status");
-  
-
-    let ItemModifyCreate;
-    const resultItemModifyCreate = this.itemRepo.createQueryBuilder("Item")
-      .select(["Item.idItem AS idItem", "Item.libelleItem AS libelleItem", "Item.etat AS etat", "Item.profilCreation AS profilCreation", "Item.dateCreation AS dateCreation","Item.profilModification AS profilModification", "Item.dateModification AS dateModification"])
-      .where("Item.dateModification IS NOT NULL")
-      .andWhere("Item.dateModification BETWEEN :start AND :end", { start: dateDebutModify, end: dateFinModify })
-      if(user !=undefined){
-        resultItemModifyCreate.andWhere("Item.profilCreation = :user", {user: user})
-      }
-      resultItemModifyCreate.andWhere('Item.idItem IN ('+ resultJustCreateItem.getQuery() +')')
-      .setParameter("status", 'C')
-    try {
-      ItemModifyCreate = await resultItemModifyCreate.getRawMany();
-    } catch (e) {
-      return {
-        status: HttpStatus.CONFLICT,
-        error: e,
-      }
-    }
- 
-      for (const itemMC of ItemModifyCreate) {
-        let itemModify = await this.itemSaveRepo.findOne({
-          select : ['idItem','libelleItem','etat', 'date','profilModification'],
-          where : {
-            date : itemMC.datecreation,
-            idItem : itemMC.iditem
-          },
-          relations:["description"]
-        })
-
-        let getDescOfItem = await this.itemRepo.findOne({
-          where : {
-            idItem : itemMC.iditem
-          }, 
-          relations : ["description"]
-        })
-
-        objetNow = {
-          id: itemMC.iditem,
-          libelle: itemModify.libelleItem,
-          etat: itemModify.etat,
-          description: itemModify.description,
-          typeObjet: 'Item',
-          newlibelle: itemMC.libelleitem,
-          newEtat: itemMC.etat,
-          newDescription: getDescOfItem.description,
-          profilModification: itemMC.profilmodification,
-          dateModification: itemMC.datemodification
-        }
-        InfoPerDay.objectModified.push(objetNow);
-      }
 
     // Sous-Item
     let SiModify
@@ -1004,7 +943,7 @@ export class ServiceAccueilService {
         select : ['idSousItem','libelleSousItem','etat','profilModification','date'],
         where : {
           date : Between(dateDebut,dateFin),
-          status : 'M'
+          status : In(['M','C'])
         },
         relations:["description"]
       })
@@ -1013,7 +952,7 @@ export class ServiceAccueilService {
         select : ['idSousItem','libelleSousItem','etat','profilModification','date'],
         where : {
           date : Between(dateDebut,dateFin),
-          status : 'M',
+          status : In(['M','C']),
           profilModification : user
         },
         relations:["description"]
@@ -1023,6 +962,7 @@ export class ServiceAccueilService {
     
     if ( SiModify.length > 0 ) {
       for (const siM of SiModify){
+        let error :boolean = false;
         objetNow = {
           id: siM.idSousItem,
           libelle: siM.libelleSousItem,
@@ -1035,110 +975,75 @@ export class ServiceAccueilService {
           profilModification: '',
           dateModification: siM.date
         }
-        let dateDebut = new Date(siM.date)
-        dateDebut.setSeconds(dateDebut.getSeconds()-3)
-        let dateFin = new Date(siM.date)
-        dateFin.setSeconds(dateFin.getSeconds()+1)
 
         let siModify = await this.SousItemSaveRepo.findOne({
           select : ['idSousItem','libelleSousItem','etat', 'date','profilModification'],
           where : {
             date : MoreThan(siM.date),
-            idSousItem : siM.idSousItem
+            idSousItem : siM.idSousItem,
+            status:'M'
           },
           relations:["description"]
         })
 
-        let siReplaceSiModify; 
+        console.log(siModify);
+        
+        
         if(siModify == undefined) {
-          siReplaceSiModify = await this.SousItemRepo.findOne({
+          let siReplaceSiModifyonCreation; 
+          siReplaceSiModifyonCreation = await this.SousItemRepo.findOne({
             select : ['idSousItem','libelleSousItem','etat', 'profilModification', 'dateModification'],
             where : {
-              dateModification : Between(dateDebut,dateFin),
+              dateCreation : MoreThan(siM.date),
               idSousItem : siM.idSousItem
             },
             relations:["description"]
           })
+          console.log(siReplaceSiModifyonCreation);
+
+          if(siReplaceSiModifyonCreation == undefined) {
+            let siReplacesiModifyonModification;
+            siReplacesiModifyonModification = await this.SousItemRepo.findOne({
+              select : ['idSousItem','libelleSousItem','etat', 'profilModification', 'dateModification'],
+              where : {
+                dateModification : MoreThan(siM.date),
+                idSousItem : siM.idSousItem
+              },
+              relations:["description"]
+            })
+            if (siReplacesiModifyonModification == undefined){
+              error = true
+            } else {
+              objetNow.newlibelle = siReplacesiModifyonModification.libelleSousItem;
+              objetNow.newEtat = siReplacesiModifyonModification.etat;
+              objetNow.newDescription = siReplacesiModifyonModification.description;
+              objetNow.profilModification = siReplacesiModifyonModification.profilModification;
+              objetNow.dateModification = siReplacesiModifyonModification.dateModification;
+            }
+
+          } else {
             
-            objetNow.newlibelle = siReplaceSiModify.libelleSousItem;
-            objetNow.newEtat = siReplaceSiModify.etat;
-            objetNow.newDescription = siReplaceSiModify.description;
-            objetNow.profilModification = siReplaceSiModify.profilModification;
-          
+            objetNow.newlibelle = siReplaceSiModifyonCreation.libelleSousItem;
+            objetNow.newEtat = siReplaceSiModifyonCreation.etat;
+            objetNow.newDescription = siReplaceSiModifyonCreation.description;
+            objetNow.profilModification = siReplaceSiModifyonCreation.profilModification;
+            objetNow.dateModification = siReplaceSiModifyonCreation.dateModification;
+          }
         } else {
           objetNow.newlibelle = siModify.libelleSousItem;
           objetNow.newEtat = siModify.etat;
           objetNow.newDescription = siModify.description;
           objetNow.profilModification = siModify.profilModification;
+          objetNow.dateModification = siModify.date;
         }
-        InfoPerDay.objectModified.push(objetNow);
+        if (error != true) {
+          InfoPerDay.objectModified.push(objetNow);
+        }
       }
     }
 
 
-    const resultJustCreateSI = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
-    .select(["Sousitemsave.idSousItem"])
-    .where((qb) => 
-            'Sousitemsave.date = '+ qb.subQuery()
-            .select(["MAX(a.date)"])
-            .from(Sousitemsave, "a")
-            .where("Sousitemsave.idSousItem = a.idSousItem")
-            .getQuery()
-    )
-    .andWhere("Sousitemsave.status = :status");
-
-    let SiModifyCreate;
-    const resultSiModifyCreate = this.SousItemRepo.createQueryBuilder("Sousitem")
-      .select(["Sousitem.idSousItem AS idSousItem", "Sousitem.libelleSousItem AS libelleSousItem", "Sousitem.etat AS etat", "Sousitem.profilCreation AS profilCreation", "Sousitem.dateCreation AS dateCreation", "Sousitem.profilModification AS profilModification", "Sousitem.dateModification AS dateModification"])
-      .where("Sousitem.dateModification IS NOT NULL")
-      .andWhere("Sousitem.dateModification BETWEEN :start AND :end", { start: dateDebutModify, end: dateFinModify })
-      if(user !=undefined){
-        resultSiModifyCreate.andWhere("Sousitem.profilCreation = :user", {user: user})
-      }
-      resultSiModifyCreate.andWhere('Sousitem.idSousItem IN ('+ resultJustCreateSI.getQuery() +')')
-      .setParameter("status", 'C')
-    try {
-      SiModifyCreate = await resultSiModifyCreate.getRawMany();
-    } catch (e) {
-      return {
-        status: HttpStatus.CONFLICT,
-        error: e,
-      }
-    }
-
-    for (const SiMC of SiModifyCreate) {
-      let itemModify = await this.SousItemSaveRepo.findOne({
-        select : ['idSousItem','libelleSousItem','etat', 'date','profilModification'],
-        where : {
-          date : SiMC.datecreation,
-          idSousItem : SiMC.idsousitem
-        },
-        relations:["description"]
-      })
-
-      let getDescOfSI = await this.SousItemRepo.findOne({
-        where : {
-          idSousItem : SiMC.idsousitem
-        }, 
-        relations : ["description"]
-      })
-
-      objetNow = {
-        id: SiMC.idsousitem,
-        libelle: itemModify.libelleSousItem,
-        etat: itemModify.etat,
-        description: itemModify.description,
-        typeObjet: 'SI',
-        newlibelle: SiMC.libellesousitem,
-        newEtat: SiMC.etat,
-        newDescription: getDescOfSI.description,
-        profilModification: SiMC.profilmodification,
-        dateModification: SiMC.datemodification
-      }
-      InfoPerDay.objectModified.push(objetNow);
-
-    }
-
+      
       const sortedModifyDesc = InfoPerDay.objectModified.sort(
         (objA, objB) => objB.dateModification.getTime() - objA.dateModification.getTime(),
       );

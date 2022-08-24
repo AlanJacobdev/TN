@@ -312,7 +312,7 @@ export class SousitemService {
       dateModif = sousitem.dateCreation   
     } else {
       statusItem = 'M'
-      dateModif = new Date();
+      dateModif = sousitem.dateModification;
     }
   
     let sousitemsaveDTO = new CreateSousitemsaveDto();
@@ -402,7 +402,19 @@ export class SousitemService {
       }
     
       const oldSi = await this.sousitemSaveService.findOnebyIDDesc(id);
-      if ( oldSi == undefined || oldSi.status == 'D' ) {
+
+      if ( oldSi == undefined || oldSi.status == 'D' || oldSi.status == 'M' ||  oldSi.status == 'C') {
+    
+        let dateDel : Date;
+        let statusOr : string = "";
+        if ( oldSi == undefined || oldSi.status == 'D' ) {
+          statusOr = 'C'
+          dateDel = sousitem.dateCreation   
+        } else if (oldSi.status == 'M' || oldSi.status == 'C'){
+          statusOr = 'M'
+          dateDel = sousitem.dateModification;
+        }
+      
         let SiCreateSaveDTO = new CreateSousitemsaveDto();
         SiCreateSaveDTO = {
           idSousItem : sousitem.idSousItem,
@@ -412,8 +424,8 @@ export class SousitemService {
           securite : sousitem.securite,
           estPrefixe : sousitem.estPrefixe,
           etat : sousitem.etat,
-          date : sousitem.dateCreation,
-          status : 'C',
+          date : dateDel,
+          status :statusOr,
           description : sousitem.description,
           profilModification : user,
           posteModification : ""   
@@ -480,8 +492,8 @@ export class SousitemService {
     let alltype = await this.typeObjetService.findAllType();
     
     for (const typeUse of allTypeUsed){
-      let index = alltype.findIndex((element) => element.idType === typeUse.idTypeObjet)
-      if (index != -1) {
+      let index = alltype.findIndex((element) => element.idType === typeUse.idtypeobjet)
+      if (index != -1) {        
         alltype.splice(index,1);
       }
     }
@@ -501,7 +513,7 @@ export class SousitemService {
     let alltype = await this.typeObjetService.findAllTypeActif();
     
     for (const typeUse of allTypeUsed){
-      let index = alltype.findIndex((element) => element.idType === typeUse.idTypeObjet)
+      let index = alltype.findIndex((element) => element.idType === typeUse.idtypeobjet)
       if (index != -1) {
         alltype.splice(index,1);
       }

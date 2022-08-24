@@ -345,7 +345,7 @@ export class ItemService {
       dateModif = item.dateCreation     
     } else {
       statusItem = 'M'
-      dateModif = new Date();
+      dateModif = item.dateModification;
     }
     let itemSaveDTO = new CreateItemsaveDto();
     itemSaveDTO = {
@@ -447,7 +447,19 @@ export class ItemService {
       }
 
       const oldItem = await this.itemSaveService.findOnebyIDDesc(id);
-      if ( oldItem == undefined || oldItem.status == 'D' ) {
+
+      if ( oldItem == undefined || oldItem.status == 'D' || oldItem.status == 'M' ||  oldItem.status == 'C') {
+    
+        let dateDel : Date;
+        let statusOr : string = "";
+        if ( oldItem == undefined || oldItem.status == 'D' ) {
+          statusOr = 'C'
+          dateDel = item.dateCreation   
+        } else if (oldItem.status == 'M' || oldItem.status == 'C'){
+          statusOr = 'M'
+          dateDel = item.dateModification;
+        }
+
         let itemCreateSaveDTO = new CreateItemsaveDto();
         itemCreateSaveDTO = {
           idItem : item.idItem,
@@ -458,9 +470,9 @@ export class ItemService {
           digit : item.digit,
           securite : item.securite,
           etat : item.etat,
-          status : "C",
+          status : statusOr,
           description : item.description,
-          date : item.dateCreation,
+          date : dateDel,
           profilModification : user,
           posteModification : ""
         }    
