@@ -23,7 +23,7 @@ export class Objetrepere {
     codeType : string;
     
     @Column({length : 4})
-    @OneToOne(() => Numerounique)
+    @ManyToOne(() => Numerounique)
     @JoinColumn({name: 'numeroUnique'})
     numeroUnique : string;
 

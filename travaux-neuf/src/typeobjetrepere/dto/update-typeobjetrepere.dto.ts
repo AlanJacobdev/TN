@@ -2,7 +2,7 @@ import { Allow, IsNotEmpty } from 'class-validator';
 
 export class UpdateTypeobjetrepereDto {
 
-    @IsNotEmpty()
+    @Allow()
     libelleTypeOR : string;
 
     @IsNotEmpty()

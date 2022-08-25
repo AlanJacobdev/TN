@@ -7,7 +7,7 @@ import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { Sousitemsave } from 'src/sousitemsave/entities/sousitemsave.entity';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
-import { Between, In, MoreThan, Not, Repository } from 'typeorm';
+import { Between, In, MoreThan, Repository } from 'typeorm';
 import { infoPerDayModified, infoPerMonth, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
 
 
@@ -92,16 +92,33 @@ export class ServiceAccueilService {
       }
     }
     
-    const resultItemModify = this.itemSaveRepo.createQueryBuilder("Itemsave")
+    const resultItemModifySave = this.itemSaveRepo.createQueryBuilder("Itemsave")
     .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
     .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
     .andWhere("Itemsave.status = 'M'")
     if(user !=undefined){
-      resultItemModify.andWhere("Itemsave.profilModification = :user", {user: user})
+      resultItemModifySave.andWhere("Itemsave.profilModification = :user", {user: user})
     }
-    resultItemModify.groupBy("TO_CHAR(Itemsave.date, 'DD-MM-YYYY')")
+    resultItemModifySave.groupBy("TO_CHAR(Itemsave.date, 'DD-MM-YYYY')")
     try {
-      itemModify = await resultItemModify.getRawMany();
+      itemModify = await resultItemModifySave.getRawMany();
+    } catch (e) {
+      return {
+        status: HttpStatus.CONFLICT,
+        error: "Problème lié à la récupération des items modifiés",
+      }
+    }
+    let itemModifySave
+    const resultItemCreateSave = this.itemRepo.createQueryBuilder("Item")
+    .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')) as count"])
+    .where("Item.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .andWhere("Item.dateModification IS NOT NULL")
+    if(user !=undefined){
+      resultItemCreateSave.andWhere("Item.profilCreation = :user", {user: user})
+    }
+    resultItemCreateSave.groupBy("TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')")
+    try {
+      itemModifySave = await resultItemCreateSave.getRawMany();
     } catch (e) {
       return {
         status: HttpStatus.CONFLICT,
@@ -109,44 +126,7 @@ export class ServiceAccueilService {
       }
     }
 
-    const resultJustCreateItem = this.itemSaveRepo.createQueryBuilder("Itemsave")
-    .select(["Itemsave.idItem"])
-    .where((qb) => 
-            'Itemsave.date = '+ qb.subQuery()
-            .select(["a.date"])
-            .from(Itemsave, "a")
-            .where("Itemsave.idItem = a.idItem")
-            .andWhere("Itemsave.status = 'C'")
-            .orderBy("Itemsave.date", "DESC")
-            .limit(1)
-            .getQuery()
-    )
-  
-
-    
-    let ItemModifyCreate;
-    const resultItemModifyCreate = this.itemRepo.createQueryBuilder("Item")
-      .select(["TO_CHAR(Item.dateModification, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateModification, 'DD-MM-YYYY')) as count"])
-      .where("Item.dateModification IS NOT NULL")
-      .andWhere("Item.dateModification BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
-      if(user !=undefined){
-        resultItemModifyCreate.andWhere("Item.profilCreation = :user", {user: user})
-      }
-      resultItemModifyCreate.andWhere('Item.idItem IN ('+ resultJustCreateItem.getQuery() +')')
-    
-      resultItemModifyCreate.groupBy("TO_CHAR(Item.dateModification, 'DD-MM-YYYY')")
-    try {
-      
-      ItemModifyCreate = await resultItemModifyCreate.getRawMany();
-      
-    } catch (e) {
-      return {
-        status: HttpStatus.CONFLICT,
-        error: e,
-      }
-    }
-
-    for ( const item of ItemModifyCreate) {
+    for ( const item of itemModifySave) {
       let index = itemModify.findIndex((element) => element.date == item.date)
       if (index != -1) {   
 
@@ -155,7 +135,7 @@ export class ServiceAccueilService {
         itemModify.push(item);
       }
     }
-    
+
 
     const resultItemsaveDelete = this.itemSaveRepo.createQueryBuilder("Itemsave")
       .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
@@ -217,16 +197,16 @@ export class ServiceAccueilService {
     }
 
 
-    const resultOrModify = this.OrSaveRepo.createQueryBuilder("Orsave")
+    const resultOrModifySave = this.OrSaveRepo.createQueryBuilder("Orsave")
     .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
     .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
     .andWhere("Orsave.status = 'M'")
     if(user !=undefined){
-      resultOrModify.andWhere("Orsave.profilModification = :user", {user: user})
+      resultOrModifySave.andWhere("Orsave.profilModification = :user", {user: user})
     }
-    resultOrModify.groupBy("TO_CHAR(Orsave.date, 'DD-MM-YYYY')")
+    resultOrModifySave.groupBy("TO_CHAR(Orsave.date, 'DD-MM-YYYY')")
     try {
-      OrModify = await resultOrModify.getRawMany();
+      OrModify = await resultOrModifySave.getRawMany();
     } catch (e) {
       return {
         status: HttpStatus.CONFLICT,
@@ -234,50 +214,36 @@ export class ServiceAccueilService {
       }
     }
 
-
-    const resultJustCreateOr = this.OrSaveRepo.createQueryBuilder("Orsave")
-    .select(["Orsave.idObjetRepere"])
-    .where((qb) => 
-            'Orsave.date = '+ qb.subQuery()
-            .select(["MAX(a.date)"])
-            .from(Orsave, "a")
-            .where("Orsave.idObjetRepere = a.idObjetRepere")
-            .getQuery()
-    )
-    .andWhere("Orsave.status = :status");
-    
-      
     let OrModifyCreate;
     const resultOrModifyCreate = this.OrRepo.createQueryBuilder("Objetrepere")
-      .select(["TO_CHAR(Objetrepere.dateModification, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Objetrepere.dateModification, 'DD-MM-YYYY')) as count"])
+      .select(["TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY')) as count"])
       .where("Objetrepere.dateModification IS NOT NULL")
-      .andWhere("Objetrepere.dateModification BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      .andWhere("Objetrepere.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
       if(user !=undefined){
         resultOrModifyCreate.andWhere("Objetrepere.profilCreation = :user", {user: user})
       }
-      resultOrModifyCreate.andWhere('Objetrepere.idObjetRepere IN ('+ resultJustCreateOr.getQuery() +')')
-      .setParameter("status", 'C')
-      resultOrModifyCreate.groupBy("TO_CHAR(Objetrepere.dateModification, 'DD-MM-YYYY')")
+      resultOrModifyCreate.groupBy("TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY')")
     try {
       OrModifyCreate = await resultOrModifyCreate.getRawMany();
     } catch (e) {
       return {
         status: HttpStatus.CONFLICT,
-        error: e,
+        error: "Problème lié à la récupération des objets repères créés",
       }
     }
 
 
-    for ( const item of OrModifyCreate) {
-      let index = OrModify.findIndex((element) => element.date == item.date)
+    for ( const or of OrModifyCreate) {
+      let index = OrModify.findIndex((element) => element.date == or.date)
       if (index != -1) {   
 
-        OrModify[index].count = +OrModify[index].count + +item.count   
+        OrModify[index].count = +OrModify[index].count + +or.count   
       } else {
-        OrModify.push(item);
+        OrModify.push(or);
       }
     }
 
+    
     const resultOrsaveDelete = this.OrSaveRepo.createQueryBuilder("Orsave")
       .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
       .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
@@ -365,17 +331,17 @@ export class ServiceAccueilService {
     }
 
 
-    const resultSiModify = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
+    const resultSiModifySave = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
     .select(["TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')) as count"])
     .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
-    .andWhere("Sousitemsave.status = 'M'")
+    .andWhere("Sousitemsave.status = 'M' ")
     if(user !=undefined){
-      resultSiModify.andWhere("Sousitemsave.profilModification = :user", {user: user})
+      resultSiModifySave.andWhere("Sousitemsave.profilModification = :user", {user: user})
     }
-    resultSiModify.groupBy("TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')")
+    resultSiModifySave.groupBy("TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')")
     
     try {
-      sousItemModify = await resultSiModify.getRawMany();
+      sousItemModify = await resultSiModifySave.getRawMany();
     } catch (e) {
       return {
         status: HttpStatus.CONFLICT,
@@ -383,49 +349,34 @@ export class ServiceAccueilService {
       }
     }
 
-
-    const resultJustCreateSI = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
-    .select(["Sousitemsave.idSousItem"])
-    .where((qb) => 
-            'Sousitemsave.date = '+ qb.subQuery()
-            .select(["MAX(a.date)"])
-            .from(Sousitemsave, "a")
-            .where("Sousitemsave.idSousItem = a.idSousItem")
-            .getQuery()
-    )
-    .andWhere("Sousitemsave.status = :status");
-
-    let SiModifyCreate;
+    let sousItemModifyCreate
     const resultSiModifyCreate = this.SousItemRepo.createQueryBuilder("Sousitem")
-      .select(["TO_CHAR(Sousitem.dateModification, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitem.dateModification, 'DD-MM-YYYY')) as count"])
-      .where("Sousitem.dateModification IS NOT NULL")
-      .andWhere("Sousitem.dateModification BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
-      if(user !=undefined){
-        resultSiModifyCreate.andWhere("Sousitem.profilCreation = :user", {user: user})
-      }
-      resultSiModifyCreate.andWhere('Sousitem.idSousItem IN ('+ resultJustCreateSI.getQuery() +')')
-      .setParameter("status", 'C')
-      resultSiModifyCreate.groupBy("TO_CHAR(Sousitem.dateModification, 'DD-MM-YYYY')")
+    .select(["TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY')) as count"])
+    .where("Sousitem.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .andWhere("Sousitem.dateModification IS NOT NULL")
+    if(user !=undefined){
+      resultSiModifyCreate.andWhere("Sousitem.profilCreation = :user", {user: user})
+    }
+    resultSiModifyCreate.groupBy("TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY')")
     try {
-
-      
-      SiModifyCreate = await resultSiModifyCreate.getRawMany();
+      sousItemModifyCreate = await resultSiModifyCreate.getRawMany();
     } catch (e) {
       return {
         status: HttpStatus.CONFLICT,
-        error: e,
+        error: "Problème lié à la récupération des sous items créés",
       }
     }
-
-    for ( const item of SiModifyCreate) {
-      let index = sousItemModify.findIndex((element) => element.date == item.date)
+  
+    for ( const sousitem of sousItemModifyCreate) {
+      let index = sousItemModify.findIndex((element) => element.date == sousitem.date)
       if (index != -1) {   
 
-        sousItemModify[index].count = +sousItemModify[index].count + +item.count   
+        sousItemModify[index].count = +sousItemModify[index].count + +sousitem.count   
       } else {
-        sousItemModify.push(item);
+        sousItemModify.push(sousitem);
       }
     }
+
     
 
     const resultSisaveDelete = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
@@ -490,8 +441,13 @@ export class ServiceAccueilService {
 
   async getHistoryOfOneDay(date : string, user? :string){
     const dateDebut = new Date(date);
+    dateDebut.setSeconds(dateDebut.getSeconds()-2)
+    console.log(dateDebut);
+    
     let dateFin = new Date(date);
     dateFin.setDate(dateFin.getDate() + 1)
+    console.log(dateFin);
+    
     let InfoPerDay : typeInfoPerDay ={
       objectCreated: [],
       objectModified: [],
@@ -511,6 +467,9 @@ export class ServiceAccueilService {
         },
         relations:["description"]
       })
+      console.log(await this.OrRepo.find());
+      
+      
       OrCreateSave = await this.OrSaveRepo.find({
         select:['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
         where : {
@@ -781,7 +740,7 @@ export class ServiceAccueilService {
           OrReplaceOrModifyonCreation = await this.OrRepo.findOne({
             select : ['idObjetRepere','libelleObjetRepere','etat', 'profilModification', 'dateModification'],
             where : {
-              dateModification : MoreThan(orM.date),
+              dateCreation : MoreThan(orM.date),
               idObjetRepere : orM.idObjetRepere
             },
             relations:["description"]
@@ -986,7 +945,7 @@ export class ServiceAccueilService {
           relations:["description"]
         })
 
-        console.log(siModify);
+
         
         
         if(siModify == undefined) {
@@ -999,7 +958,7 @@ export class ServiceAccueilService {
             },
             relations:["description"]
           })
-          console.log(siReplaceSiModifyonCreation);
+
 
           if(siReplaceSiModifyonCreation == undefined) {
             let siReplacesiModifyonModification;
