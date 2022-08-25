@@ -47,6 +47,7 @@ export class ServiceAccueilService {
     dateFin = new Date(end)
     dateFin.setDate(dateFin.getDate() + 1)
 
+    
     const resultItemCreation = this.itemRepo.createQueryBuilder("Item")
       .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')) as count"])
       .where("Item.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
@@ -441,7 +442,6 @@ export class ServiceAccueilService {
 
   async getHistoryOfOneDay(date : string, user? :string){
     const dateDebut = new Date(date);
-    dateDebut.setSeconds(dateDebut.getSeconds()-2)
     console.log(dateDebut);
     
     let dateFin = new Date(date);
@@ -458,22 +458,23 @@ export class ServiceAccueilService {
     let OrCreate;
     let OrCreateSave;
  
+
     if (user == undefined){
       OrCreate = await this.OrRepo.find({
         select:['idObjetRepere', 'libelleObjetRepere','etat','profilCreation','dateCreation'],
         where : {
-          dateCreation : Between(dateDebut,dateFin),
+          dateCreation : Between(dateDebut.toISOString(),dateFin.toISOString()),
           dateModification : null
         },
         relations:["description"]
       })
-      console.log(await this.OrRepo.find());
+      
       
       
       OrCreateSave = await this.OrSaveRepo.find({
         select:['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut,dateFin),
+          date : Between(dateDebut.toISOString() ,dateFin.toISOString()),
           status : 'C'
         },
         relations : ["description"]
@@ -483,7 +484,7 @@ export class ServiceAccueilService {
       OrCreate = await this.OrRepo.find({
         select:['idObjetRepere', 'libelleObjetRepere','etat','profilCreation','dateCreation'],
         where : {
-          dateCreation : Between(dateDebut,dateFin),
+          dateCreation : Between(dateDebut.toISOString() ,dateFin.toISOString()),
           profilCreation : user,
           dateModification : null
         },
@@ -492,7 +493,7 @@ export class ServiceAccueilService {
       OrCreateSave = await this.OrSaveRepo.find({
         select:['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut,dateFin),
+          date : Between(dateDebut.toISOString() ,dateFin.toISOString()),
           profilModification : user,
           status : 'C'
         },
@@ -526,22 +527,27 @@ export class ServiceAccueilService {
       })
     }
 
+
+    
     let ItemCreate
     let ItemCreateSave
  
     if (user == undefined){
-      ItemCreate = await this.itemRepo.find({
-        select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
-        where : {
-          dateCreation : Between(dateDebut, dateFin),
-          dateModification : null
-        },
-        relations:["description"]
-      })
+ 
+    
+    ItemCreate = await this.itemRepo.find({
+      select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
+      where : {
+        dateCreation : Between(dateDebut.toISOString(), dateFin.toISOString()),
+        dateModification : null
+      },
+      relations:["description"]
+    })
+
       ItemCreateSave  = await this.itemSaveRepo.find({
         select:['idItem', 'libelleItem', 'etat', 'profilModification', 'date'],
         where : {
-          date : Between(dateDebut, dateFin),
+          date : Between(dateDebut.toISOString(), dateFin.toISOString()),
           status : 'C'
         },
         relations:["description"]
@@ -553,7 +559,7 @@ export class ServiceAccueilService {
       ItemCreate = await this.itemRepo.find({
         select:['idItem', 'libelleItem', 'etat', 'profilCreation', 'dateCreation'],
         where : {
-          dateCreation : Between(dateDebut, dateFin),
+          dateCreation : Between(dateDebut.toISOString(), dateFin.toISOString()),
           dateModification : null,
           profilCreation : user
         },
@@ -562,7 +568,7 @@ export class ServiceAccueilService {
       ItemCreateSave = await this.itemSaveRepo.find({
         select:['idItem', 'libelleItem', 'etat', 'profilModification', 'date'],
         where : {
-          date : Between(dateDebut, dateFin),
+          date : Between(dateDebut.toISOString(), dateFin.toISOString()),
           profilModification : user,
           status : 'C'
         },
@@ -602,7 +608,7 @@ export class ServiceAccueilService {
       SiCreate = await this.SousItemRepo.find({
         select:['idSousItem','libelleSousItem','etat','profilCreation','dateCreation'],
         where : {
-          dateCreation : Between(dateDebut, dateFin),
+          dateCreation : Between(dateDebut.toISOString(), dateFin.toISOString()),
           dateModification : null
         },
         relations:["description"]
@@ -610,7 +616,7 @@ export class ServiceAccueilService {
       SiCreateSave = await this.SousItemSaveRepo.find({
         select:['idSousItem','libelleSousItem','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut, dateFin),
+          date : Between(dateDebut.toISOString(), dateFin.toISOString()),
           status : 'C'
         },
         relations:["description"]
@@ -619,7 +625,7 @@ export class ServiceAccueilService {
       SiCreate = await this.SousItemRepo.find({
         select:['idSousItem','libelleSousItem','etat','profilCreation','dateCreation'],
         where : {
-          dateCreation : Between(dateDebut, dateFin),
+          dateCreation : Between(dateDebut.toISOString(), dateFin.toISOString()),
           dateModification : null,
           profilCreation : user
         },
@@ -628,7 +634,7 @@ export class ServiceAccueilService {
       SiCreateSave = await this.SousItemSaveRepo.find({
         select:['idSousItem','libelleSousItem','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut, dateFin),
+          date : Between(dateDebut.toISOString(), dateFin.toISOString()),
           profilModification : user,
           status : 'C'
         },
@@ -670,7 +676,7 @@ export class ServiceAccueilService {
       OrModify = await this.OrSaveRepo.find({
         select : ['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut,dateFin),
+          date : Between(dateDebut.toISOString(),dateFin.toISOString()),
           status : In(['M','C'])
         },
         relations:["description"]
@@ -679,7 +685,7 @@ export class ServiceAccueilService {
       OrModify = await this.OrSaveRepo.find({
         select : ['idObjetRepere','libelleObjetRepere','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut,dateFin),
+          date : Between(dateDebut.toISOString(),dateFin.toISOString()),
           status : In(['M','C']),
           profilModification : user
         },
@@ -795,7 +801,7 @@ export class ServiceAccueilService {
       ItemModify = await this.itemSaveRepo.find({
         select : ['idItem','libelleItem','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut,dateFin),
+          date : Between(dateDebut.toISOString(),dateFin.toISOString()),
           status : In(['M','C'])
         },
         relations:["description"]
@@ -804,7 +810,7 @@ export class ServiceAccueilService {
       ItemModify = await this.itemSaveRepo.find({
         select : ['idItem','libelleItem','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut,dateFin),
+          date : Between(dateDebut.toISOString(),dateFin.toISOString()),
           status : In(['M','C']),
           profilModification : user
         },
@@ -901,7 +907,7 @@ export class ServiceAccueilService {
       SiModify = await this.SousItemSaveRepo.find({
         select : ['idSousItem','libelleSousItem','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut,dateFin),
+          date : Between(dateDebut.toISOString(), dateFin.toISOString()),
           status : In(['M','C'])
         },
         relations:["description"]
@@ -910,7 +916,7 @@ export class ServiceAccueilService {
       SiModify = await this.SousItemSaveRepo.find({
         select : ['idSousItem','libelleSousItem','etat','profilModification','date'],
         where : {
-          date : Between(dateDebut,dateFin),
+          date : Between(dateDebut.toISOString(), dateFin.toISOString()),
           status : In(['M','C']),
           profilModification : user
         },
@@ -1015,7 +1021,7 @@ export class ServiceAccueilService {
         OrDelete = await this.OrSaveRepo.find({
           select:['idObjetRepere', 'libelleObjetRepere','etat','profilModification','date'],
           where : {
-            date : Between(dateDebut,dateFin),
+            date : Between(dateDebut.toISOString(), dateFin.toISOString()),
             status : 'D'
           },
           relations:["description"]
@@ -1024,7 +1030,7 @@ export class ServiceAccueilService {
         OrDelete = await this.OrSaveRepo.find({
           select:['idObjetRepere', 'libelleObjetRepere','etat','profilModification','date'],
           where : {
-            date : Between(dateDebut,dateFin),
+            date : Between(dateDebut.toISOString(), dateFin.toISOString()),
             status : 'D',
             profilModification : user
           },
@@ -1049,7 +1055,7 @@ export class ServiceAccueilService {
         ItemDelete = await this.itemSaveRepo.find({
           select:['idItem', 'libelleItem', 'etat', 'profilModification', 'date'],
           where : {
-            date: Between(dateDebut, dateFin),
+            date: Between(dateDebut.toISOString(), dateFin.toISOString()),
             status : 'D'
           },
           relations:["description"]
@@ -1058,7 +1064,7 @@ export class ServiceAccueilService {
         ItemDelete = await this.itemSaveRepo.find({
           select:['idItem', 'libelleItem', 'etat', 'profilModification', 'date'],
           where : {
-            date: Between(dateDebut, dateFin),
+            date: Between(dateDebut.toISOString(), dateFin.toISOString()),
             status : 'D',
             profilModification : user
           },
@@ -1084,7 +1090,7 @@ export class ServiceAccueilService {
         SiDelete = await this.SousItemSaveRepo.find({
           select:['idSousItem','libelleSousItem','etat','profilModification','date'],
           where : {
-            date : Between(dateDebut, dateFin),
+            date : Between(dateDebut.toISOString(), dateFin.toISOString()),
             status : 'D'
           },
           relations:["description"]
@@ -1093,7 +1099,7 @@ export class ServiceAccueilService {
         SiDelete = await this.SousItemSaveRepo.find({
           select:['idSousItem','libelleSousItem','etat','profilModification','date'],
           where : {
-            date : Between(dateDebut, dateFin),
+            date : Between(dateDebut.toISOString(), dateFin.toISOString()),
             status : 'D',
             profilModification: user
           },
