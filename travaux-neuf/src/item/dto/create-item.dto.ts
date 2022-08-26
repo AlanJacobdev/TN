@@ -25,7 +25,7 @@ export class CreateItemDto {
         "message": "Le digit doit être un nombre"
     })
     @IsNotEmpty()
-    digit : number;
+    digit : string;
 
     @IsNotEmpty()
     codeObjet : string;

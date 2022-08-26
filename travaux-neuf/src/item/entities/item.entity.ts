@@ -30,7 +30,7 @@ export class Item {
     numeroUnique : string;
 
     @Column({width : 1})
-    digit : number;
+    digit : string;
 
     @ManyToOne(() => Typeobjet)
     @JoinColumn({name: 'codeObjet'})

@@ -24,7 +24,7 @@ export class Itemsave {
     numeroUnique : string;
     
     @Column({width : 1})
-    digit : number;
+    digit : string;
     
     @Column({length : 2})
     codeObjet : string;

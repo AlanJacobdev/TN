@@ -545,12 +545,20 @@ export class ItemService {
         "libelle" : ""
       })
     }
-
     for (const item of ItemByORAndType) {
+     
       let index = itemAndDispo.findIndex((element) => element.idItem === item.idItem || element.idItem + 'Z' === item.idItem)
       itemAndDispo[index] = {
         "idItem" : item.idItem,
         "libelle" : item.libelleItem
+      }
+      if(index == -1) {
+        if(item.codeObjet == type){
+          itemAndDispo.push({
+            "idItem" : item.idItem,
+            "libelle" : item.libelleItem
+          })
+        }
       }
     }
     return itemAndDispo;

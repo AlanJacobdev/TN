@@ -10,8 +10,6 @@ import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class UtilisateurService {
-
-
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private roleService : RoleService){}
   
   async create(createUtilisateurDto: CreateUtilisateurDto) {
@@ -70,6 +68,15 @@ export class UtilisateurService {
     })
   }
 
+  estAdmin(id: number) {
+    return this.utiRepo.findOne({
+      select : ["estAdministrateur"],
+      where : {
+        idUtilisateur : id
+      }
+    })
+  }
+  
   findOneForToken( login : string, refreshToken : string, refreshTokenExp : string) {
     return this.utiRepo.findOne({
       where : {

@@ -23,7 +23,7 @@ export class CreateItemsaveDto {
     numeroUnique : string;
     
     @IsNotEmpty()
-    digit : number;
+    digit : string;
     
     @IsNotEmpty()
     codeObjet : string;

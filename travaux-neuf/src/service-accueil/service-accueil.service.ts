@@ -442,11 +442,9 @@ export class ServiceAccueilService {
 
   async getHistoryOfOneDay(date : string, user? :string){
     const dateDebut = new Date(date);
-    console.log(dateDebut);
     
     let dateFin = new Date(date);
     dateFin.setDate(dateFin.getDate() + 1)
-    console.log(dateFin);
     
     let InfoPerDay : typeInfoPerDay ={
       objectCreated: [],

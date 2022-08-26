@@ -31,6 +31,12 @@ export class UtilisateurController {
     return this.utilisateurService.findOne(+id);
   }
 
+  @Get('estAdmin/:id')
+  estAdmin(@Param('id') id: string) {
+    return this.utilisateurService.estAdmin(+id);
+  }
+
+
   @Get('findOneConnexion/:login/:password')
   findOneConnexion(@Param('login') login: string, @Param('password') password: string ) {
     return this.utilisateurService.findOneConnexion(login, password);
