@@ -573,6 +573,7 @@ export class ObjetrepereService {
     let allORByAtelier = await this.getORByAtelier(Atelier);
     for (const nu of allNU) {
       res.push({
+        "nu" : nu.idNumeroUnique,
         "numeroUnique" : nu.idNumeroUnique,
         "libelleOR" : ""
       })
@@ -580,10 +581,20 @@ export class ObjetrepereService {
     for (const or of allORByAtelier) {
       let index = res.findIndex((element) => element.numeroUnique === or.numeroUnique)
       res[index] = {
-        "numeroUnique" : or.numeroUnique,
+        "nu" : or.numeroUnique,
+        "numeroUnique" : or.codeType+or.numeroUnique,
         "libelleOR" : or.libelleObjetRepere
       }
+      if(index == -1) {
+        res.push({
+          "nu" : or.numeroUnique,
+          "numeroUnique" : or.codeType+or.numeroUnique,
+          "libelleOR" : or.libelleObjetRepere
+        })
+      }
     }
+    
+    res = res.sort((objA, objB) => Number(objA.nu.substring(1,4)) < Number(objB.nu.substring(1,4)) ? -1 : Number(objA.nu.substring(1,4)) > Number(objB.nu.substring(1,4)) ? 1 : 0 )
     return res;
   }
 
