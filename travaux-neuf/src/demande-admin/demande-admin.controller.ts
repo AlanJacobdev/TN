@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 import { DemandeAdminService } from './demande-admin.service';
 import { CreateDemandeAdminDto } from './dto/create-demande-admin.dto';
 import { UpdateDemandeAdminDto } from './dto/update-demande-admin.dto';
@@ -15,36 +16,43 @@ import { UpdateDemandeAdminDto } from './dto/update-demande-admin.dto';
 export class DemandeAdminController {
   constructor(private readonly demandeAdminService: DemandeAdminService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createDemandeAdminDto: CreateDemandeAdminDto) {
     return this.demandeAdminService.create(createDemandeAdminDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.demandeAdminService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/getAllObjectsFromDmd/:idDmd')
   getAllObjectsFromDmd(@Param('idDmd') idDmd: number) {
     return this.demandeAdminService.getAllObjectsFromDmd(idDmd);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('getArborescenceOfOR/:idOr')
   getArborescenceOfOR(@Param('idOr') idOr: string) {
     return this.demandeAdminService.getArborescenceOfOR(idOr);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('getArborescenceOfItem/:idItem')
   getArborescenceOfItem(@Param('idItem') idItem: string) {
     return this.demandeAdminService.getArborescenceOfItem(idItem);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id/:profil/:accept')
   remove(@Param('id') id: string, @Param('profil') profil: string, @Param('accept') accept : string ) {
     return this.demandeAdminService.remove(+id, profil, accept);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/sendmail/:user/:motif')
   sendMail(@Param('user') user: string, @Param('motif') motif: string) {
     return this.demandeAdminService.sendMail(user,motif);

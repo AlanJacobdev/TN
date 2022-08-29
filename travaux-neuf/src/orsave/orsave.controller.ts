@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { OrsaveService } from './orsave.service';
 import { CreateOrsaveDto } from './dto/create-orsave.dto';
 import { UpdateOrsaveDto } from './dto/update-orsave.dto';
+import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 
 /**
  * Entité controllant l'ensemble des requêtes commençant par orsave (ex: localhost/orsave/5)
@@ -14,27 +15,31 @@ import { UpdateOrsaveDto } from './dto/update-orsave.dto';
 export class OrsaveController {
   constructor(private readonly orsaveService: OrsaveService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createOrsaveDto: CreateOrsaveDto) {
     return this.orsaveService.create(createOrsaveDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.orsaveService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.orsaveService.findById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id/:date')
   findOne(@Param('id') id: string, @Param('date') date: Date) {
     return this.orsaveService.findOne(id, date);
   }
 
-
+  @UseGuards(JwtAuthGuard)
   @Delete(':id/:date')
   remove(@Param('id') id: string, @Param('date') date: Date) {
     return this.orsaveService.remove(id, date);

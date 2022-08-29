@@ -1,28 +1,33 @@
-import { Controller, Get, Post, Body, Param, Delete, Response, HttpStatus, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Response, HttpStatus, StreamableFile, UseGuards } from '@nestjs/common';
 import { ExportationService } from './exportation.service';
 import { CreateExportationDto } from './dto/create-exportation.dto';
 import { createReadStream } from 'fs';
 import { join } from 'path';
+import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 
 @Controller('exportation')
 export class ExportationController {
   constructor(private readonly exportationService: ExportationService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createExportationDto: CreateExportationDto) {
     return this.exportationService.create(createExportationDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.exportationService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.exportationService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/readFile/:id')
   async getFile(@Response({ passthrough: true }) res, @Param('id') id: number): Promise<StreamableFile | { status: HttpStatus; error: string; }> {
     try{
@@ -51,6 +56,7 @@ export class ExportationController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.exportationService.remove(+id);

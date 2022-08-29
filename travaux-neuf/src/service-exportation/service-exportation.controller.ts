@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Response, Param, Delete, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Response, Param, Delete, StreamableFile, UseGuards } from '@nestjs/common';
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { doc } from 'prettier';
+import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 import { createExportGMAO, exportGMAO } from './Interface';
 import { ServiceExportationService } from './service-exportation.service';
 
@@ -10,28 +11,31 @@ export class ServiceExportationController {
   constructor(private readonly serviceExportationService: ServiceExportationService) {}
 
 
-
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.serviceExportationService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.serviceExportationService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('export/getAllExportItem')
   getAllExportItem(){
     return this.serviceExportationService.getAllExportItemForGMAO();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('export/getAllExportItemForGMAOForOneUser/:user')
   getAllExportItemForGMAOForOneUser(@Param('user') user: string){
     return this.serviceExportationService.getAllExportItemForGMAOForOneUser(user);
   }
   
-
+  @UseGuards(JwtAuthGuard)
   @Post('export/exportationData')
   async exportationData(@Response({ passthrough: true }) res, @Body() data: createExportGMAO){
 
@@ -51,6 +55,7 @@ export class ServiceExportationController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.serviceExportationService.remove(+id);

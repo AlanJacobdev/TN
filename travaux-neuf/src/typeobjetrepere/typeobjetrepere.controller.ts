@@ -1,37 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards } from '@nestjs/common';
 import { TypeobjetrepereService } from './typeobjetrepere.service';
 import { CreateTypeobjetrepereDto } from './dto/create-typeobjetrepere.dto';
 import { UpdateTypeobjetrepereDto } from './dto/update-typeobjetrepere.dto';
+import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 
 @Controller('typeobjetrepere')
 export class TypeobjetrepereController {
   constructor(private readonly typeobjetrepereService: TypeobjetrepereService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createTypeobjetrepereDto: CreateTypeobjetrepereDto) {
     return this.typeobjetrepereService.create(createTypeobjetrepereDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.typeobjetrepereService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/findAllTypeORForUser/:profil')
   findAllTypeORForUser(@Param('profil') profil: string) {
     return this.typeobjetrepereService.findAllTypeORForUser(profil);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.typeobjetrepereService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateTypeobjetrepereDto: UpdateTypeobjetrepereDto) {
     return this.typeobjetrepereService.update(id, updateTypeobjetrepereDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.typeobjetrepereService.remove(id);
