@@ -108,10 +108,12 @@ export class ObjetrepereService {
           posteCreation: createObjetrepereDto.posteCreation,
           securite : createObjetrepereDto.securite
         };
+        console.log(createObjetrepereDto.securite);
+        
       } else {
         createDto = {
           libelleObjetRepere: "Numéro secondaire de " + NUOrigine,
-          codeType: createObjetrepereDto.codeType,
+          codeType: "GO",
           numeroUnique: nu,
           etat: 'R',
           description: [],
@@ -582,13 +584,13 @@ export class ObjetrepereService {
       let index = res.findIndex((element) => element.numeroUnique === or.numeroUnique)
       res[index] = {
         "nu" : or.numeroUnique,
-        "numeroUnique" : or.codeType+or.numeroUnique,
+        "numeroUnique" : or.codeType+or.numeroUnique + (or.securite ? 'Z' : ''),
         "libelleOR" : or.libelleObjetRepere
       }
       if(index == -1) {
         res.push({
           "nu" : or.numeroUnique,
-          "numeroUnique" : or.codeType+or.numeroUnique,
+          "numeroUnique" : or.codeType+or.numeroUnique+(or.securite ? 'Z' : ''),
           "libelleOR" : or.libelleObjetRepere
         })
       }
