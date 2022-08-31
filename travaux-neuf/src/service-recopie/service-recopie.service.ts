@@ -244,7 +244,6 @@ export class ServiceRecopieService {
             //     listIdError.push(item.idItem);
             // } else {
             const SI = await this.recopySousItemFromItem(item.idItem, NU, profil);
-            // console.log(SI);
             
             // }
         }

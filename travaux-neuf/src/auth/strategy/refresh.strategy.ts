@@ -34,6 +34,8 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
         let decoderes :any = this.jwt.decode(res);
         let exptime = decoderes.exp
         let limiteInactivite : any= new Date(exptime*1000 + jwtKey.timeSession * 60000);
+      
+        
         limiteInactivite = limiteInactivite.getTime();
         let currentDate = new Date().getTime();
        
@@ -46,6 +48,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
             throw new BadRequestException('invalid refresh token');
         }
         let user = await this.authService.validRefreshToken(payload.login, data.refreshToken);        
+        
         if(!user){
             throw new BadRequestException('token expired');
         }

@@ -108,7 +108,6 @@ export class ObjetrepereService {
           posteCreation: createObjetrepereDto.posteCreation,
           securite : createObjetrepereDto.securite
         };
-        console.log(createObjetrepereDto.securite);
         
       } else {
         createDto = {

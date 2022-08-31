@@ -116,7 +116,6 @@ export class InformationsService {
             let exist = documentOfModification.find((e) => e == doc)
             if (exist == undefined) {
               let res = await this.documentService.remove(doc);
-              console.log(res);
               
             }
           }

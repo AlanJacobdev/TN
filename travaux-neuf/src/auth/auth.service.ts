@@ -56,6 +56,9 @@ export class AuthService {
         refreshToken: randomToken.generate(16),
         refreshTokenExp: moment().add(1, 'days').format('YYYY/MM/DD'),
       };
+
+      console.log(update);
+      
       await this.utilisateurService.updateToken(userId, update);
       return update.refreshToken;
   }
@@ -64,6 +67,7 @@ export class AuthService {
 
   public async validRefreshToken(login: any, refreshToken: any) {
    const currentDate = moment().format('YYYY/MM/DD');
+   console.log(currentDate);
    
    let user = await this.utilisateurService.findOneForToken(login, refreshToken, currentDate)
    

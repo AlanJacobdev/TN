@@ -7,6 +7,7 @@ import { Utilisateur } from './entities/utilisateur.entity';
 import * as bcrypt from 'bcrypt';
 import { emailUser, userIdentity } from './dto/user';
 import { RoleService } from 'src/role/role.service';
+import * as moment from 'moment';
 
 @Injectable()
 export class UtilisateurService {
@@ -78,11 +79,13 @@ export class UtilisateurService {
   }
   
   findOneForToken( login : string, refreshToken : string, refreshTokenExp : string) {
+    let dateMoment  = moment(refreshTokenExp, 'YYYY/MM/DD');
+    let newDateMoment = dateMoment.add(1, 'days').format('YYYY/MM/DD')
     return this.utiRepo.findOne({
       where : {
         login : login,
         refreshToken : refreshToken,
-        refreshTokenExp : MoreThanOrEqual(refreshTokenExp)
+        refreshTokenExp : newDateMoment
       }
     })
   }
@@ -298,9 +301,7 @@ export class UtilisateurService {
 
 
    async userExistOrNot(req : any, id : string, pwd : string) {
-    console.log("req" + req);
-    
-    console.log("test");
+
     
     // const ActiveDirectory = require('activedirectory');
     // var config = new ActiveDirectory({

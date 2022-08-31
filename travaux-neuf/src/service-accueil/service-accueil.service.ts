@@ -47,7 +47,6 @@ export class ServiceAccueilService {
     dateFin = new Date(end)
     dateFin.setDate(dateFin.getDate() + 1)
 
-    console.log(dateDebut + " " + dateFin);
     
     const resultItemCreation = this.itemRepo.createQueryBuilder("Item")
       .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')) as count"])
