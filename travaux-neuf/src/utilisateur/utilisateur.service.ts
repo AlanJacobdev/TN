@@ -13,7 +13,7 @@ export class UtilisateurService {
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private roleService : RoleService){}
   
   async create(createUtilisateurDto: CreateUtilisateurDto) {
-    let loginExist = this.findOneByLogin(createUtilisateurDto.login);
+    let loginExist = await this.findOneByLogin(createUtilisateurDto.login);
     if (loginExist == undefined){
       let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
       let isEmail = regex.test(createUtilisateurDto.email);
