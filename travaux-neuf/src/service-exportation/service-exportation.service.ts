@@ -412,14 +412,19 @@ export class ServiceExportationService {
           }
         }
 
+        const fs = require('fs');    
         let EXCEL_EXTENSION = '.xlsx';
         let date = new Date().getTime()
         let name = data.nomDocument +'_export_' + date + EXCEL_EXTENSION
-        let path ='./../exports/'+ name;
+        let dir = "./../exports"
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir);
+        }
+        let path =dir + name;
         xlsx.writeFile(workbook, path );
         
         
-        const fs = require('fs');    
+        
         if (fs.existsSync(path)) {   
 
           let createExport :CreateExportationDto = {
