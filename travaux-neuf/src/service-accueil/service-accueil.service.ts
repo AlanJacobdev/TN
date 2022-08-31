@@ -47,10 +47,11 @@ export class ServiceAccueilService {
     dateFin = new Date(end)
     dateFin.setDate(dateFin.getDate() + 1)
 
+    console.log(dateDebut + " " + dateFin);
     
     const resultItemCreation = this.itemRepo.createQueryBuilder("Item")
       .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')) as count"])
-      .where("Item.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      .where("Item.dateCreation BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
       .andWhere("Item.dateModification IS NULL")
       if(user !=undefined){
         resultItemCreation.andWhere("Item.profilCreation = :user", {user: user})
@@ -64,11 +65,10 @@ export class ServiceAccueilService {
         error: e,
       }
     }
-     
 
     const resultItemCreateAndSave = this.itemSaveRepo.createQueryBuilder("Itemsave")
     .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
-    .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
     .andWhere("Itemsave.status = 'C'")
     if(user !=undefined){
       resultItemCreateAndSave.andWhere("Itemsave.profilModification = :user", {user: user})
@@ -95,7 +95,7 @@ export class ServiceAccueilService {
     
     const resultItemModifySave = this.itemSaveRepo.createQueryBuilder("Itemsave")
     .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
-    .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
     .andWhere("Itemsave.status = 'M'")
     if(user !=undefined){
       resultItemModifySave.andWhere("Itemsave.profilModification = :user", {user: user})
@@ -112,7 +112,7 @@ export class ServiceAccueilService {
     let itemModifySave
     const resultItemCreateSave = this.itemRepo.createQueryBuilder("Item")
     .select(["TO_CHAR(Item.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Item.dateCreation, 'DD-MM-YYYY')) as count"])
-    .where("Item.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .where("Item.dateCreation BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
     .andWhere("Item.dateModification IS NOT NULL")
     if(user !=undefined){
       resultItemCreateSave.andWhere("Item.profilCreation = :user", {user: user})
@@ -140,7 +140,7 @@ export class ServiceAccueilService {
 
     const resultItemsaveDelete = this.itemSaveRepo.createQueryBuilder("Itemsave")
       .select(["TO_CHAR(Itemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Itemsave.date, 'DD-MM-YYYY')) as count"])
-      .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      .where("Itemsave.date BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
       .andWhere("Itemsave.status = 'D'")
       if(user !=undefined){
         resultItemsaveDelete.andWhere("Itemsave.profilModification = :user", {user: user})
@@ -162,7 +162,7 @@ export class ServiceAccueilService {
     const resultOrCreation = this.OrRepo.createQueryBuilder("Objetrepere")
       .select(["TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY')) as count"])
       .where("Objetrepere.dateModification IS NULL")
-      .andWhere("Objetrepere.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      .andWhere("Objetrepere.dateCreation BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
       if(user !=undefined){
         resultOrCreation.andWhere("Objetrepere.profilCreation = :user", {user: user})
       }
@@ -178,7 +178,7 @@ export class ServiceAccueilService {
 
     const resultOrCreateSave = this.OrSaveRepo.createQueryBuilder("Orsave")
     .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
-    .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
     .andWhere("Orsave.status = 'C'")
     if(user !=undefined){
       resultOrCreateSave.andWhere("Orsave.profilModification = :user", {user: user})
@@ -200,7 +200,7 @@ export class ServiceAccueilService {
 
     const resultOrModifySave = this.OrSaveRepo.createQueryBuilder("Orsave")
     .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
-    .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
     .andWhere("Orsave.status = 'M'")
     if(user !=undefined){
       resultOrModifySave.andWhere("Orsave.profilModification = :user", {user: user})
@@ -219,7 +219,7 @@ export class ServiceAccueilService {
     const resultOrModifyCreate = this.OrRepo.createQueryBuilder("Objetrepere")
       .select(["TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Objetrepere.dateCreation, 'DD-MM-YYYY')) as count"])
       .where("Objetrepere.dateModification IS NOT NULL")
-      .andWhere("Objetrepere.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      .andWhere("Objetrepere.dateCreation BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
       if(user !=undefined){
         resultOrModifyCreate.andWhere("Objetrepere.profilCreation = :user", {user: user})
       }
@@ -247,7 +247,7 @@ export class ServiceAccueilService {
     
     const resultOrsaveDelete = this.OrSaveRepo.createQueryBuilder("Orsave")
       .select(["TO_CHAR(Orsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Orsave.date, 'DD-MM-YYYY')) as count"])
-      .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      .where("Orsave.date BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
       .andWhere("Orsave.status = 'D'")
       if(user !=undefined){
         resultOrsaveDelete.andWhere("Orsave.profilModification = :user", {user: user})
@@ -294,7 +294,7 @@ export class ServiceAccueilService {
 
     const resultSiCreation = this.SousItemRepo.createQueryBuilder("Sousitem")
       .select(["TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY')) as count"])
-      .where("Sousitem.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      .where("Sousitem.dateCreation BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
       .andWhere("Sousitem.dateModification IS NULL")
       if(user !=undefined){
         resultSiCreation.andWhere("Sousitem.profilCreation = :user", {user: user})
@@ -311,7 +311,7 @@ export class ServiceAccueilService {
 
     const resultSiCreateSave = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
     .select(["TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')) as count"])
-    .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
     .andWhere("Sousitemsave.status = 'C'")
     if(user !=undefined){
       resultSiCreateSave.andWhere("Sousitemsave.profilModification = :user", {user: user})
@@ -334,7 +334,7 @@ export class ServiceAccueilService {
 
     const resultSiModifySave = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
     .select(["TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')) as count"])
-    .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
     .andWhere("Sousitemsave.status = 'M' ")
     if(user !=undefined){
       resultSiModifySave.andWhere("Sousitemsave.profilModification = :user", {user: user})
@@ -353,7 +353,7 @@ export class ServiceAccueilService {
     let sousItemModifyCreate
     const resultSiModifyCreate = this.SousItemRepo.createQueryBuilder("Sousitem")
     .select(["TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitem.dateCreation, 'DD-MM-YYYY')) as count"])
-    .where("Sousitem.dateCreation BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+    .where("Sousitem.dateCreation BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
     .andWhere("Sousitem.dateModification IS NOT NULL")
     if(user !=undefined){
       resultSiModifyCreate.andWhere("Sousitem.profilCreation = :user", {user: user})
@@ -382,7 +382,7 @@ export class ServiceAccueilService {
 
     const resultSisaveDelete = this.SousItemSaveRepo.createQueryBuilder("Sousitemsave")
       .select(["TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY') as date", "COUNT(TO_CHAR(Sousitemsave.date, 'DD-MM-YYYY')) as count"])
-      .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut, end: dateFin })
+      .where("Sousitemsave.date BETWEEN :start AND :end", { start: dateDebut.toISOString(), end: dateFin.toISOString() })
       .andWhere("Sousitemsave.status = 'D'")
       if(user !=undefined){
         resultSisaveDelete.andWhere("Sousitemsave.profilModification = :user", {user: user})
