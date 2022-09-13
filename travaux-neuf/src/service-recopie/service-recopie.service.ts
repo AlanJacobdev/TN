@@ -7,6 +7,12 @@ import { ConfigService } from '@nestjs/config';
 import { CreateSousitemDto } from 'src/sousitem/dto/create-sousitem.dto';
 import { recopieItem } from './interface/RecopieInterface';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class ServiceRecopieService {
 

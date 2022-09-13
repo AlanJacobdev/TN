@@ -5,6 +5,11 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import * as randomToken from 'rand-token';
 import * as moment from 'moment';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
 
 @Injectable()
 export class AuthService {

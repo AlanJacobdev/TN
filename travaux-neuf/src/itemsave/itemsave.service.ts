@@ -6,9 +6,10 @@ import { CreateItemsaveDto } from './dto/create-itemsave.dto';
 import { ConfigService } from '@nestjs/config';
 import { Itemsave } from './entities/itemsave.entity';
 
-
 /**
  * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
  */
 
 @Injectable()

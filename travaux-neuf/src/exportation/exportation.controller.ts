@@ -5,6 +5,13 @@ import { createReadStream } from 'fs';
 import { join } from 'path';
 import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par exportation (ex: localhost/exportation/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('exportation')
 export class ExportationController {
   constructor(private readonly exportationService: ExportationService) {}

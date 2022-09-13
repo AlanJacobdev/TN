@@ -6,6 +6,8 @@ import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 
 /**
  * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
  * Les templates se situes dans le repertoire /templates
  */
 

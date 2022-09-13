@@ -9,6 +9,12 @@ import { emailUser, userIdentity } from './dto/user';
 import { RoleService } from 'src/role/role.service';
 import * as moment from 'moment';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class UtilisateurService {
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private roleService : RoleService){}

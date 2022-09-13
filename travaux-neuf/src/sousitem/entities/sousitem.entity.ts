@@ -3,6 +3,11 @@ import { Item } from "src/item/entities/item.entity";
 import { Typeobjet } from "src/typeobjet/entities/typeobjet.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
 
+/**
+ * Fichier de configuration de la table Sous item au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('sousitem')
 export class Sousitem {
 

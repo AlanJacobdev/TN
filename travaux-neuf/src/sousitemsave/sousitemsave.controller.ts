@@ -4,6 +4,13 @@ import { CreateSousitemsaveDto } from './dto/create-sousitemsave.dto';
 import { UpdateSousitemsaveDto } from './dto/update-sousitemsave.dto';
 import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par sousitemsave (ex: localhost/sousitemsave/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('sousitemsave')
 export class SousitemsaveController {
   constructor(private readonly sousitemsaveService: SousitemsaveService) {}

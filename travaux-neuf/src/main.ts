@@ -4,6 +4,11 @@ import { AppModule } from './app.module';
 import * as session from 'express-session';
 import * as cookieParser from 'cookie-parser';
 
+/**
+ * @author : @alanjacobdev
+ * Paramétrage global de l'applciation
+ */
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     // logger: ['error', 'warn'],

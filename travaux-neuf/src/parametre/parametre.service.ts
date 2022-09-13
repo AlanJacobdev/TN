@@ -5,6 +5,12 @@ import { CreateParametreDto } from './dto/create-parametre.dto';
 import { UpdateParametreDto } from './dto/update-parametre.dto';
 import { Parametre } from './entities/parametre.entity';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 
 export class ParametreService {

@@ -5,6 +5,12 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { Document } from './entities/document.entity';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class DocumentService {
   

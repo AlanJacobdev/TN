@@ -6,6 +6,11 @@ import { Repository } from 'typeorm';
 import { CreateSousitemsaveDto } from './dto/create-sousitemsave.dto';
 import { Sousitemsave } from './entities/sousitemsave.entity';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
 
 @Injectable()
 export class SousitemsaveService {

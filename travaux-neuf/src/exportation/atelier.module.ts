@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TypeobjetService } from './typeobjet.service';
-import { TypeobjetController } from './typeobjet.controller';
+import { AtelierService } from './atelier.service';
+import { AtelierController } from './atelier.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Typeobjet } from './entities/typeobjet.entity';
+import { Atelier } from './entities/atelier.entity';
 import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 /**
@@ -16,9 +16,9 @@ import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
  */
 
 @Module({
-  imports : [ TypeOrmModule.forFeature([Typeobjet]), UtilisateurModule],
-  controllers: [TypeobjetController],
-  providers: [TypeobjetService],
-  exports : [TypeobjetService]
+  imports: [TypeOrmModule.forFeature([Atelier]), UtilisateurModule],
+  controllers: [AtelierController],
+  providers: [AtelierService],
+  exports : [AtelierService]
 })
-export class TypeobjetModule {}
+export class AtelierModule {}

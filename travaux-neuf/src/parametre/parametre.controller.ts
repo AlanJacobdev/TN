@@ -4,6 +4,13 @@ import { CreateParametreDto } from './dto/create-parametre.dto';
 import { UpdateParametreDto } from './dto/update-parametre.dto';
 import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par parametre (ex: localhost/parametre/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('parametre')
 export class ParametreController {
   constructor(private readonly parametreService: ParametreService) {}

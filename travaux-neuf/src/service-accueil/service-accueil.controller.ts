@@ -2,6 +2,13 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 import { ServiceAccueilService } from './service-accueil.service';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par service-accueil (ex: localhost/service-accueil/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('service-accueil')
 export class ServiceAccueilController {
   constructor(private readonly serviceAccueilService: ServiceAccueilService) {}

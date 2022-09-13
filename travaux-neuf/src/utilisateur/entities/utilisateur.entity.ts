@@ -1,6 +1,10 @@
 import { Role } from "src/role/entities/role.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
+/**
+ * Fichier de configuration de la table utilisateur au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
 
 @Entity('utilisateur')
 export class Utilisateur {

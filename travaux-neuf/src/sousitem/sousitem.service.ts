@@ -13,6 +13,12 @@ import { CreateSousitemDto } from './dto/create-sousitem.dto';
 import { UpdateSousitemDto } from './dto/update-sousitem.dto';
 import { Sousitem } from './entities/sousitem.entity';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class SousitemService {
   

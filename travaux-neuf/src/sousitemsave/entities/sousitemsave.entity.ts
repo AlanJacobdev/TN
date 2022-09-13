@@ -1,6 +1,11 @@
 import { Description } from "src/description/entities/description.entity";
 import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from "typeorm"
 
+/**
+ * Fichier de configuration de la table Sous item sauvegardé au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('sousitemsauvegarde')
 export class Sousitemsave {
 

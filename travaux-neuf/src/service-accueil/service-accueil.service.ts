@@ -10,6 +10,11 @@ import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 import { Between, In, MoreThan, Repository } from 'typeorm';
 import { infoPerDayModified, infoPerMonth, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
 
 @Injectable()
 export class ServiceAccueilService {

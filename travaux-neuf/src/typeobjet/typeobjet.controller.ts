@@ -4,6 +4,13 @@ import { CreateTypeobjetDto } from './dto/create-typeobjet.dto';
 import { UpdateTypeobjetDto } from './dto/update-typeobjet.dto';
 import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par typeobjet (ex: localhost/typeobjet/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('typeobjet')
 export class TypeobjetController {
   constructor(private readonly typeobjetService: TypeobjetService) {}

@@ -4,6 +4,13 @@ import { CreateTypeobjetrepereDto } from './dto/create-typeobjetrepere.dto';
 import { UpdateTypeobjetrepereDto } from './dto/update-typeobjetrepere.dto';
 import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par typeobjetrepere (ex: localhost/typeobjetrepere/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('typeobjetrepere')
 export class TypeobjetrepereController {
   constructor(private readonly typeobjetrepereService: TypeobjetrepereService) {}

@@ -1,5 +1,11 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 
+/**
+ * Fichier de configuration de la table TypeObjetrepere au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
+
 @Entity('typeobjetrepere')
 export class Typeobjetrepere {
 

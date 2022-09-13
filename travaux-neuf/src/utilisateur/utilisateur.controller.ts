@@ -5,6 +5,13 @@ import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { AADAuthGuard } from 'src/auth/strategy/aad-auth.guard';
 import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par utilisateur (ex: localhost/utilisateur/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('utilisateur')
 export class UtilisateurController {
   constructor(private readonly utilisateurService: UtilisateurService ) {}

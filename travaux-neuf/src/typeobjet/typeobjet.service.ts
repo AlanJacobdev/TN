@@ -6,6 +6,12 @@ import { CreateTypeobjetDto } from './dto/create-typeobjet.dto';
 import { UpdateTypeobjetDto } from './dto/update-typeobjet.dto';
 import { Typeobjet } from './entities/typeobjet.entity';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class TypeobjetService {
 

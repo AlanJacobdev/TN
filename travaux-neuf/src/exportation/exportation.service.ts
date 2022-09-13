@@ -5,6 +5,12 @@ import { Repository } from 'typeorm';
 import { CreateExportationDto } from './dto/create-exportation.dto';
 import { Exportation } from './entities/exportation.entity';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class ExportationService {
 

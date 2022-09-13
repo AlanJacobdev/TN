@@ -4,6 +4,13 @@ import { ObjetrepereService } from 'src/objetrepere/objetrepere.service';
 import { Repository } from 'typeorm';
 import { CreateOrsaveDto } from './dto/create-orsave.dto';
 import { Orsave } from './entities/orsave.entity';
+
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class OrsaveService {
 

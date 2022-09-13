@@ -8,6 +8,11 @@ import { ExportationService } from 'src/exportation/exportation.service';
 import { CreateExportationDto } from 'src/exportation/dto/create-exportation.dto';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
 
 @Injectable()
 export class ServiceExportationService {

@@ -6,6 +6,13 @@ import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 import { createExportGMAO, exportGMAO } from './Interface';
 import { ServiceExportationService } from './service-exportation.service';
 
+/**
+ * Entité controllant l'ensemble des requêtes commençant par service-exportation (ex: localhost/service-exportation/5)
+ * Permet de rediriger la requete vers la fonction dédiée
+ * 
+ * Plus d'informations https://docs.nestjs.com/controllers
+ */
+
 @Controller('service-exportation')
 export class ServiceExportationController {
   constructor(private readonly serviceExportationService: ServiceExportationService) {}

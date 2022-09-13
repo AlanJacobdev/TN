@@ -9,6 +9,12 @@ import { CreateSousitemsaveDto } from 'src/sousitemsave/dto/create-sousitemsave.
 import { SousitemsaveService } from 'src/sousitemsave/sousitemsave.service';
 import { deleteObject } from './interface/SuppressionInterface';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class ServiceSuppressionService {
  

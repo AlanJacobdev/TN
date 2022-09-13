@@ -6,6 +6,12 @@ import { CreateTypeobjetrepereDto } from './dto/create-typeobjetrepere.dto';
 import { UpdateTypeobjetrepereDto } from './dto/update-typeobjetrepere.dto';
 import { Typeobjetrepere } from './entities/typeobjetrepere.entity';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class TypeobjetrepereService {
   constructor(@InjectRepository(Typeobjetrepere) private TypeOrRepo : Repository<Typeobjetrepere>, @Inject(forwardRef(() => UtilisateurService)) private utilisateurService : UtilisateurService ){}

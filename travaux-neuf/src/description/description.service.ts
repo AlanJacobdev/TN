@@ -5,6 +5,12 @@ import { CreateDescriptionDto } from './dto/create-description.dto';
 import { UpdateDescriptionDto } from './dto/update-description.dto';
 import { Description } from './entities/description.entity';
 
+/**
+ * @author : @alanjacobdev
+ * Classe appellée par un controleur. 
+ * Manipule des données afin de les renvoyer au controleur après traitement
+ */
+
 @Injectable()
 export class DescriptionService {
   

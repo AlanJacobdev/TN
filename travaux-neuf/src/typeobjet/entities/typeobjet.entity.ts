@@ -1,5 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
 
+/**
+ * Fichier de configuration de la table Typeobjet au sein de la base
+ * Plus d'informations https://typeorm.io/entities
+ */
+
 @Entity('typeobjet')
 export class Typeobjet {
     
