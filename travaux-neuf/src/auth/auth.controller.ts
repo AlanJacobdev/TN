@@ -34,18 +34,13 @@ export class AuthController {
   }
   
 
-  // @UseGuards(AADAuthGuard)
-  // @Post('test')
-  // async test(@Request() req) {
-  //   return this.authService.login(req.user);
-  // }
-  
-  @UseGuards(JwtAuthGuard)
-  @Get('fav-movies')
-  async movies(){
-  return ["Avatar", "Avengers"];
-  }
-  
+
+  /**
+   * Route gérant la rafraichissement du token de connexion lorsque celui-ci arrive a terme
+   * @param req Requête entrante
+   * @param res Requête sortante
+   * @returns {msg:'success'};
+   */
   @UseGuards(RefreshAuthGuard)
   @Get('refresh-tokens')
   async regenerateTokens(

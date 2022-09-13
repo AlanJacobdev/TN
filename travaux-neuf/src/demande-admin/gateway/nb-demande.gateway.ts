@@ -31,13 +31,23 @@ export class NbDemandeGateway implements OnGatewayInit, OnGatewayConnection, OnG
       this.server.emit('demandeResponse',  (await this.demandeAdminService.findAll()).length);
     }
 
+    /**
+     * Initialisation du webSocket lors du lancement de l'applciation
+     * @param server 
+     */
     afterInit(server: Server) {
      this.logger.log('Init');
     }
    
+    /** 
+     * Méthode utile pour vérifier la bonne déconnexion d'un utilisateur
+    */
     handleDisconnect(client: Socket) {
     }
    
+    /** 
+    * Méthode utile pour vérifier la bonne connexion d'un utilisateur
+    */
     handleConnection(client: Socket, ...args: any[]) {
     }
    }

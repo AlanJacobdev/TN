@@ -7,6 +7,9 @@ import { AuthService } from "../auth.service";
 import { jwtKey } from "../constants";
 
  
+/**
+ * Strategie vérifiant la présence d'un jeton de connexion au sein de la requête ainsi que son expiration
+ */
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     constructor(private authService: AuthService, private jwt : JwtService){
@@ -24,6 +27,12 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
         })
     }
  
+    /**
+     * 
+     * @param req Requete entrante
+     * @param payload User
+     * @returns Exception si erreur ou utilisateur
+     */
     async validate(req:Request, payload:any){
         if(!payload){
             throw new BadRequestException('invalid jwt token');

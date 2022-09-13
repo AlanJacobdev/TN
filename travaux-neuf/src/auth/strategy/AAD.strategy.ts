@@ -3,6 +3,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 
+/**
+ * Strategie pour vérifier l'existance de l'utilisateur sur l' Active directory 
+ * NON UTILISÉ
+ * 
+ */
 @Injectable() 
 export class AADStrategy extends PassportStrategy(OIDCStrategy, 'aad') {
     
@@ -54,13 +59,18 @@ export class AADStrategy extends PassportStrategy(OIDCStrategy, 'aad') {
       
     }
 
+    /**
+     * Méthode de validation (après vérification de l'existence) 
+     * NON UTILISÉE
+     * @param response 
+     * @returns 
+     */
   async validate(response: any){      
     // const user = this.authService.selectUser(response.user)    
     // if (!user) {
     //   throw new UnauthorizedException();
     // }
     // return user;  
-    console.log("test");
     
     return response 
   }

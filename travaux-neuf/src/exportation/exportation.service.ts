@@ -16,6 +16,11 @@ export class ExportationService {
 
   constructor(@InjectRepository(Exportation) private exportationRepo : Repository<Exportation>, private utilisateurService : UtilisateurService){}
 
+  /**
+   * Création d'une exportation 
+   * @param createExportationDto : Structure attendue pour la création d'une exportation
+   * @returns : L'identifiant de la nouvelle exportation
+   */
   async create(createExportationDto: CreateExportationDto) {
     const newExport = this.exportationRepo.create(createExportationDto);
       await this.exportationRepo.save(newExport);
@@ -28,6 +33,10 @@ export class ExportationService {
       return doc;
   }
 
+  /**
+   * Liste l'ensemble des exportations  
+   * @returns L'ensemble des exportations créées
+   */
   async findAll() {
     let res = await this.exportationRepo.find({
       order : {
@@ -44,6 +53,12 @@ export class ExportationService {
     return res;
   }
 
+
+  /**
+   * Retourne une exportation
+   * @param id : Identifiant de l'exportation
+   * @returns Structure de l'exportation (ou undefined si introuvable)
+   */
   async findOne(id: number) {
     let res =  await this.exportationRepo.findOne({
       where : {
@@ -61,6 +76,11 @@ export class ExportationService {
   }
 
 
+  /**
+   * 
+   * @param id Supprime une exportation
+   * @returns HttpException ou une structure ({status, error} OU {status, message})
+   */
   async remove(id: number) {
     const fs = require('fs');
     let exp = await this.exportationRepo.findOne({

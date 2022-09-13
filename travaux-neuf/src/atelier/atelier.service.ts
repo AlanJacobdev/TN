@@ -33,7 +33,7 @@ export class AtelierService {
     } else {
       return {
         status : HttpStatus.CONFLICT,
-        error :'Exist déjà',
+        error :'Existe déjà',
       }
     }
   }

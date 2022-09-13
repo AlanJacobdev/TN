@@ -4,7 +4,9 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { Request } from "express";
 import { jwtKey } from "../constants";
 
-
+/**
+ * Strategie vérifiant la présence d'un jeton de connexion au sein de la requête
+ */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
     constructor(){
@@ -18,14 +20,13 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
                 }
                 
                 return data.token.access_token;
-            }])
-            
-            
+            }]) 
         })
-        
-        
     }
  
+    /**
+     * Méthode de validation (après vérification de l'existence) 
+     */
     async validate(payload:any){
         
         if(!payload === null){

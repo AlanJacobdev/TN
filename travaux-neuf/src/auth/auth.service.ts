@@ -56,13 +56,17 @@ export class AuthService {
 
 
    
+  /**
+   * Créer le jeton de rafraichissement et l'insere dans la table utilisateur
+   * @param userId : Identifiant de l'utilisateur
+   * @returns Le jeton de rafraichissement
+   */
   public async getRefreshToken(userId: number): Promise<string> {
       const update = {
         refreshToken: randomToken.generate(16),
         refreshTokenExp: moment().add(1, 'days').format('YYYY/MM/DD'),
       };
 
-      console.log(update);
       
       await this.utilisateurService.updateToken(userId, update);
       return update.refreshToken;
@@ -70,6 +74,12 @@ export class AuthService {
 
 
 
+  /**
+   * Vérifie si l'utilisateur à un jeton valide (non expiré et existant)
+   * @param login : Login de l'utilisateur
+   * @param refreshToken : Jeton de rafraichissement
+   * @returns : Structure de l'utilisateur si existant sinon null
+   */
   public async validRefreshToken(login: any, refreshToken: any) {
    const currentDate = moment().format('YYYY/MM/DD');
    console.log(currentDate);
