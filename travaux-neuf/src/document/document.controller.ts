@@ -17,6 +17,12 @@ import { UpdateDocumentDto } from './dto/update-document.dto';
 export class DocumentController {
   constructor(private readonly documentService: DocumentService) {}
 
+  /**
+   * Route permettant l'importation de documents liés a une information
+   * @param file : Fichier envoyé
+   * @param user : Utilisateur à l'origine de l'importation
+   * @returns : {status : string, error : string} OU {status : string, value : string}
+   */
   @Post('file-upload/:user')
   @UseInterceptors(FilesInterceptor('document', 20, {
     storage: diskStorage({
@@ -27,17 +33,31 @@ export class DocumentController {
     return this.documentService.create(file, user)
   }
   
-
+  /**
+   * Route retournant l'ensemble des documents 
+   * @returns Liste des documents existants
+   */
   @Get()
   findAll() {
     return this.documentService.findAll();
   }
 
+  /**
+   * Route retournant un documents dont l'identifiant correspond à celui passé en paramètre
+   * @param id : Identifiant du document
+   * @returns Structure du document recherché
+   */
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.documentService.findOne(+id);
   }
 
+  /**
+   * Route permettant la lecture d'un document
+   * @param res : Retour (fichier)
+   * @param id : Identifiant du document
+   * @returns Fichier ou erreur
+   */
   @Get('/readFile/:id')
   async getFile(@Response({ passthrough: true }) res, @Param('id') id: number): Promise<StreamableFile | { status: HttpStatus; error: string; }> {
     try{
@@ -67,11 +87,21 @@ export class DocumentController {
   }
   
 
+  /**
+   * Route mettant à jour un document
+   * @param updateInformationDto : Structure contenant les champs modifiés
+   * @returns Structure du document modifié
+   */
   @Put()
   update(@Body() updateInformationDto: UpdateDocumentDto) {
     return this.documentService.update(updateInformationDto);
   }
   
+  /**
+   * Route supprimant un document
+   * @param id : Identifiant du document
+   * @returns Message de validation ou erreur
+   */
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.documentService.remove(+id);

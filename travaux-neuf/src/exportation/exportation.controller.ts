@@ -16,24 +16,44 @@ import { JwtAuthGuard } from 'src/auth/strategy/jwt.guard';
 export class ExportationController {
   constructor(private readonly exportationService: ExportationService) {}
 
+  /**
+   * Route permettant la création d'une exportation (fichier d'exportation)
+   * @param createExportationDto 
+   * @returns Structure de la nouvelle exportation
+   */
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createExportationDto: CreateExportationDto) {
     return this.exportationService.create(createExportationDto);
   }
 
+  /**
+   * Route retournant l'ensemble des exportations
+   * @returns Liste des exportations existantes
+   */
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.exportationService.findAll();
   }
 
+  /**
+   * Route retournant une exportation
+   * @param id : Identifiant de l'exportation
+   * @returns Structure de l'exportation ou undefined
+   */
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.exportationService.findOne(+id);
   }
 
+  /**
+   * Route permettant la lecture d'une exportation
+   * @param res : Retour (fichier)
+   * @param id : Identifiant de l'exportation
+   * @returns Fichier en lecture ou erreur
+   */
   @UseGuards(JwtAuthGuard)
   @Get('/readFile/:id')
   async getFile(@Response({ passthrough: true }) res, @Param('id') id: number): Promise<StreamableFile | { status: HttpStatus; error: string; }> {
@@ -63,6 +83,11 @@ export class ExportationController {
     }
   }
 
+  /**
+   * Route supprimant une exportation
+   * @param id : Identifiant de l'exportation
+   * @returns Message de confirmation ou erreur
+   */
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {

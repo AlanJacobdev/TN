@@ -22,7 +22,7 @@ export class DocumentService {
    * @param document Liste de documents créés
    * @param user Utilisateur créant les documents
    * @returns : {status : string, error : string} OU {status : string, value : string}
-        }
+        
    */
   async create(document : Array<Express.Multer.File>, user : string) {
     let date = new Date();  
@@ -78,7 +78,7 @@ export class DocumentService {
   /**
    * Retourne un document en fonction de son identifiant
    * @param id : Identifiant du document
-   * @returns : Structure de l'atelier recherché ou undefined si inconnu
+   * @returns : Structure du document recherché ou undefined si inconnu
    */
   findOne(id: number) {
     return this.documentRepo.findOne({
