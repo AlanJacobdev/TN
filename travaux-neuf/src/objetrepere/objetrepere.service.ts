@@ -566,7 +566,7 @@ export class ObjetrepereService {
 
 
   /**
-   * Retourne la liste des numéros unqiues d'un atelier en précisant lesquels sont déjà créer
+   * Retourne la liste des numéros uniques d'un atelier en précisant lesquels sont déjà créés
    * @param Atelier : Identifiant de l'atelier 
    * @returns Liste des 1000 nu complétée des OR existants
    */

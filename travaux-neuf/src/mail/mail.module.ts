@@ -20,18 +20,9 @@ import { ParametreModule } from 'src/parametre/parametre.module';
   imports: [ParametreModule,
     UtilisateurModule,
     MailerModule.forRoot({
-      //transport: 'smtps://itemisationlaita@gmail.com:item_laita29@Smtp.gmail.com:587',
-      // or
       transport: {
         host: 'postel.even.fr',
         port: 25,
-        // // ignoreTLS: true,
-        // // secure: true,
-        // // tls: { rejectUnauthorized: false },
-        // auth: {
-        //   user: 'itemisationlaita@gmail.com',
-        //   pass: 'itemlaita29!',
-        // },
       },
       defaults: {
         from: '"No Reply" <itemisationlaita@gmail.com>',
