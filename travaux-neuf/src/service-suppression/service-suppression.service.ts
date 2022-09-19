@@ -184,9 +184,9 @@ export class ServiceSuppressionService {
 
 
   /**
-   * 
-   * @param profil Méthode de suppression réservée aux administrateur (pas de limite d'heure)
-   * @param objectToDelete Liste d'objet à supprimer
+   * Méthode de suppression réservée aux administrateur (pas de limite d'heure)
+   * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+   * @param objectToDelete Liste d'objet a supprimer
    * @returns Liste des objets avec leur status de suppression ou erreur
    */
   async deleteObjectsAsAdmin(profil:string, objectToDelete : deleteObject) {
@@ -196,7 +196,7 @@ export class ServiceSuppressionService {
   /**
    * Supprime un lot d'objets repère (par arborescence) 
    * @param profil : Identifiant de l'utilisateur à l'origine de la requête
-   * @param objectToDelete : Liste d'objets à supprimer
+   * @param objectToDelete : Liste d'objets a supprimer
    * @returns Liste des objets avec leur status de suppression ou erreur
    */
   async deleteObjects( profil:string, objectToDelete : deleteObject) {
