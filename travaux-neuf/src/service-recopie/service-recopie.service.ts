@@ -20,6 +20,13 @@ export class ServiceRecopieService {
     constructor(private OrService : ObjetrepereService, private itemService:ItemService,
                 private SiService : SousitemService, private configservice : ConfigService){}
 
+
+    /**
+     * Recopie l'ensemble des items d'un objet sur un autre objet 
+     * @param or Identifiant de l'objet parent source
+     * @param nu Numéro unique de l'objet parent cible
+     * @returns Liste des items du parent cible
+     */
     async recopyItemFromObjetRepere(or: string, nu : string ) {
         const orSourceExist = await this.OrService.findOne(or);
         if (orSourceExist != undefined) {
@@ -72,6 +79,13 @@ export class ServiceRecopieService {
         }
     }
 
+    /**
+     * Recopie l'ensemble des sous items d'un item sur un autre item 
+     * @param item Identifiant de l'item parent source
+     * @param nu Numéro unique de l'item parent cible
+     * @param profil : Identifiant du profil à l'origine de la requête
+     * @returns Liste des sous items du parent cible
+     */
     async recopySousItemFromItem(item: string, nu : string, profil : string ) {
         const itemSourceExist = await this.itemService.findOne(item);
         if (itemSourceExist != undefined) {
@@ -123,6 +137,14 @@ export class ServiceRecopieService {
         }
     }
 
+    /**
+     * Recopie un item lié à un objet repère
+     * @param IdOR : Identifiant de l'objet repère
+     * @param IdItem : Identifiant de l'item
+     * @param nu : Numéro unique cible
+     * @param profil : Identifiant du profil cible
+     * @returns Structure du nouvel item ou erreur
+     */
     async recopyOneItemFromOR(IdOR: string, IdItem: string, nu:string, profil : string){
         
         const orSourceExist = await this.OrService.findOne(IdOR);
@@ -169,54 +191,15 @@ export class ServiceRecopieService {
         }
     }
 
-    // async recopyOneSousItemFromItem(IdItem: string, IdSousItem: string, nu:string){
-    //     const itemSourceExist = await this.itemService.findOne(IdItem);
-    //     if (itemSourceExist != undefined) {
-    //         const idTargetItem = (itemSourceExist.securite ? itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit)
-    //         const itemTargetExist = await this.itemService.findOne(idTargetItem);
-    //         if (itemTargetExist != undefined) {
-    //             const sousItem = await this.SiService.findOne(IdSousItem);
-    //             if(sousItem != undefined){ 
-    //                 const idSousItem = (itemSourceExist.securite ? (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit + 'Z' : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem + 'Z' ): (sousItem.estPrefixe ? sousItem.codeSousItem + itemSourceExist.codeObjet + nu + itemSourceExist.digit : itemSourceExist.codeObjet + nu + itemSourceExist.digit + sousItem.codeSousItem ));
-    //                 const sousItemExist = await this.SiService.findOne(idSousItem)
-    //                 if (sousItemExist == undefined){
-    //                     let createsousitem = new CreateSousitemDto();
-    //                     createsousitem = {
-    //                         idSousItem : idSousItem,
-    //                         libelleSousItem : `SousItem issue de la recopie de ${sousItem.idSousItem}`,
-    //                         idItem : idTargetItem,
-    //                         codeSousItem : sousItem.codeSousItem,
-    //                         securite : sousItem.securite,
-    //                         estPrefixe : sousItem.estPrefixe,
-    //                         actif : sousItem.actif,
-    //                         description : sousItem.description,
-    //                         profilCreation : this.configservice.get('profil'),
-    //                         posteCreation : "",
-    //                         dateCreation : new Date(),
-    //                     }
-    //                     await this.SiService.create(createsousitem);
-    //                 }
-                    
-    //                 return await this.SiService.findAllSousItemOfItem(idTargetItem);
-    //             } else {
-    //                 return  {
-    //                     status : HttpStatus.NOT_FOUND,
-    //                     error :'Source Item doesn\'t exist'
-    //                 }
-    //             }
-    //         } else {
-    //             return  {
-    //                 status : HttpStatus.NOT_FOUND,
-    //                 error :'Item doesn\'t exist'
-    //             }
-    //         }
-    //     } else {
-    //         return  {
-    //             status : HttpStatus.NOT_FOUND,
-    //             error :'Origin Item doesn\'t exist'
-    //         }
-    //     }
-    // }
+
+    /**
+     * Recopie une liste d'item lié à un objet repère
+     * @param idOr : Identifiant de l'objet repère source
+     * @param NU : Numéro unique cible
+     * @param itemsRecopie : Liste d'item a recopier
+     * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+     * @returns Message de validation ou erreur
+     */
 
     async recopySpecificItemFromOR(idOr:string, NU:string, itemsRecopie: recopieItem[], profil : string) {
         let retour : string = "";
@@ -245,38 +228,20 @@ export class ServiceRecopieService {
         for(const item of itemsRecopie){
             const recopieItem = await this.recopyOneItemFromOR(idOr, item.idItem, NU, profil);
             
-            // if(recopieItem.hasOwnProperty('error')){
-            //     error =+ 1 ;
-            //     listIdError.push(item.idItem);
-            // } else {
+           
             const SI = await this.recopySousItemFromItem(item.idItem, NU, profil);
             
-            // }
+           
         }
     
-        // if( error > 0 ){
-        //     listIdError.forEach(function(item, index, array) {
-        //         if(index == 0) {
-        //             stringError += item
-        //         } else {
-        //             stringError += ", " + item
-        //         }
-        //       });
-
-        //     retour = JSON.stringify(
-        //         { 
-        //             status : HttpStatus.NOT_FOUND, 
-        //             error :'Les items '+ stringError + ' n\'ont pas pu être créé'
-        //         }
-        //             )
-        // } else {
+       
             retour = JSON.stringify(
                 { 
                     status : HttpStatus.OK, 
                     message :'Les items ont été recopiés' 
                 }
             )
-        // }
+        
         
         return retour;
     }

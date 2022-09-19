@@ -1,5 +1,9 @@
 import { Description } from "src/description/entities/description.entity";
 
+/**
+ * Interfaces utiles au sein du service accueil
+ */
+
 export interface infoPerMonth {
     date : string;
     count : number

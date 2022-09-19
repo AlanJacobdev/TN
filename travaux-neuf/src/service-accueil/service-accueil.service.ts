@@ -23,6 +23,14 @@ export class ServiceAccueilService {
    @InjectRepository(Sousitem) private SousItemRepo: Repository<Sousitem>, @InjectRepository(Sousitemsave) private SousItemSaveRepo: Repository<Sousitemsave>, private utilisateurService :UtilisateurService) {
 
   }
+
+  /**
+   * Récupère le nombre d'activités (création modification et suppression) effectués pour chaque jour d'un mois (en complétant les semaine avc les jours des mois précédent ou suivant)
+   * @param start : 1er lundi du mois affiché (peut être du mois précedent)
+   * @param end : Dernier dimanche du mois (peut être du mois suivant)
+   * @param user : Identifiant de l'utilisateur faisant la requête (si non administrateur)
+   * @returns Liste des activités pour un mois 
+   */
   async getNumberOfActivityForEachDay(start: string, end: string, user? : string) {
     
     
@@ -438,10 +446,10 @@ export class ServiceAccueilService {
 
 
   /**
-   * 
-   * @param date 
-   * @param user 
-   * @returns 
+   * Recupère l'historique des activités (création modification et suppression) pour un jour donné 
+   * @param date : Date du jour
+   * @param user : Identifiant de l'utilisateur à l'origine de la requête
+   * @returns Liste des activités pour un jour 
    */
 
   async getHistoryOfOneDay(date : string, user? :string){

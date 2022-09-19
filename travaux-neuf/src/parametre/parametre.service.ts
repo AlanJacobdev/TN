@@ -17,6 +17,12 @@ export class ParametreService {
   constructor(@InjectRepository(Parametre) private paramRepo : Repository<Parametre>){
 
   }
+
+  /**
+   * Création d'un paramètre
+   * @param createParametreDto : Informations utiles à la création d'un paramètre
+   * @returns Structure du nouveau paramètre 
+   */
   async create(createParametreDto: CreateParametreDto) {
     
     let paramExist = this.findOne(createParametreDto.libelle); 
@@ -32,10 +38,19 @@ export class ParametreService {
     }
   }
 
+  /**
+   * Retourne l'ensemble des paramètres
+   * @returns Liste des paramètres existant
+   */
   findAll() {
     return this.paramRepo.find();
   }
 
+  /**
+   * Retourne un paramètre en fonction de son libelle 
+   * @param libelle : Libelle du paramètre
+   * @returns Structure du paramètre recherché 
+   */
   findOne(libelle: string) {
     return this.paramRepo.findOne({
       where : {
@@ -45,6 +60,12 @@ export class ParametreService {
   }
 
 
+  /**
+   * Met à jour l'adresse mail administrateur servant de réception aux demandes de suppressions
+   * @param libelle : Libelle du paramètres (identifiant)
+   * @param updateParametreDto : Informations à modifier
+   * @returns Structure du paramètres mis à jour ou erreur
+   */
   async updateEmail(libelle : string, updateParametreDto: UpdateParametreDto){
     let email = await this.findOne(libelle);
     if (email != undefined){
@@ -72,6 +93,13 @@ export class ParametreService {
     }
   }
 
+
+   /**
+   * Met à jour le nombre d'heure pour lequel il est toujours possible de supprimer son propre objet (arborescence)
+   * @param libelle : Libelle du paramètres (identifiant)
+   * @param updateParametreDto : Informations à modifier
+   * @returns Structure du paramètres mis à jour ou erreur
+   */
   async updateHeure(libelle : string, updateParametreDto: UpdateParametreDto){
     let heure = await this.findOne(libelle);
     if( heure != undefined) {
@@ -99,7 +127,4 @@ export class ParametreService {
   }
 
 
-  remove(id: number) {
-    return `This action removes a #${id} parametre`;
-  }
 }

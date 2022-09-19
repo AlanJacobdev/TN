@@ -20,16 +20,11 @@ export class ServiceExportationService {
   constructor(private orService : ObjetrepereService ,private itemService: ItemService ,private siService: SousitemService, private exportationService :ExportationService,
     private utilisateurService :UtilisateurService){}
 
-  findAll() {
-    return `This action returns all serviceExportation`;
-  }
 
-  findOne(id: number) {
-    return `This action returns a #${id} serviceExportation`;
-  }
 
   /**
-   * Retourne l'ensemble des objets non exportés au sein de la GMAO.
+   * Retourne l'ensemble des objets non exportés au sein de la GMAO piur un utilisateur (droits).
+   * @param user : Identifiant de l'utilisateur à l'origine de la requête
    * @returns Objet contenant l'ensemble des objets repères, items et sous-items non exportés
    */
   async getAllExportItemForGMAOForOneUser(user : string) {
@@ -47,6 +42,10 @@ export class ServiceExportationService {
     return res;
   }
 
+  /**
+   * Retourne l'ensemble des objets non exportés au sein de la GMAO.
+   * @returns Objet contenant l'ensemble des objets repères, items et sous-items non exportés
+   */
   async getAllExportItemForGMAO() {
 
     let OrToExport = await this.orService.getORforExportGMAO();
@@ -63,10 +62,11 @@ export class ServiceExportationService {
   }
 
   
-  remove(id: number) {
-    return `This action removes a #${id} serviceExportation`;
-  }
-
+  /**
+   * Création du fichier excel d'exportation
+   * @param data : Données à exporter
+   * @returns Chemin de création du fichier ou erreur
+   */
   async exportationData(data : createExportGMAO){
     let updateExporteStatus = await this.updateExportStatus(data);
     
@@ -457,6 +457,11 @@ export class ServiceExportationService {
     }
   }
 
+  /**
+   * Modification des status d'exportation 
+   * @param data Objets à modifier
+   * @returns Message de validation ou d'erreur
+   */
   async updateExportStatus( data : createExportGMAO){
     try {
       for (const or of data.createObject.listeOR){
@@ -491,14 +496,32 @@ export class ServiceExportationService {
     }  
 }
 
+  /**
+   * Modification des status d'export d'un objet repère
+   * @param or : Identifiant de l'objet repère
+   * @param value : Valeur de l'export
+   * @returns Structure modifiée ou erreur
+   */
   async updateExportStatusOR(or : string, value : boolean){
     return this.orService.updateExportStatus(or, value)
   }
 
+  /**
+   * Modification des status d'export d'un item
+   * @param item : Identifiant de l'item
+   * @param value : Valeur de l'export
+   * @returns Structure modifiée ou erreur
+   */
   async updateExportStatusItem( item : string, value : boolean){
     return this.itemService.updateExportStatus(item, value);
   }
 
+  /**
+   * Modification des status d'export d'un sous-item
+   * @param si : Identifiant du sous item
+   * @param value : Valeur de l'export
+   * @returns Structure modifiée ou erreur
+   */
   async updateExportStatusSi( si : string, value : boolean){
     return this.siService.updateExportStatus(si, value);
   }

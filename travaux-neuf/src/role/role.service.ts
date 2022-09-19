@@ -23,6 +23,11 @@ export class RoleService {
 
   }
 
+  /**
+   * Création d'un rôle
+   * @param createRoleDto : Informations utiles à la création d'un rôle
+   * @returns Structure du nouveau rôle
+   */
   async create(createRoleDto: CreateRoleDto) {
     let roleExist = await this.roleRepository.findOne({
       where : {
@@ -65,6 +70,10 @@ export class RoleService {
     }
   }
 
+  /**
+   * Retourne l'ensemble des rôles
+   * @returns Liste des rôles existant
+   */
   async findAll() {
     let role = await this.roleRepository.find({
       relations : ["atelier", "typeObjet"]
@@ -84,6 +93,11 @@ export class RoleService {
     return role
   }
 
+  /**
+   * Recherche un rôle en fonction de son identifiant
+   * @param id : Identifiant du rôle
+   * @returns Structure du rôle recherché ou undefined
+   */
   findOne(id: number) {
     return this.roleRepository.findOne({
       where : {
@@ -94,6 +108,11 @@ export class RoleService {
   }
 
 
+  /**
+   * Retourne les ateliers lié à un rôle
+   * @param idRole : Identifiant du rôle
+   * @returns Liste des ateliers liés au rôle
+   */
   async getAtelierFromRole(idRole : number){
 
     let atelier = await this.roleRepository.findOne({
@@ -106,6 +125,11 @@ export class RoleService {
     return atelier
   }
 
+  /**
+   * Retourne les types d'objet repères lié à un rôle
+   * @param idRole : Identifiant du rôle
+   * @returns Liste des types d'objet repères liés au rôle
+   */
   async getTypeORFromRole(idRole : number){
 
     let atelier = await this.roleRepository.findOne({
@@ -119,7 +143,12 @@ export class RoleService {
   }
 
 
-
+  /**
+   * Modification d'un rôle
+   * @param id : Identifiant du rôle
+   * @param updateRoleDto : Informations a modifier
+   * @returns Structure modifié du rôle ou erreur
+   */
   async update(id: number, updateRoleDto: UpdateRoleDto) {
     const role = await this.roleRepository.findOne({
       where : {
@@ -166,6 +195,11 @@ export class RoleService {
 
   }
 
+  /**
+   * Suppression d'un rôle
+   * @param id : Identifiant du rôle
+   * @returns Message de validation ou erreur
+   */
   async remove(id: number) {
     const role = await this.roleRepository.findOne({
       where : {

@@ -26,6 +26,12 @@ export class ServiceSuppressionService {
   private retourOR = [];
 
 
+  /**
+   * Verifie s'il est possible de supprimer l'arbre d'objet (en fonction de la limite d'heure ou de droit) 
+   * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+   * @param objectToDelete : Objets à supprimer
+   * @returns True or false
+   */
   async verifyIfCanDeleteTree(profil:string, objectToDelete : deleteObject){
     let OrCanDeleted: boolean, ItemCanDeleted: boolean, SiCanDeleted : boolean;
     let heure = (await this.paramService.findOne("nbHeure")).valeur;
@@ -55,6 +61,13 @@ export class ServiceSuppressionService {
     }
   }
 
+  /**
+   * Vérifie la possibilité de supprimer un OR et ses enfants (item, sous item)
+   * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+   * @param Or : Liste d'objet repères a supprimer
+   * @param heure : Limite d'heure
+   * @returns True or false
+   */
   async verifyOr(profil:string, Or : string[], heure : number){
     let dateNow = new Date();
     
@@ -100,6 +113,13 @@ export class ServiceSuppressionService {
     return true;
   }
 
+  /**
+   * Vérifie la possibilité de supprimer un item et ses enfants (sous item)
+   * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+   * @param Item : Liste d'items a supprimer
+   * @param heure : Limite d'heure
+   * @returns True or false
+   */
   async verifyItem(profil:string, Item : string[], heure : number){
     let dateNow = new Date();
     dateNow.setHours(dateNow.getHours() - heure)
@@ -135,6 +155,13 @@ export class ServiceSuppressionService {
     return true;
   }
 
+    /**
+   * Vérifie la possibilité de supprimer un sous item
+   * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+   * @param Si : Liste de sous item a supprimer
+   * @param heure : Limite d'heure
+   * @returns True or false
+   */
   async verifySi(profil:string, Si : string[], heure : number){
     let dateNow = new Date();
     dateNow.setHours(dateNow.getHours() - heure)
@@ -156,11 +183,22 @@ export class ServiceSuppressionService {
   }
 
 
-
+  /**
+   * 
+   * @param profil Méthode de suppression réservée aux administrateur (pas de limite d'heure)
+   * @param objectToDelete Liste d'objet à supprimer
+   * @returns Liste des objets avec leur status de suppression ou erreur
+   */
   async deleteObjectsAsAdmin(profil:string, objectToDelete : deleteObject) {
     return await this.deleteObject(profil, objectToDelete, true);
   }
 
+  /**
+   * Supprime un lot d'objets repère (par arborescence) 
+   * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+   * @param objectToDelete : Liste d'objets à supprimer
+   * @returns Liste des objets avec leur status de suppression ou erreur
+   */
   async deleteObjects( profil:string, objectToDelete : deleteObject) {
     
     const canDeleteAsAdmin = await this.verifyIfCanDeleteTree (profil, objectToDelete);
@@ -172,7 +210,14 @@ export class ServiceSuppressionService {
     }
   }
 
-
+  /**
+   * Supprime les objets en fonction du status administrateur ou non
+   * @param profil : Identifiant de l'utilisateur a supprimer
+   * @param objectToDelete : Liste d'objets a supprimer
+   * @param admin : Est administrateur o unon
+   * @param date : Date de création (facultatif)
+   * @returns Liste des objets avec leur status de suppression ou erreur
+   */
   async deleteObject (profil:string, objectToDelete : deleteObject, admin : boolean, date? :Date) {
     let retour : deleteObject = {
       listeOR: [],
@@ -229,6 +274,13 @@ export class ServiceSuppressionService {
   }
 
 
+  /**
+   * Suppression de sous items
+   * @param listeSousItem : Liste de sous item a supprimer
+   * @param admin : Est administrateur ou non
+   * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+   * @param date : Date de création du sous item (facultatif)
+   */
   async deleteSI(listeSousItem : string[], admin : boolean, profil : string, date? : Date){
     for (const SI of listeSousItem){
       let res 
@@ -252,6 +304,13 @@ export class ServiceSuppressionService {
     }
   }
 
+  /**
+   * Suppression d'item
+   * @param listeItem : Liste d'item a supprimer
+   * @param admin : Est administrateur ou non
+   * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+   * @param date : Date de création du sous item (facultatif)
+   */
   async deleteItem(listeItem : string [], admin : boolean, profil : string, date? : Date){
     
       let flagErrorSI : boolean = false;
@@ -305,6 +364,13 @@ export class ServiceSuppressionService {
       }
   }
 
+  /**
+   * Suppression d'objet repère
+   * @param listeOR : Liste d'objet repère a supprimer
+   * @param admin : Est administrateur ou non
+   * @param profil : Identifiant de l'utilisateur à l'origine de la requête
+   * @param date : Date de création du sous item (facultatif)
+   */
   async deleteOR(listeOR : string [], admin : boolean, profil : string, date? : Date){
 
       let flagErrorSI : boolean = false;
@@ -376,6 +442,13 @@ export class ServiceSuppressionService {
     }
     
 
+    /**
+     * Création des objets liés à une demande de suppression refusée, afin de garder la trace des objets.
+     * @param profil : Profil de l'utilisateur à l'origine de la demande
+     * @param objectToDelete : Liste d'objets a supprimer
+     * @param date : Date de création
+     * @returns Message de validation ou erreur
+     */
     async createObjectSaveForDemandeAdminRefuse(profil:string, objectToDelete : deleteObject, date :Date){
       const listeOR : string[] = objectToDelete.listeOR;
       const listeItem : string[] = objectToDelete.listeItem;

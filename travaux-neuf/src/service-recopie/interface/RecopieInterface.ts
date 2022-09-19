@@ -1,3 +1,8 @@
+
+/**
+ * Interface utile au service recopie
+ */
+
 export interface recopieItem {
     idItem: string,
     libelleItem: string,
