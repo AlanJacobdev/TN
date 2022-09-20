@@ -82,8 +82,8 @@ export class ExportationService {
 
 
   /**
-   * 
-   * @param id Supprime une exportation
+   * Supprime une exportation
+   * @param id Identification d'une exportation
    * @returns HttpException ou une structure ({status, error} OU {status, message})
    */
   async remove(id: number) {

@@ -9,6 +9,11 @@ import { jwtKey } from "../constants";
  */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
+      /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
     constructor(){
         super({
             ignoreExpiration: false,

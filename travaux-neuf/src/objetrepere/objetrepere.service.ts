@@ -308,6 +308,11 @@ export class ObjetrepereService {
 
     return result
   }
+
+  /**
+   * Retourne l'ensemble des objets repères non exportès sur la base GMAO
+   * @returns 
+   */
   async getORforExportGMAO(){
    
       let res = await this.OrRepo.find({
@@ -457,7 +462,7 @@ export class ObjetrepereService {
   }
 
   /**
-   * 
+   * Suppression d'un objet repère
    * @param id Identifiant de l'objet repère supprimé
    * @param user Utilisateur supprimant l'objet repère 
    * @param admin Est administrateur (facultatif)

@@ -17,8 +17,23 @@ import { DemandeAdminService } from '../demande-admin.service';
 @WebSocketGateway({ cors: true } )
 export class NbDemandeGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
     
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
     constructor(private demandeAdminService: DemandeAdminService){}
+    
+
+    /** 
+     * Serveur Websocket
+     */
     @WebSocketServer() server: Server;
+    
+    
+    /**
+     * Logger dedié a ce Websocket
+     */
     private logger: Logger = new Logger('AppGateway');
    
     /**

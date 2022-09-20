@@ -26,8 +26,19 @@ export class ServiceSuppressionService {
   constructor(private ORService : ObjetrepereService ,private ItemService : ItemService, private SIService : SousitemService, private paramService : ParametreService,
               private ItemSaveService : ItemsaveService, private SISaveService : SousitemsaveService,){}
  
+  /**
+   * Tableau des Sous items avec leur status de suppression
+   */
   private retourSI = [];
+  
+  /**
+   * Tableau des Items avec leur status de suppression
+   */
   private retourItem = [];
+
+  /**
+   * Tableau des Objets repères avec leur status de suppression
+   */
   private retourOR = [];
 
 

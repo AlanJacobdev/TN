@@ -12,6 +12,11 @@ import { AuthService } from '../auth.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(private authService: AuthService) {
     super({
       usernameField: 'login',
@@ -19,6 +24,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+   /**
+     * Méthode de validation (après vérification de l'existence) 
+     */
   async validate(login: string, password: string): Promise<any> {
     const user = await this.authService.validateUser(login, password);
     if (!user) {

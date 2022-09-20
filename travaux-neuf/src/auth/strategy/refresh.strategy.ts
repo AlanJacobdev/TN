@@ -12,6 +12,12 @@ import { jwtKey } from "../constants";
  */
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
+   
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
     constructor(private authService: AuthService, private jwt : JwtService){
         super({
             ignoreExpiration: true,
@@ -28,7 +34,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     }
  
     /**
-     * 
+     * Methode de validation après existence d'un token
      * @param req Requete entrante
      * @param payload User
      * @returns Exception si erreur ou utilisateur

@@ -26,10 +26,12 @@ import { ConnectionOptions } from 'typeorm';
 
 /**
  * @author : @alanjacobdev
+ */
+
+/**
  * Configuration utilisée pour se connectrer à la base Postgres
  * Plus d'informations : https://docs.nestjs.com/techniques/database
  */
-
 export const config: ConnectionOptions = {
       type: 'postgres',
       host: '172.16.208.38',

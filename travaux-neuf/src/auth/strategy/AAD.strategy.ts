@@ -11,6 +11,11 @@ import { AuthService } from '../auth.service';
 @Injectable() 
 export class AADStrategy extends PassportStrategy(OIDCStrategy, 'aad') {
     
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
     constructor (private authService: AuthService) {
         super({
             identityMetadata: "https://login.microsoftonline.com/934f7349-18aa-4596-9ce2-a951b6794888/v2.0/.well-known/openid-configuration",
