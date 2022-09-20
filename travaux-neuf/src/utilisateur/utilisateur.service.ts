@@ -19,6 +19,11 @@ import * as moment from 'moment';
 export class UtilisateurService {
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private roleService : RoleService){}
   
+  /**
+   * Creation d'un utilisateur
+   * @param createUtilisateurDto : Informations utiles à la création
+   * @returns Structure du nouvel utilisateur ou erreur
+   */
   async create(createUtilisateurDto: CreateUtilisateurDto) {
     let loginExist = await this.findOneByLogin(createUtilisateurDto.login);
     if (loginExist == undefined){
@@ -55,6 +60,10 @@ export class UtilisateurService {
     }
   }
 
+  /**
+   * Retourne l'ensemble des utilisateurs
+   * @returns Liste des utilisateurs existant
+   */
   async findAll() {
     let res = await this.utiRepo.find({
       order: {
@@ -67,6 +76,11 @@ export class UtilisateurService {
     return res
   }
 
+  /**
+   * Retourne un utilisateur
+   * @param id : Identifiant d'un utilisateur
+   * @returns Structure de l'utilisateur recherché ou erreur
+   */
   async findOne(id: number) {
     return this.utiRepo.findOne({
       where : {
@@ -75,6 +89,11 @@ export class UtilisateurService {
     })
   }
 
+  /**
+   * Recherche le status administrateur d'un utilisateur donné
+   * @param id : Identifiant d'un utilisateur
+   * @returns True or false
+   */
   estAdmin(id: number) {
     return this.utiRepo.findOne({
       select : ["estAdministrateur"],
@@ -84,6 +103,13 @@ export class UtilisateurService {
     })
   }
   
+  /**
+   * Recherche un utilisateur en fonction des ses token et son login
+   * @param login : Identifiant (login) de l'utilisateur
+   * @param refreshToken : Jeton de rafraichissement
+   * @param refreshTokenExp : Expiration du jeton de rafraichissement
+   * @returns Structure de l'utilisateur ou undefined
+   */
   findOneForToken( login : string, refreshToken : string, refreshTokenExp : string) {
     let dateMoment  = moment(refreshTokenExp, 'YYYY/MM/DD');
     let newDateMoment = dateMoment.add(1, 'days').format('YYYY/MM/DD')
@@ -96,6 +122,11 @@ export class UtilisateurService {
     })
   }
 
+  /**
+   * Recupère les ateliers accessibles pour un utilisateur
+   * @param user : Identifiant d'un utilisateur
+   * @returns : Liste des ateliers accessibles par l'utilisateur
+   */
   async getAtelierFromUser(user :string){
     let role = await this.utiRepo.findOne({
       select:['idRole'],
@@ -107,6 +138,11 @@ export class UtilisateurService {
 
   }
 
+  /**
+   * Retourne la liste des type d'objet repères accessibles pour un utilisateur
+   * @param user : identifiant de l'utilisateur 
+   * @returns Liste des types d'objet repère accessibles par un utilisateur 
+   */
   async getTypeORFromUser(user :string){
     let role = await this.utiRepo.findOne({
       select:['idRole'],
@@ -118,7 +154,11 @@ export class UtilisateurService {
 
   }
 
-
+  /**
+   * Retourne le nom et prénom d'un utilisateur
+   * @param loginUser : Login de l'utilisateur
+   * @returns Nom et prénom de l'utilisateur
+   */
   async findOneByLogin(loginUser :string) : Promise<userIdentity>{
     return this.utiRepo.findOne({
       select : ['nom','prenom'],
@@ -128,6 +168,11 @@ export class UtilisateurService {
     })
   }
 
+  /**
+   * Retourne l'email d'un utilisateur
+   * @param loginUser : Login d'un utilisateur
+   * @returns 
+   */
   async findEmailByLogin(loginUser : string) : Promise<emailUser>{
     return this.utiRepo.findOne({
       select : ['email'],
@@ -137,6 +182,12 @@ export class UtilisateurService {
     })
   }
 
+  /**
+   * Vérifie la concordance des mot de passe et l'existence du login
+   * @param login : Login de l'utilisateur
+   * @param password : Mot de passe de l'utilisateur
+   * @returns Structure de l'utilisateur ou undefined (erreur)
+   */
   async findOneConnexion(login: string, password : string) {
     const user = await this.utiRepo.findOne({
       where : {
@@ -163,6 +214,12 @@ export class UtilisateurService {
     }
   }
 
+  /**
+   * Modification d'un utilisateur
+   * @param id : identifiant de l'utilisateur
+   * @param updateUtilisateurDto : Informations a modifier
+   * @returns Structure de l'utilisateur modifiée ou erreur
+   */
   async update(id: number, updateUtilisateurDto: UpdateUtilisateurDto) {
     let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
     let isEmail = regex.test(updateUtilisateurDto.email);
@@ -203,6 +260,12 @@ export class UtilisateurService {
     }
   }
 
+  /**
+   * Modifie le mot de passe de l'utilisateur
+   * @param idUser : Identifiant de l'utilisateur
+   * @param updateUtilisateurDto : Informations a modifier
+   * @returns Structure de l'utilisateur(valide) ou erreur(echec)
+   */
   async updatePwd(idUser: number, updateUtilisateurDto: UpdateUtilisateurDto) {
     const uti = await this.utiRepo.findOne({
       where : {
@@ -225,6 +288,12 @@ export class UtilisateurService {
     return user;
   }
 
+  /**
+   * Modifie l'état de l'utilisateur (actif / inactif)
+   * @param idUser : identifiant de l'utilisateur
+   * @param updateUtilisateurDto : Informations a modifier
+   * @returns 
+   */
   async updateActif(idUser: number, updateUtilisateurDto: UpdateUtilisateurDto) {
     const uti = await this.utiRepo.findOne({
       where : {
@@ -244,6 +313,12 @@ export class UtilisateurService {
     return user;
   }
 
+  /**
+   * Mise à jour du jeton
+   * @param idUser : Identifiant de l'utilisateur
+   * @param updateUtilisateurDto : Informations à modifier
+   * @returns Structure de l'utilisateur (valdie) ou erreur (echec)
+   */
   async updateToken(idUser: number, updateUtilisateurDto: any) {
     const uti = await this.utiRepo.findOne({
       where : {
@@ -263,6 +338,11 @@ export class UtilisateurService {
     return user;
   }
 
+  /**
+   * Suppression d'un utilisateur
+   * @param id : Identifiant de l'utilisateur 
+   * @returns Message de validation ou erreur
+   */
   async remove(id: number) {
     const uti = await this.utiRepo.findOne({
       where : {
@@ -289,6 +369,11 @@ export class UtilisateurService {
     }
   }
 
+  /**
+   * NON UTILISEE
+   * @param login 
+   * @param pwd 
+   */
   async findUserOnCimaint (login: string, pwd:string) {
 
     // try {
@@ -305,7 +390,12 @@ export class UtilisateurService {
     
   }
 
-
+  /**
+   * NON UTILISEE
+   * @param req 
+   * @param id 
+   * @param pwd 
+   */
    async userExistOrNot(req : any, id : string, pwd : string) {
 
     
@@ -333,8 +423,5 @@ export class UtilisateurService {
 
     
    }
-
-
-
 
 }

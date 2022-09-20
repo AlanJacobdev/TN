@@ -26,6 +26,12 @@ export class SousitemService {
   constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>,@InjectRepository(Item) private itemRepo:Repository<Item>, private typeObjetService : TypeobjetService, private itemservice: ItemService, private sousitemSaveService : SousitemsaveService,
               private descriptionService: DescriptionService, private utilisateurService : UtilisateurService){}
   
+
+  /**
+   * Création d'un sous item
+   * @param createSousitemDto : Informations utiles à la création 
+   * @returns Structure du nouveau sous item
+   */
   async create(createSousitemDto: CreateSousitemDto) {
     const item = await this.itemservice.findOne(createSousitemDto.idItem);
     if (item != undefined) {
@@ -95,6 +101,10 @@ export class SousitemService {
     }
   }
 
+  /**
+   * Retourne l'ensemble des sous items
+   * @returns Liste des sous items existant
+   */
   findAll() {
     return this.sousitemRepo.find({
       relations: ["description"],
@@ -104,6 +114,11 @@ export class SousitemService {
     });
   }
 
+  /**
+   * Recherche l'ensemble des sous item lié à un item donnée
+   * @param id : identifiant de l'item parent
+   * @returns Liste des sous items liés au parent
+   */
   findAllSousItemOfItem(id : string){
     return this.sousitemRepo.find({
       where : {
@@ -116,6 +131,11 @@ export class SousitemService {
     })
   }
 
+  /**
+   * Recherche l'identifiant et le libellé des sous items liés à un item parent
+   * @param id : identifiant de l'item parent
+   * @returns Liste des sous items liés au parent
+   */
   findAllSousItemOfItemUseful(id : string){
     return this.sousitemRepo.find({
       select : ['idSousItem', 'libelleSousItem'],
@@ -128,6 +148,11 @@ export class SousitemService {
     })
   }
 
+  /**
+   * Retourne un sous item 
+   * @param id : Identifiant du sous item
+   * @returns Structure du sous item ou undefined
+   */
   async findOne(id: string) {
     return this.sousitemRepo.findOne({
       where: {
@@ -138,7 +163,9 @@ export class SousitemService {
   }
 
     /**
-   * Retourne l'ensemble des objets repère créé / modifier et non itemiser au sein de la GMAO
+   * Retourne l'ensemble des objets repère créé / modifier et non itemiser au sein de la GMAO pour un utilisateur donné
+   * @param user : Identifiant de l'utilisateur à l'origine de la requête
+   * @returns Liste des sous items non exportés
    */
   async getSIforExportGMAOForOneUser(user :string){
     let atelier = (await this.utilisateurService.getAtelierFromUser(user)).atelier;
@@ -205,6 +232,11 @@ export class SousitemService {
     return result
   }
 
+  /**
+    /**
+   * Retourne l'ensemble des objets repère créé / modifier et non itemiser au sein de la GMAO pour un utilisateur donné
+   * @returns Liste des sous items non exportés
+   */
   async getSIforExportGMAO(){
     let res = await this.sousitemRepo.find({
       where : {
@@ -229,6 +261,11 @@ export class SousitemService {
     return res;
   }
   
+  /**
+   * Recherche les sous item d'un lié à un item. Transforme l'identifiant utilisateur pour l'affichage
+   * @param id : Identifiant de l'item parent
+   * @returns Liste des sous items liés au parent
+   */
   async getSousItemByItemAffichage(id: string) {
     const sousItem = await this.sousitemRepo.find({
       where : {
@@ -255,6 +292,13 @@ export class SousitemService {
     return sousItem
   }
 
+
+    /**
+     * DOUBLON
+   * Recherche l'ensemble des sous item lié à un item donnée
+   * @param id : identifiant de l'item parent
+   * @returns Liste des sous items liés au parent
+   */
   async getSousItemByItem(id: string) {
     const sousItem = await this.sousitemRepo.find({
       where : {
@@ -270,6 +314,12 @@ export class SousitemService {
 
 
 
+  /**
+   * Modification d'un sous item
+   * @param id : Identifiant du sous item recherché
+   * @param updateSousitemDto : informations a modifier
+   * @returns Structure du sous item modifiée ou erreur
+   */
   async update(id: string, updateSousitemDto: UpdateSousitemDto) {
     const sousitem = await this.sousitemRepo.findOne({
       where : {
@@ -386,6 +436,14 @@ export class SousitemService {
       });
     }
 
+    /**
+     * Supprime un sous item
+     * @param id : Identifiant du sous item
+     * @param user : Identifiant de l'utilisateur à l'origine de la requête
+     * @param admin : Est administrateur ou non (facultatif)
+     * @param date : Date du sous item à supprimer (facultatif)
+     * @returns Message de validation ou erreur
+     */
   async remove(id: string, user : string, admin? : boolean, date? : Date) {
     const sousitem = await this.sousitemRepo.findOne({
       where : {
@@ -480,11 +538,21 @@ export class SousitemService {
       }
   }
 
-  async getHistory(idItem : string) {
-    return this.sousitemSaveService.findHistoryById(idItem);
+  /**
+   * Retourne l'historique d'activité d'un sous item
+   * @param idSousItem : Identifiant du sous item
+   * @returns Liste des différent état du sous item
+   */
+  async getHistory(idSousItem : string) {
+    return this.sousitemSaveService.findHistoryById(idSousItem);
   }
 
 
+  /**
+   * Retourne les types non attribués à un sous item pour un item donné
+   * @param idItem : Identifiant de l'item
+   * @returns Liste des types d'objet non attribués pour un sous item
+   */
   async getAllTypeAvailable(idItem : string){
 
     const allTypeUsed = await this.sousitemRepo.createQueryBuilder("SousItem")
@@ -507,6 +575,12 @@ export class SousitemService {
     return alltype;
   }
 
+
+  /**
+   * Retourne les types ACTIFS et non attribués à un sous item pour un item donné
+   * @param idItem : Identifiant de l'item
+   * @returns Liste des types d'objet ACTIF et non attribués pour un sous item
+   */
   async getAllTypeAvailableAndActif(idItem : string){
 
     const allTypeUsed = await this.sousitemRepo.createQueryBuilder("SousItem")

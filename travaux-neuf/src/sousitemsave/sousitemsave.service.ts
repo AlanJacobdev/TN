@@ -17,6 +17,11 @@ export class SousitemsaveService {
 
   constructor(@InjectRepository(Sousitemsave) private sousItemSaveRepo : Repository<Sousitemsave>, @Inject(forwardRef(() => SousitemService)) private sousItemService : SousitemService, private configservice : ConfigService){}
 
+  /**
+   * Création d'un sous item sauvegardé
+   * @param createSousitemsaveDto : Informations utiles à la création
+   * @returns Structure du nouveau sous item sauvegardé
+   */
   async create(createSousitemsaveDto: CreateSousitemsaveDto) {
     const sousItem = await this.sousItemService.findOne(createSousitemsaveDto.idSousItem);
     if (sousItem != undefined){
@@ -25,9 +30,7 @@ export class SousitemsaveService {
         try{
           const newSousItemSave = this.sousItemSaveRepo.create(createSousitemsaveDto);
           await this.sousItemSaveRepo.save(newSousItemSave)
-          if(createSousitemsaveDto.etat === 'M') {
-            await this.deleteSaveOlderThan(createSousitemsaveDto.idSousItem);
-          }
+         
           return newSousItemSave;
         } catch (e :any){
           throw new HttpException ({
@@ -47,14 +50,22 @@ export class SousitemsaveService {
         error :'Sous Item doesn\'t exist',
       }
     }
-    
-    
   }
 
+  /**
+   * Retourne l'ensemble des sous item sauvegardé
+   * @returns Liste des sous items sauvegardé existants
+   */
   findAll() {
     return this.sousItemSaveRepo.find();
   }
 
+  /**
+   * Retourne un sous item sauvegardé
+   * @param id : Identifiant su sous item sauvegardé
+   * @param date : Date de création
+   * @returns Structure du sous item sauvegardé ou undefined
+   */
   findOne(id: string, date : Date) {
     return this.sousItemSaveRepo.findOne({
       where : {
@@ -65,6 +76,11 @@ export class SousitemsaveService {
     })
   }
 
+  /**
+   * Retourne l'ensemble des états d'un sous items sauvegardé
+   * @param id : Identifiant d'un sous item sauvegardé
+   * @returns Liste des différents états d'un sous items sauvegardé
+   */
   findById(id: string) {
     return this.sousItemSaveRepo.find({
       where : {
@@ -77,6 +93,12 @@ export class SousitemsaveService {
     })
   }
 
+  /**
+   * Retourne l'identifiant et libellé de sous items sauvegardés liés à un item
+   * @param id : Identifiant d'un item
+   * @param date : date de création du ou des sous items
+   * @returns Liste des sous-items sauvegardé liés à un item
+   */
   findAllSousItemOfItemUseful(id : string, date : Date){
     return this.sousItemSaveRepo.find({
       select : ['idSousItem', 'libelleSousItem'],
@@ -90,6 +112,11 @@ export class SousitemsaveService {
     })
   }
 
+  /**
+   * Recherche le dernier état d'un sous item sauvegardé
+   * @param id : Identifiant du sous item sauvegardé
+   * @returns Structure du sous item sauvegardé
+   */
   findOnebyIDDesc(id : string){
     return this.sousItemSaveRepo.findOne({
       where : {
@@ -102,6 +129,11 @@ export class SousitemsaveService {
     })
   }
 
+  /**
+   * Retourne les 5 derniers états d'un sous items sauvegardé (ou à partir de la dernière création)
+   * @param id : Identifiant du sous item sauvegardé
+   * @returns Liste des différents états du sous item sauvegardé
+   */
   async findHistoryById(id: string) {
     let finalHistory = [];
     const history = await this.sousItemSaveRepo.find({
@@ -132,6 +164,12 @@ export class SousitemsaveService {
 
   }
 
+  /**
+   * Supprime un état d'un sous items sauvegardé
+   * @param idSousItem : Identifiant d'un sous item sauvegardé
+   * @param date : Date de création
+   * @returns Message de validation ou erreur
+   */
   async remove(idSousItem: string, date: Date) {
     date = new Date(date);
  
@@ -161,30 +199,5 @@ export class SousitemsaveService {
 
 
   
-  async deleteSaveOlderThan (id : string){
-    const existingBackUp = await this.sousItemSaveRepo.find({
-      where : {
-        idSousItem : id
-      },
-      order : {
-        date : "ASC"
-      }
-    })
-
-    if ( existingBackUp.length > this.configservice.get('maxSave') ){
-      const DeletedBackUp = await this.sousItemSaveRepo.find({
-        where : {
-          idSousItem : id
-        },
-        order : {
-          date : "ASC"
-        },
-        take: existingBackUp.length - this.configservice.get('maxSave') ,
-      })
-      for (const sousItem of DeletedBackUp){
-        this.remove(sousItem.idSousItem, sousItem.date );
-      }
-    }
-
-  }
+  
 }

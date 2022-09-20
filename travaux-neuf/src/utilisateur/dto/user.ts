@@ -1,3 +1,6 @@
+/**
+ * Interfaces utiles au service Utilisateur
+ */
 export interface userIdentity {
     nom : string,
     prenom : string

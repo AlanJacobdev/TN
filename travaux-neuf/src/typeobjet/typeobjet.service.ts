@@ -17,6 +17,11 @@ export class TypeobjetService {
 
   constructor(@InjectRepository(Typeobjet) private typeObjetRepo : Repository<Typeobjet>, private utilisateurService : UtilisateurService ){}
 
+  /**
+   * Creation d'un type d'objet
+   * @param createTypeobjetDto : Informations utiles à la création
+   * @returns Structure du nouveau type d'objet ou erreur
+   */
   async create(createTypeobjetDto: CreateTypeobjetDto) {
     const typeobjet= await this.findOne(createTypeobjetDto.idType)
     if ( typeobjet == undefined){
@@ -41,6 +46,12 @@ export class TypeobjetService {
     
   }
 
+  /**
+   * Vérifie le libelle d'un type d'objet repère (contrainte lié à l'identifiant)
+   * @param typeObjet : Identifiant du type d'objet
+   * @param libelle : Libelle du type d'objet
+   * @returns Undefined(valide) ou string d'erreur
+   */
   async checkLibelle(typeObjet : string, libelle : string){
     const startTO = typeObjet.charAt(0);     
     if ( startTO == 'A' || startTO == 'L' || startTO == 'V'){
@@ -70,6 +81,10 @@ export class TypeobjetService {
     return undefined;
   }
 
+  /**
+   * Retourne l'ensemble des types d'objet existants
+   * @returns 
+   */
   async findAll() {
     const type = await this.typeObjetRepo.find({
       order : {
@@ -88,6 +103,10 @@ export class TypeobjetService {
     return type
   }
 
+  /**
+   * Retourne l'ensemble des type d'objet actifs
+   * @returns 
+   */
   findAllTypeOActif(){
     return this.typeObjetRepo.find({
       where : {
@@ -96,6 +115,11 @@ export class TypeobjetService {
     })
   }
 
+  /**
+   * Retourne un type d'objet 
+   * @param id : Identifiant du type d'objet
+   * @returns Structure du type d'objet ou undefined
+   */
   findOne(id: string) {
     return this.typeObjetRepo.findOne({
       where : {
@@ -104,6 +128,10 @@ export class TypeobjetService {
     })
   }
 
+  /**
+   * Recherche l'identifiant, le libellé et l'état d'un type d'objet (par ordre croissant)
+   * @returns Liste des types d'objets existant avec la contrainte de sélection
+   */
   findAllType(){
     return this.typeObjetRepo.find({
       select:['idType','libelleType','actif'],
@@ -113,6 +141,10 @@ export class TypeobjetService {
     })
   }
 
+  /**
+   * Recherche l'identifiant, le libellé et l'état d'un type d'objet ACTIF (par ordre croissant)
+   * @returns Liste des types d'objets existant et ACTIF avec la contrainte de sélection
+   */
   findAllTypeActif(){
     return this.typeObjetRepo.find({
       select:['idType','libelleType','actif'],
@@ -125,6 +157,12 @@ export class TypeobjetService {
     })
   }
 
+  /**
+   * Modification d'un type d'objet
+   * @param id : Identifiant du type d'objet
+   * @param updateTypeobjetDto : Information a modifier
+   * @returns Structure du type d'objet modifié ou erreur
+   */
   async update(id: string, updateTypeobjetDto: UpdateTypeobjetDto) {
     const typeObjet = await this.typeObjetRepo.findOne({
       where : {
@@ -152,6 +190,11 @@ export class TypeobjetService {
 
   }
 
+  /**
+   * Supprime un type d'objet
+   * @param id : Identifiant du type d'objet
+   * @returns Message de validation ou erreur
+   */
   async remove(id: string) {
     const TypeObjet = await this.typeObjetRepo.findOne({
       where : {
