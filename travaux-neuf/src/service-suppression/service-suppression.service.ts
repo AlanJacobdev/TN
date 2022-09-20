@@ -18,6 +18,11 @@ import { deleteObject } from './interface/SuppressionInterface';
 @Injectable()
 export class ServiceSuppressionService {
  
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(private ORService : ObjetrepereService ,private ItemService : ItemService, private SIService : SousitemService, private paramService : ParametreService,
               private ItemSaveService : ItemsaveService, private SISaveService : SousitemsaveService,){}
  

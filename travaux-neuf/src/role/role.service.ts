@@ -19,6 +19,11 @@ import { Role } from './entities/role.entity';
 @Injectable()
 export class RoleService {
 
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Role) private roleRepository : Repository<Role>, @Inject(forwardRef(() => AtelierService)) private atelierService : AtelierService, private typeORService : TypeobjetrepereService, @Inject(forwardRef(() => UtilisateurService)) private utilisateurService :UtilisateurService){
 
   }

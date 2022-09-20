@@ -15,7 +15,11 @@ import { Atelier } from './entities/atelier.entity';
 @Injectable()
 export class AtelierService {
 
-
+  /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Atelier) private AtelierRepo : Repository<Atelier> , private utilisateurService: UtilisateurService){}
 
   /**

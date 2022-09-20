@@ -17,6 +17,12 @@ import * as moment from 'moment';
 
 @Injectable()
 export class UtilisateurService {
+  
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Utilisateur) private utiRepo: Repository<Utilisateur>, private roleService : RoleService){}
   
   /**

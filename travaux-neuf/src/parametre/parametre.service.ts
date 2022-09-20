@@ -14,6 +14,12 @@ import { Parametre } from './entities/parametre.entity';
 @Injectable()
 
 export class ParametreService {
+  
+  /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Parametre) private paramRepo : Repository<Parametre>){
 
   }

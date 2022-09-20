@@ -15,6 +15,11 @@ import { Numerounique } from './entities/numerounique.entity';
 @Injectable()
 export class NumerouniqueService {
   
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Numerounique) private NuRepo : Repository<Numerounique>, private atelierService: AtelierService){}
 
   /**

@@ -14,6 +14,12 @@ import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 
 @Injectable()
 export class MailService {
+  
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(private mailerService: MailerService, private utilisateurService : UtilisateurService, private parametreService : ParametreService) {}
 
   /**

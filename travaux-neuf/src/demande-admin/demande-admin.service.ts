@@ -22,6 +22,11 @@ import { DemandeAdmin } from './entities/demande-admin.entity';
 @Injectable()
 export class DemandeAdminService {
 
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(DemandeAdmin) private demandeAdminRepo : Repository<DemandeAdmin>, private objetRepereService : ObjetrepereService, 
   private itemService : ItemService, private sousItemService : SousitemService,  private mailService : MailService, private utilisateurService : UtilisateurService,
   private serviceSuppression: ServiceSuppressionService, private demandeAdminTraiteeService : DemandeAdminTraiteeService){}

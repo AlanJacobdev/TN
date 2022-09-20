@@ -22,6 +22,11 @@ import { Item } from './entities/item.entity';
 @Injectable()
 export class ItemService {
   
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Item) private itemRepo : Repository<Item> , private typeObjetService : TypeobjetService, private OrService : ObjetrepereService, private itemSaveService : ItemsaveService,
               private descriptionService: DescriptionService, private utilisateurService : UtilisateurService){}
   

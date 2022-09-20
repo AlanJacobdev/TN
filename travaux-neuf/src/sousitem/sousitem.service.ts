@@ -22,7 +22,11 @@ import { Sousitem } from './entities/sousitem.entity';
 @Injectable()
 export class SousitemService {
   
-  
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Sousitem) private sousitemRepo:Repository<Sousitem>,@InjectRepository(Item) private itemRepo:Repository<Item>, private typeObjetService : TypeobjetService, private itemservice: ItemService, private sousitemSaveService : SousitemsaveService,
               private descriptionService: DescriptionService, private utilisateurService : UtilisateurService){}
   

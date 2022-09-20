@@ -15,6 +15,11 @@ import { Typeobjet } from './entities/typeobjet.entity';
 @Injectable()
 export class TypeobjetService {
 
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Typeobjet) private typeObjetRepo : Repository<Typeobjet>, private utilisateurService : UtilisateurService ){}
 
   /**

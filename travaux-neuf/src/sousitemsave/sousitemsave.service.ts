@@ -15,6 +15,11 @@ import { Sousitemsave } from './entities/sousitemsave.entity';
 @Injectable()
 export class SousitemsaveService {
 
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Sousitemsave) private sousItemSaveRepo : Repository<Sousitemsave>, @Inject(forwardRef(() => SousitemService)) private sousItemService : SousitemService, private configservice : ConfigService){}
 
   /**

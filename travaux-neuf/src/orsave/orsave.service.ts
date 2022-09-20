@@ -14,7 +14,11 @@ import { Orsave } from './entities/orsave.entity';
 @Injectable()
 export class OrsaveService {
 
-
+  /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Orsave) private orsaveRepo : Repository<Orsave>,  @Inject(forwardRef(() => ObjetrepereService)) private orservice : ObjetrepereService){}
 
   /**

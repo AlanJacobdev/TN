@@ -13,7 +13,12 @@ import { Exportation } from './entities/exportation.entity';
 
 @Injectable()
 export class ExportationService {
-
+  
+  /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Exportation) private exportationRepo : Repository<Exportation>, private utilisateurService : UtilisateurService){}
 
   /**

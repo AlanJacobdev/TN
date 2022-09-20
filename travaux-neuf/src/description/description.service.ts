@@ -13,7 +13,12 @@ import { Description } from './entities/description.entity';
 
 @Injectable()
 export class DescriptionService {
-  
+   
+  /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Description) private descriptionRepo : Repository<Description> ){
   }
 

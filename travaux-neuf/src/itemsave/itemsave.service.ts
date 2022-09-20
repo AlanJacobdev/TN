@@ -15,6 +15,11 @@ import { Itemsave } from './entities/itemsave.entity';
 @Injectable()
 export class ItemsaveService {
   
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Itemsave) private itemSaveRepo : Repository<Itemsave> , @Inject(forwardRef(() => ItemService)) private itemservice: ItemService, private configservice : ConfigService){}
 
   /**

@@ -17,6 +17,11 @@ import { Information } from './entities/information.entity';
 @Injectable()
 export class InformationsService {
 
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Information) private informationServiceRepo : Repository<Information>, private documentService : DocumentService, private utilisateurService : UtilisateurService){}
 
   /**

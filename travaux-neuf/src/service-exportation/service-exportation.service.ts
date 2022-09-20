@@ -16,11 +16,14 @@ import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
 
 @Injectable()
 export class ServiceExportationService {
-
+  
+  /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(private orService : ObjetrepereService ,private itemService: ItemService ,private siService: SousitemService, private exportationService :ExportationService,
     private utilisateurService :UtilisateurService){}
-
-
 
   /**
    * Retourne l'ensemble des objets non exportés au sein de la GMAO piur un utilisateur (droits).

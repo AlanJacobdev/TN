@@ -21,6 +21,11 @@ import { Objetrepere } from './entities/objetrepere.entity';
 @Injectable()
 export class ObjetrepereService {
   
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Objetrepere) private OrRepo : Repository<Objetrepere>, private nuservice : NumerouniqueService, private typeorservice : TypeobjetrepereService,  private orsaveservice : OrsaveService,
               private descriptionService: DescriptionService, private utilisateurService : UtilisateurService ){}
 

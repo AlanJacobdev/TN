@@ -14,6 +14,11 @@ import { Document } from './entities/document.entity';
 @Injectable()
 export class DocumentService {
   
+    /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
   constructor(@InjectRepository(Document) private documentRepo : Repository<Document>){
   }
   

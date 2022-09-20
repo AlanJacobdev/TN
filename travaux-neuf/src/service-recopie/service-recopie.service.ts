@@ -16,7 +16,11 @@ import { recopieItem } from './interface/RecopieInterface';
 @Injectable()
 export class ServiceRecopieService {
 
-
+  /**
+   * Constructeur de la classe 
+   * Injection de Repository et autres services utilisés par cette classe
+   * Plus d'informations : https://docs.nestjs.com/providers
+   */
     constructor(private OrService : ObjetrepereService, private itemService:ItemService,
                 private SiService : SousitemService, private configservice : ConfigService){}
 
