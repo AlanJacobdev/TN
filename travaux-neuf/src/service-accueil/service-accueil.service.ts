@@ -7,7 +7,7 @@ import { Orsave } from 'src/orsave/entities/orsave.entity';
 import { Sousitem } from 'src/sousitem/entities/sousitem.entity';
 import { Sousitemsave } from 'src/sousitemsave/entities/sousitemsave.entity';
 import { UtilisateurService } from 'src/utilisateur/utilisateur.service';
-import { Between, In, MoreThan, Repository } from 'typeorm';
+import { Between, In, MoreThan, Not, Repository } from 'typeorm';
 import { infoPerDayModified, infoPerMonth, typeInfoPerDay, typeInfoPerMounth } from './interface/structure';
 
 /**
@@ -762,7 +762,8 @@ export class ServiceAccueilService {
             select : ['idObjetRepere','libelleObjetRepere','etat', 'profilModification', 'dateModification'],
             where : {
               dateCreation : MoreThan(orM.date),
-              idObjetRepere : orM.idObjetRepere
+              idObjetRepere : orM.idObjetRepere,
+              dateModification : Not(null)
             },
             relations:["description"]
           })
@@ -834,6 +835,7 @@ export class ServiceAccueilService {
     }
 
     
+    
     if ( ItemModify.length > 0 ) {
       for (const itemM of ItemModify){
         let error :boolean = false;
@@ -860,7 +862,6 @@ export class ServiceAccueilService {
           },
           relations:["description"]
         })
-        
 
         
         if(itemModify == undefined) {
@@ -869,11 +870,13 @@ export class ServiceAccueilService {
             select : ['idItem','libelleItem','etat', 'profilModification', 'dateModification'],
             where : {
               dateCreation : MoreThan(itemM.date),
-              idItem : itemM.idItem
+              idItem : itemM.idItem,
+              dateModification : Not(null)
+
             },
             relations:["description"]
           })
-
+          console.log(itemReplaceitemModifyonCreation);
 
 
           if(itemReplaceitemModifyonCreation == undefined) {
@@ -886,6 +889,7 @@ export class ServiceAccueilService {
               },
               relations:["description"]
             })
+            
             if(itemReplaceitemModifyonModification == undefined) {
               error =true;
             } else {
@@ -975,7 +979,8 @@ export class ServiceAccueilService {
             select : ['idSousItem','libelleSousItem','etat', 'profilModification', 'dateModification'],
             where : {
               dateCreation : MoreThan(siM.date),
-              idSousItem : siM.idSousItem
+              idSousItem : siM.idSousItem,
+              dateModification : Not(null)
             },
             relations:["description"]
           })
@@ -988,6 +993,7 @@ export class ServiceAccueilService {
               where : {
                 dateModification : MoreThan(siM.date),
                 idSousItem : siM.idSousItem
+                
               },
               relations:["description"]
             })
@@ -1021,6 +1027,7 @@ export class ServiceAccueilService {
         }
       }
     }
+
 
 
       
